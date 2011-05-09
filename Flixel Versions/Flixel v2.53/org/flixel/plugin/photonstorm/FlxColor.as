@@ -2,10 +2,11 @@
  * FlxColor
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 getHSVColorWheel now supports an alpha value per color
  * v1.3 Added getAlphaFloat
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 5th 2011
+ * @version 1.4 - May 9th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  * @see Depends upon FlxMath
@@ -26,20 +27,22 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Get HSV colour wheel values in an array which will be 360 elements in size
+		 * Get HSV color wheel values in an array which will be 360 elements in size
+		 * 
+		 * @param	alpha	Alpha value for each color of the color wheel, between 0 (transparent) and 255 (opaque)
 		 * 
 		 * @return	Array
 		 */
-		public static function getHSVColorWheel():Array
+		public static function getHSVColorWheel(alpha:uint = 255):Array
 		{
-			var colours:Array = new Array();
+			var colors:Array = new Array();
 			
 			for (var c:int = 0; c <= 359; c++)
 			{
-				colours[c] = HSVtoRGB(c, 1.0, 1.0);
+				colors[c] = HSVtoRGB(c, 1.0, 1.0, alpha);
 			}
 			
-			return colours;
+			return colors;
 		}
 		
 		/**
@@ -196,19 +199,20 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * Convert a HSV (hue, saturation, lightness) color space value to an RGB color
 		 * 
-		 * @param	h Hue degree, between 0 and 359
-		 * @param	s Saturation, between 0.0 (grey) and 1.0
-		 * @param	v Value, between 0.0 (black) and 1.0
+		 * @param	h 		Hue degree, between 0 and 359
+		 * @param	s 		Saturation, between 0.0 (grey) and 1.0
+		 * @param	v 		Value, between 0.0 (black) and 1.0
+		 * @param	alpha	Alpha value to set per color (between 0 and 255)
 		 * 
-		 * @return 32-bit RGB colour value (0xAARRGGBB)
+		 * @return 32-bit ARGB color value (0xAARRGGBB)
 		 */
-		public static function HSVtoRGB(h:Number, s:Number, v:Number):uint
+		public static function HSVtoRGB(h:Number, s:Number, v:Number, alpha:uint = 255):uint
 		{
 			var result:uint;
 			
 			if (s == 0.0)
 			{
-				result = getColor32(255, v * 255, v * 255, v * 255);
+				result = getColor32(alpha, v * 255, v * 255, v * 255);
 			}
 			else
 			{
@@ -221,27 +225,27 @@ package org.flixel.plugin.photonstorm
 				switch (int(h))
 				{
 					case 0:
-						result = getColor32(255, v * 255, t * 255, p * 255);
+						result = getColor32(alpha, v * 255, t * 255, p * 255);
 						break;
 						
 					case 1:
-						result = getColor32(255, q * 255, v * 255, p * 255);
+						result = getColor32(alpha, q * 255, v * 255, p * 255);
 						break;
 						
 					case 2:
-						result = getColor32(255, p * 255, v * 255, t * 255);
+						result = getColor32(alpha, p * 255, v * 255, t * 255);
 						break;
 						
 					case 3:
-						result = getColor32(255, p * 255, q * 255, v * 255);
+						result = getColor32(alpha, p * 255, q * 255, v * 255);
 						break;
 						
 					case 4:
-						result = getColor32(255, t * 255, p * 255, v * 255);
+						result = getColor32(alpha, t * 255, p * 255, v * 255);
 						break;
 						
 					case 5:
-						result = getColor32(255, v * 255, p * 255, q * 255);
+						result = getColor32(alpha, v * 255, p * 255, q * 255);
 						break;
 						
 					default:
@@ -374,9 +378,9 @@ package org.flixel.plugin.photonstorm
 		 * <p>Set the min value to start each channel from the given offset.</p>
 		 * <p>Set the max value to restrict the maximum color used per channel</p>
 		 * 
-		 * @param	min		The lowest value to use for the colour
-		 * @param	max 	The highest value to use for the colour
-		 * @param	alpha	The alpha value of the returning colour (default 255 = fully opaque)
+		 * @param	min		The lowest value to use for the color
+		 * @param	max 	The highest value to use for the color
+		 * @param	alpha	The alpha value of the returning color (default 255 = fully opaque)
 		 * 
 		 * @return 32-bit color value with alpha
 		 */

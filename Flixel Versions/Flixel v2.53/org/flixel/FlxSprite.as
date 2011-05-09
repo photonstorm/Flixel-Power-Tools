@@ -7,7 +7,6 @@ package org.flixel
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.display.StageQuality;
 	
 	import org.flixel.system.FlxAnim;
 	
@@ -438,12 +437,6 @@ package org.flixel
 			var camera:FlxCamera;
 			var i:uint = 0;
 			var l:uint = cameras.length;
-			
-			
-			var previousQuality:String = FlxG.stage.quality;
-			
-			FlxG.stage.quality = StageQuality.LOW;
-			
 			while(i < l)
 			{
 				camera = cameras[i++];
@@ -452,9 +445,7 @@ package org.flixel
 				_point.x = x - int(camera.scroll.x*scrollFactor.x) - offset.x;
 				_point.y = y - int(camera.scroll.y*scrollFactor.y) - offset.y;
 				_point.x += (_point.x > 0)?0.0000001:-0.0000001;
-				_point.y += (_point.y > 0)?0.0000001: -0.0000001;
-				
-				
+				_point.y += (_point.y > 0)?0.0000001:-0.0000001;
 				if(((angle == 0) || (_bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null))
 				{	//Simple render
 					_flashPoint.x = _point.x;
@@ -475,9 +466,6 @@ package org.flixel
 				if(FlxG.visualDebug && !ignoreDrawDebug)
 					drawDebug(camera);
 			}
-			
-			FlxG.stage.quality = previousQuality;
-			
 		}
 		
 		/**

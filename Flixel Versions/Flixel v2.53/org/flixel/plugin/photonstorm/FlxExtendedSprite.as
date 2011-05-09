@@ -11,6 +11,7 @@
 
 package org.flixel.plugin.photonstorm 
 {
+	import flash.display.BitmapData;
 	import org.flixel.*;
 
 	public class FlxExtendedSprite extends FlxSprite

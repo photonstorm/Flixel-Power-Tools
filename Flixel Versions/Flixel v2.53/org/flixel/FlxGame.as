@@ -157,8 +157,6 @@ package org.flixel
 		 */
 		internal var _replayCallback:Function;
 
-		private var hasUpdated:Boolean;
-		
 		/**
 		 * Instantiate a new game object.
 		 * 
@@ -421,13 +419,9 @@ package org.flixel
 		 * @param	FlashEvent	Flash event.
 		 */
 		protected function onEnterFrame(FlashEvent:Event=null):void
-		{
-			//trace("onEnterFrame");
-
-			hasUpdated = false;
-			
+		{			
 			var mark:uint = getTimer();
-			var elapsedMS:uint = mark - _total;
+			var elapsedMS:uint = mark-_total;
 			_total = mark;
 			updateSoundTray(elapsedMS);
 			if(!_lostFocus)
@@ -443,21 +437,13 @@ package org.flixel
 				else
 				{
 					_accumulator += elapsedMS;
-					
 					if(_accumulator > _maxAccumulation)
 						_accumulator = _maxAccumulation;
-						//trace("accumulator reset to", _maxAccumulation);
 					while(_accumulator >= _step)
 					{
 						step();
 						_accumulator = _accumulator - _step; 
 					}
-				}
-				
-				if (hasUpdated == false)
-				{
-					trace("*********** STEP / UPDATE was never called");
-					step();
 				}
 				
 				FlxBasic._VISIBLECOUNT = 0;
@@ -470,8 +456,6 @@ package org.flixel
 					_debugger.perf.update();
 					_debugger.watch.update();
 				}
-			
-				//trace("\n");
 			}
 		}
 
@@ -514,8 +498,6 @@ package org.flixel
 		 */
 		protected function step():void
 		{
-			//trace("step: accumulator", _accumulator, "step", _step);
-
 			//handle game reset request
 			if(_requestedReset)
 			{
@@ -636,8 +618,6 @@ package org.flixel
 		 */
 		protected function update():void
 		{			
-			//trace("update");
-			
 			var mark:uint = getTimer();
 			
 			FlxG.elapsed = FlxG.timeScale*(_step/1000);
@@ -645,8 +625,6 @@ package org.flixel
 			FlxG.updatePlugins();
 			_state.update();
 			FlxG.updateCameras();
-			
-			hasUpdated = true;
 			
 			if(_debuggerUp)
 				_debugger.perf.flixelUpdate(getTimer()-mark);
@@ -657,7 +635,6 @@ package org.flixel
 		 */
 		protected function draw():void
 		{
-			//trace("draw");
 			var mark:uint = getTimer();
 			FlxG.lockCameras();
 			_state.draw();

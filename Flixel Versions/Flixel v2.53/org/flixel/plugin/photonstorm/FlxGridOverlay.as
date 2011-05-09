@@ -61,6 +61,7 @@ package org.flixel.plugin.photonstorm
 			var output:FlxSprite = new FlxSprite().makeGraphic(width, height);
 			
 			output.pixels = grid;
+			output.dirty = true;
 			
 			return output;
 		}
@@ -137,12 +138,12 @@ package org.flixel.plugin.photonstorm
 			
 		}
 		
-		private static function createGrid(cellWidth:int, cellHeight:int, width:int, height:int, alternate:Boolean, color1:uint, color2:uint):BitmapData
+		public static function createGrid(cellWidth:int, cellHeight:int, width:int, height:int, alternate:Boolean, color1:uint, color2:uint):BitmapData
 		{
 			//	How many cells can we fit into the width/height? (round it UP if not even, then trim back)
 			
-			var rowColor:int = color1;
-			var lastColor:int = color1;
+			var rowColor:uint = color1;
+			var lastColor:uint = color1;
 			var grid:BitmapData = new BitmapData(width, height, true);
 			
 			//	If there aren't an even number of cells in a row then we need to swap the lastColor value

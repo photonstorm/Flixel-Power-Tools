@@ -15,7 +15,6 @@ package
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
 	import tests.*;
-	import wip.*;
 	import flash.utils.getDefinitionByName;
 	
 	public class TestSuiteState extends FlxState
@@ -100,10 +99,6 @@ package
 			options.push( { state: FlxScrollingTextTest2, color: [0xff0080FF, 0xff80FFFF] } );
 			options.push( { state: FlxScrollingTextTest3, color: [0xff0080FF, 0xff80FFFF] } );
 			
-			
-			options.push( { spacer: true } );
-			
-			options.push( { state: CameraBake, color: [0xFF0000, 0xBC1BDE] } );
 		}
 		
 		override public function create():void
