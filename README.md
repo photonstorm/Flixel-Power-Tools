@@ -2,8 +2,10 @@ Flixel Power Tools
 ==================
 
 Version 1.5
+
 May 9th 2011
-[PhotonStorm](http://www.photonstorm.com)
+
+By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
 The [Flixel Power Tools](http://www.photonstorm.com/flixel-power-tools) are a package
 of classes designed to provide extra functionality to your Flixel 2.5+ games.
@@ -14,12 +16,14 @@ Quick Install Guide
 
 Unzip the file `photonstorm.zip` into the following folder within your Flixel project:
 
-     src\org\flixel\plugin
+     src/org/flixel/plugin
 
 It should create a folder called `photonstorm` containing all of the tools. The final
 directory structure of your project should be:
 
-     src\org\flixel\plugin\photonstorm
+     src/org/flixel/plugin/photonstorm
+
+and within the `photonstorm` folder you'll find all the classes listed below.
 
 
 Getting Started
@@ -28,9 +32,7 @@ Getting Started
 For now documentation is provided built-in to the classes. AS3 IDEs such as FlashDevelop will
 provide context-sensitive help for all classes and functions in the Flixel Power Tools.
 
-You can also check out the home page at (http://www.photonstorm.com/flixel-power-tools)
-
-and of course the Test Suite
+You can also check out the home page at http://www.photonstorm.com/flixel-power-tools and the Test Suite.
 
 
 Test Suite
@@ -43,7 +45,7 @@ To run the Test Suite launch the following SWF:
 
     Test Suite/bin/FlixelPowerTools.swf
 
-If you don't have Flash Player installed locally then launch `index.html` in a browser.
+If you don't have Flash Player installed locally then open `index.html` in a browser.
 
 
 Classes
