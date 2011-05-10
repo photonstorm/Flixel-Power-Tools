@@ -14,7 +14,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="..\..\Flixel Versions\Flixel v2.53" />
+    <class path="..\Flixel Versions\Flixel v2.53" />
   </classpaths>
   <!-- Build options -->
   <build>
