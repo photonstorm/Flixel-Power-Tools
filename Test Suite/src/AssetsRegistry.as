@@ -39,7 +39,7 @@ package
 		[Embed(source = '../assets/spaz-bitch-beatnick.png')] public static var spazPNG:Class;
 		[Embed(source = '../assets/game14_angel_dawn.png')] public static var angelDawnPNG:Class;
 		[Embed(source = '../assets/spaz-oh_crikey-komische_sackratten_von_der_hohle.png')] public static var ohCrikeyPNG:Class;
-		
+		[Embed(source = '../assets/lance-overdose-loader_eye.png')] public static var overdoseEyePNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;

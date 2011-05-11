@@ -119,6 +119,8 @@ package
 			
 			options.push( { state: RainbowLineTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: PlasmaTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: DropDownTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: DropDownTest2, color: [0xff2E2E2E, 0xff606060] } );
 			
 		}
 		

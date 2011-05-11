@@ -13,6 +13,7 @@ package org.flixel.plugin.photonstorm
 {
 	import flash.utils.Dictionary;
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.FX.DropDownFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
 	import org.flixel.plugin.photonstorm.FX.RainbowLineFX;
 	
@@ -51,6 +52,20 @@ package org.flixel.plugin.photonstorm
 		public static function rainbowLine():RainbowLineFX
 		{
 			var temp:RainbowLineFX = new RainbowLineFX;
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
+		
+		/**
+		 * Creates a Drop Down Effect
+		 * 
+		 * @return	DropDownFX
+		 */
+		public static function dropDown():DropDownFX
+		{
+			var temp:DropDownFX = new DropDownFX;
 			
 			members[temp] = temp;
 			
