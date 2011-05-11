@@ -7,14 +7,13 @@
     <movie path="bin\FlixelPowerTools.swf" />
     <movie fps="60" />
     <movie width="640" />
-    <movie height="480" />
+    <movie height="512" />
     <movie version="10" />
     <movie background="#000000" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="src" />
-    <class path="..\Flixel Versions\Flixel v2.53" />
   </classpaths>
   <!-- Build options -->
   <build>

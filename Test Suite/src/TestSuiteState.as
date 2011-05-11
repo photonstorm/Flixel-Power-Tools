@@ -1,11 +1,11 @@
 /**
  * Flixel Power Tools Test Suite
  * 
- * Updated for Flixel v2.53
+ * v1.5 - Massive restructure to split the tests up and move to git
+ * v1.4 - Scrolling Text and new Special FX Plugin systems added
+ * v1.3 - Updated for Flixel v2.53
  * 
- * Test Selection Menu
- * 
- * @version 1.4 - May 5th 2011
+ * @version 1.5 - May 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -15,13 +15,26 @@ package
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
 	import tests.*;
-	import flash.utils.getDefinitionByName;
+	import tests.bitmapfont.*;
+	import tests.buttonplus.*;
+	import tests.collision.*;
+	import tests.color.*;
+	import tests.delay.*;
+	import tests.flod.*;
+	import tests.gradient.*;
+	import tests.healthbar.*;
+	import tests.screengrab.*;
+	import tests.scrollingtext.*;
+	import tests.scrollzone.*;
+	import tests.specialfx.*;
+	import tests.starfield.*;
+	import tests.velocity.*;
 	
 	public class TestSuiteState extends FlxState
 	{
 		[Embed(source = '../assets/menu_burd.png')] private var menuBurdPNG:Class;
 		
-		private var version:String = "- Test Suite v1.4 -";
+		private var version:String = "- Test Suite v1.5 -";
 		private var options:Array;
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
@@ -31,82 +44,87 @@ package
 		{
 			options = new Array;
 			
-			options.push( { state: FlxVelocityTest1, color: [0xff008000, 0xff00FF00] } );
-			options.push( { state: FlxVelocityTest2, color: [0xff008000, 0xff00FF00] } );
-			options.push( { state: FlxVelocityTest3, color: [0xff008000, 0xff00FF00] } );
+			
+			options.push( { state: VelocityTest1, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: VelocityTest2, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: VelocityTest3, color: [0xff008000, 0xff00FF00] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxGradientTest1, color: [0xffFF8000, 0xffDFDF00] } );
-			options.push( { state: FlxGradientTest2, color: [0xffFF8000, 0xffDFDF00] } );
-			options.push( { state: FlxGradientTest3, color: [0xffFF8000, 0xffDFDF00] } );
+			options.push( { state: GradientTest1, color: [0xffFF8000, 0xffDFDF00] } );
+			options.push( { state: GradientTest2, color: [0xffFF8000, 0xffDFDF00] } );
+			options.push( { state: GradientTest3, color: [0xffFF8000, 0xffDFDF00] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxBitmapFontTest1, color: [0xff0080FF, 0xff80FFFF] } );
-			options.push( { state: FlxBitmapFontTest2, color: [0xff0080FF, 0xff80FFFF] } );
+			options.push( { state: ColorTest1, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ColorTest2, color: [0xff8000FF, 0xffBE7DFF] } );
 			
 			options.push( { newColumn: true } );
 			
-			options.push( { state: FlxCollisionTest1, color: [0xff2E2E2E, 0xff606060] } );
-			options.push( { state: FlxCollisionTest2, color: [0xff2E2E2E, 0xff606060] } );
-			options.push( { state: FlxCollisionTest3, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: BitmapFontTest1, color: [0xff0080FF, 0xff80FFFF] } );
+			options.push( { state: BitmapFontTest2, color: [0xff0080FF, 0xff80FFFF] } );
+			options.push( { state: BitmapFontTest3, color: [0xff0080FF, 0xff80FFFF] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxColorTest1, color: [0xff8000FF, 0xffBE7DFF] } );
-			options.push( { state: FlxColorTest2, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: CollisionTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: CollisionTest2, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: CollisionTest3, color: [0xff2E2E2E, 0xff606060] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxFlodTest1, color: [0xffC0C0C0, 0xff808080] } );
-			
-			options.push( { spacer: true } );
-			
-			options.push( { state: FlxDelayTest1, color: [0xff6C3913, 0xffC96923] } );
+			options.push( { state: DelayTest1, color: [0xff6C3913, 0xffC96923] } );
 			
 			options.push( { newColumn: true } );
 			
-			options.push( { state: FlxHealthBarTest1, color: [0xffFF8000, 0xffFF0080] } );
-			options.push( { state: FlxHealthBarTest2, color: [0xffFF8000, 0xffFF0080] } );
+			options.push( { state: FlodTest1, color: [0xffC0C0C0, 0xff808080] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxStarFieldTest1, color: [0xff2FA41E, 0xff266599] } );
-			options.push( { state: FlxStarFieldTest2, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: HealthBarTest1, color: [0xffFF8000, 0xffFF0080] } );
+			options.push( { state: HealthBarTest2, color: [0xffFF8000, 0xffFF0080] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxButtonPlusTest1, color: [0xffFF0000, 0xffBC1BDE] } );
+			options.push( { state: ScreenGrabTest1, color: [0xffFF0000, 0xffBC1BDE] } );
+			options.push( { state: ScreenGrabTest2, color: [0xffFF0000, 0xffBC1BDE] } );
 			
 			options.push( { newColumn: true } );
 			
 			//	SCREEN TWO
 			
-			options.push( { state: FlxScrollZoneTest1, color: [0xff008000, 0xff00FF00] } );
-			options.push( { state: FlxScrollZoneTest2, color: [0xff008000, 0xff00FF00] } );
-			options.push( { state: FlxScrollZoneTest3, color: [0xff008000, 0xff00FF00] } );
-			options.push( { state: FlxScrollZoneTest4, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: ButtonPlusTest1, color: [0xffFF0000, 0xffBC1BDE] } );
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: FlxScreenGrabTest1, color: [0xffFF0000, 0xffBC1BDE] } );
-			options.push( { state: FlxScreenGrabTest2, color: [0xffFF0000, 0xffBC1BDE] } );
+			options.push( { state: ScrollZoneTest1, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: ScrollZoneTest2, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: ScrollZoneTest3, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: ScrollZoneTest4, color: [0xff008000, 0xff00FF00] } );
+			//options.push( { state: ScrollZoneTest5, color: [0xff008000, 0xff00FF00] } );
+			
+			options.push( { spacer: true } );
+			
+			options.push( { state: ScrollingTextTest1, color: [0xff0080FF, 0xff80FFFF] } );
+			options.push( { state: ScrollingTextTest2, color: [0xff0080FF, 0xff80FFFF] } );
+			options.push( { state: ScrollingTextTest3, color: [0xff0080FF, 0xff80FFFF] } );
 			
 			options.push( { newColumn: true } );
 			
-			options.push( { state: FlxScrollingTextTest1, color: [0xff0080FF, 0xff80FFFF] } );
-			options.push( { state: FlxScrollingTextTest2, color: [0xff0080FF, 0xff80FFFF] } );
-			options.push( { state: FlxScrollingTextTest3, color: [0xff0080FF, 0xff80FFFF] } );
+			options.push( { state: StarFieldTest1, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: StarFieldTest2, color: [0xff2FA41E, 0xff266599] } );
+			
+			options.push( { spacer: true } );
+			
+			options.push( { state: RainbowLineTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: PlasmaTest1, color: [0xff2E2E2E, 0xff606060] } );
 			
 		}
 		
 		override public function create():void
 		{
 			header = new TestsHeader(version, false);
-			
-			header.instructions.text = version;
-			
 			add(header);
 			
 			//	Our camera tracks this invisible sprite
@@ -133,7 +151,7 @@ package
 				}
 				else if (option.spacer)
 				{
-					currentY += 14;
+					currentY += 10;
 				}
 				else
 				{
@@ -148,8 +166,10 @@ package
 				}
 			}
 
+			add(header.overlay);
+			
 			FlxG.camera.follow(dolly);
-			FlxG.camera.setBounds(0, 0, 640, 240, true);
+			FlxG.camera.setBounds(0, 0, 640, 256, true);
 			
 			FlxG.mouse.show();
 		}
