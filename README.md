@@ -3,7 +3,7 @@ Flixel Power Tools
 
 Version 1.5
 
-May 9th 2011
+May 11th 2011
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
@@ -26,13 +26,15 @@ directory structure of your project should be:
 and within the `photonstorm` folder you'll find all the classes listed below.
 
 
-Getting Started
----------------
+Getting Started Guide
+---------------------
 
-For now documentation is provided built-in to the classes. AS3 IDEs such as FlashDevelop will
+There is a comprehensive Getting Started Guide in both Word and PDF format in the `Docs` folder.
+
+Documentation is also provided built-in to the classes. AS3 IDEs such as FlashDevelop will
 provide context-sensitive help for all classes and functions in the Flixel Power Tools.
 
-You can also check out the home page at http://www.photonstorm.com/flixel-power-tools and the Test Suite.
+Finally check out the home page at http://www.photonstorm.com/flixel-power-tools for updates.
 
 
 Test Suite
