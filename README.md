@@ -86,6 +86,16 @@ If you'd just like to request a specific class or function then leave me a messa
 either the [Flixel Power Tools project page][fpt] or the [Flixel Forums][ff]
 
 
+Dev or Master
+-------------
+
+As the Flixel Power Tools are changing rapidly I have split them into two branches: master and dev.
+
+Dev contains the "bleeding edge" classes (aka might not compile). Once they are stable I merge with "master".
+
+Unless you are extremely curious, or helping out with the project, you should pretty much always checkout from master.
+
+
 Bugs?
 -----
 
