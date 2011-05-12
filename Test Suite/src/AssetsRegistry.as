@@ -24,6 +24,7 @@ package
 		[Embed(source = '../assets/fonts/072.png')] public static var tinyPNG:Class;
 		
 		//	Sprites
+		[Embed(source = '../assets/mouse.png')] public static var mouseCursorPNG:Class;
 		[Embed(source = '../assets/red_ball.png')] public static var redPNG:Class;
 		[Embed(source = '../assets/green_ball.png')] public static var greenPNG:Class;
 		[Embed(source = '../assets/blue_ball.png')] public static var bluePNG:Class;
@@ -33,7 +34,12 @@ package
 		[Embed(source = '../assets/balls.png')] public static var ballsPNG:Class;
 		[Embed(source = '../assets/agent-t-buggin-acf_logo.png')] public static var acfPNG:Class;
 		[Embed(source = '../assets/auto_scroll_landscape.png')] public static var tcbPNG:Class;
-		[Embed(source = '../assets/player.png')] public static var chickPNG:Class;
+		[Embed(source = '../assets/chick.png')] public static var chickPNG:Class;
+		[Embed(source = '../assets/car.png')] public static var carPNG:Class;
+		[Embed(source = '../assets/tinycar.png')] public static var tinyCarPNG:Class;
+		[Embed(source = '../assets/ufo.png')] public static var ufoPNG:Class;
+		[Embed(source = '../assets/thrust_ship.png')] public static var thrustShipPNG:Class;
+		[Embed(source = '../assets/shmup-ship.png')] public static var shmupShipPNG:Class;
 		
 		//	Pictures
 		[Embed(source='../assets/1984-nocooper-space.png')] public static var noCooper1984PNG:Class;
@@ -44,6 +50,7 @@ package
 		
 		//	Music
 		[Embed(source = '../assets/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;
+		[Embed(source = '../assets/yo_africa.MOD', mimeType = 'application/octet-stream')] public static var yoAfricaMOD:Class;
 		
 		public function AssetsRegistry() 
 		{

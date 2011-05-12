@@ -4,6 +4,7 @@ package tests.controls
 	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import flash.utils.getTimer;
 	import tests.TestsHeader;
 
 	public class ControlTest1 extends FlxState
@@ -17,11 +18,17 @@ package tests.controls
 		//	Test specific variables
 		private var controls:FlxControls;
 		private var player:FlxSprite;
+		
+		private var scene:FlxGroup;
 		private var floor:FlxTileblock;
 		private var wallLeft:FlxTileblock;
 		private var wallRight:FlxTileblock;
 		private var platform1:FlxTileblock;
 		private var platform2:FlxTileblock;
+		
+		private var startTime:int;
+		private var stopTime:int;
+		private var hasStopped:Boolean;
 		
 		public function ControlTest1() 
 		{
@@ -34,11 +41,6 @@ package tests.controls
 			
 			//	Test specific
 
-			if (FlxG.getPlugin(FlxControls) == null)
-			{
-				FlxG.addPlugin(new FlxControls);
-			}
-			
 			player = new FlxSprite(64, 150);
 			player.loadGraphic(AssetsRegistry.chickPNG, true, true, 16, 18, true);
 			
@@ -51,6 +53,13 @@ package tests.controls
 			player.offset.x = 2;
 			player.offset.y = 2;
 			
+			//	Physics values
+			player.maxVelocity.x = 100;			//	Default walking speed
+			player.maxVelocity.y = 100;			//	Default walking speed
+			player.acceleration.y = 100;			//	Gravity (on the Y axis, dragging player down)
+			player.drag.x = 200;		//	Deceleration (makes player slide to a stop)
+			//player.drag.y = 100;		//	Deceleration (makes player slide to a stop)
+			
 			//	The Animation sequences we need
 			player.addAnimation("idle", [0], 0, false);
 			player.addAnimation("walk", [0, 1, 0, 2], 10, true);
@@ -62,6 +71,9 @@ package tests.controls
 			player.facing = FlxObject.RIGHT;
 			
 			//	This creates a little scene for our player to run around
+			
+			scene = new FlxGroup(5);
+			
 			floor = new FlxTileblock(0, 200, 320, 16);
 			floor.makeGraphic(320, 16, 0xaa689c16);
 			
@@ -77,16 +89,22 @@ package tests.controls
 			platform2 = new FlxTileblock(64, 100, 96, 16);
 			platform2.makeGraphic(96, 16, 0xaa689c16);
 			
+			scene.add(floor);
+			scene.add(wallLeft);
+			scene.add(wallRight);
+			scene.add(platform1);
+			scene.add(platform2);
+			
 			//	Control the sprite
 			controls = new FlxControls();
-			controls.basicCursorControl(player, 400, 0);
+			controls.basicCursorControl(player, 100, 100);
 			
-			add(floor);
-			add(wallLeft);
-			add(wallRight);
-			add(platform1);
-			add(platform2);
+			add(scene);
 			add(player);
+			
+			hasStopped = false;
+			startTime = getTimer();
+			stopTime = startTime + 1000;
 			
 			//	Header overlay
 			add(header.overlay);
@@ -95,6 +113,28 @@ package tests.controls
 		override public function update():void
 		{
 			super.update();
+			
+			FlxG.collide(player, scene);
+			
+			//player.acceleration.x = 0;
+			//player.velocity.x = 0;
+			//
+			//if (hasStopped == false)
+			//{
+				//player.velocity.x = 100;
+				//
+				//if (getTimer() >= stopTime)
+				//{
+					//hasStopped = true;
+					//
+					//trace("Final x", player.x, "travelled", player.x - 64);
+					//trace("Final vx", player.velocity.x, "ax", player.acceleration.x);
+			//
+					//player.velocity.x = 0;
+				//}
+			//}
+			//
+			controls.update();
 		}
 		
 	}
