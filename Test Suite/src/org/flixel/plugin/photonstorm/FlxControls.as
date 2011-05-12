@@ -54,7 +54,7 @@ package org.flixel.plugin.photonstorm
 		
 		public function basicCursorControl(source:FlxSprite, xSpeed:int, ySpeed:int, horizontal:Boolean = true, vertical:Boolean = true):void
 		{
-			trace("c basic");
+			trace("c basic", source, xSpeed, ySpeed);
 			
 			entity = source;
 			runBasicControl = true;
@@ -138,6 +138,11 @@ package org.flixel.plugin.photonstorm
 		
 		override public function update():void
 		{
+			if (entity == null)
+			{
+				return;
+			}
+			
 			entity.acceleration.x = 0;
 			
 			if (checkArrows)
