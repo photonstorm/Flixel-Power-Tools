@@ -19,6 +19,7 @@ package
 	import tests.buttonplus.*;
 	import tests.collision.*;
 	import tests.color.*;
+	import tests.controls.*;
 	import tests.delay.*;
 	import tests.flod.*;
 	import tests.gradient.*;
@@ -76,6 +77,8 @@ package
 			
 			options.push( { state: DelayTest1, color: [0xff6C3913, 0xffC96923] } );
 			
+			options.push( { state: ControlTest1, color: [0xff2FA41E, 0xff266599] } );
+			
 			options.push( { newColumn: true } );
 			
 			options.push( { state: FlodTest1, color: [0xffC0C0C0, 0xff808080] } );
@@ -110,6 +113,8 @@ package
 			options.push( { state: ScrollingTextTest2, color: [0xff0080FF, 0xff80FFFF] } );
 			options.push( { state: ScrollingTextTest3, color: [0xff0080FF, 0xff80FFFF] } );
 			
+			//	SCREEN THREE
+			
 			options.push( { newColumn: true } );
 			
 			options.push( { state: StarFieldTest1, color: [0xff2FA41E, 0xff266599] } );
@@ -121,6 +126,10 @@ package
 			options.push( { state: PlasmaTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest2, color: [0xff2E2E2E, 0xff606060] } );
+			
+			options.push( { spacer: true } );
+			
+			options.push( { state: ControlTest1, color: [0xff2FA41E, 0xff266599] } );
 			
 		}
 		

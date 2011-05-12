@@ -33,6 +33,7 @@ package
 		[Embed(source = '../assets/balls.png')] public static var ballsPNG:Class;
 		[Embed(source = '../assets/agent-t-buggin-acf_logo.png')] public static var acfPNG:Class;
 		[Embed(source = '../assets/auto_scroll_landscape.png')] public static var tcbPNG:Class;
+		[Embed(source = '../assets/player.png')] public static var chickPNG:Class;
 		
 		//	Pictures
 		[Embed(source='../assets/1984-nocooper-space.png')] public static var noCooper1984PNG:Class;

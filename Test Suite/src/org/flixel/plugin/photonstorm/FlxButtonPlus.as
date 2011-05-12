@@ -84,7 +84,7 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * The 1px thick border color that is drawn around this button
 		 */
-		public var borderColor:int = 0xffffffff;
+		public var borderColor:uint = 0xffffffff;
 		
 		/**
 		 * The color gradient of the button in its in-active (not hovered over) state

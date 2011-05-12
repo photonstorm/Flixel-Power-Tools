@@ -2,9 +2,10 @@
  * FlxControls
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.2 First real version deployed
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.1 - April 23rd 2011
+ * @version 1.2 - May 12th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -31,15 +32,16 @@ package org.flixel.plugin.photonstorm
 		
 		//private var quitKey:int = ;	// Q
 		
-		public var upCallback:Function;
-		public var downCallback:Function;
-		public var leftCallback:Function;
-		public var rightCallback:Function;
+		//public var upCallback:Function;
+		//public var downCallback:Function;
+		//public var leftCallback:Function;
+		//public var rightCallback:Function;
 		public var fireCallback:Function;
 		public var jumpCallback:Function;
 		
 		private var runBasicControl:Boolean = false;
 		private var entity:FlxSprite = null;
+		
 		public var xVelocity:int;
 		public var yVelocity:int;
 		
@@ -48,35 +50,31 @@ package org.flixel.plugin.photonstorm
 		
 		public function FlxControls() 
 		{
-			super();
-			
-			trace("c born");
-			
-			FlxG.state.add(this);
 		}
 		
-		public function basicCursorControl(parent:FlxSprite, xSpeed:int, ySpeed:int):void
+		public function basicCursorControl(source:FlxSprite, xSpeed:int, ySpeed:int, horizontal:Boolean = true, vertical:Boolean = true):void
 		{
 			trace("c basic");
 			
-			entity = parent;
+			entity = source;
 			runBasicControl = true;
+			checkArrows = true;
 			
 			xVelocity = xSpeed;
 			yVelocity = ySpeed;
 			
-			enableArrowKeys(moveUp, moveDown, moveLeft, moveRight);
+			active = true;
+			
+			//enableArrowKeys(moveUp, moveDown, moveLeft, moveRight);
 		}
 		
 		private function moveLeft():void
 		{
-			trace("left");
 			entity.velocity.x = -xVelocity;
 		}
 		
 		private function moveRight():void
 		{
-			trace("right");
 			entity.velocity.x = xVelocity;
 		}
 		
@@ -90,6 +88,7 @@ package org.flixel.plugin.photonstorm
 			entity.velocity.y = yVelocity;
 		}
 		
+		/*
 		public function enableArrowKeys(up:Function = null, down:Function = null, left:Function = null, right:Function = null):void
 		{
 			if (up is Function)
@@ -114,6 +113,7 @@ package org.flixel.plugin.photonstorm
 			
 			checkArrows = true;
 		}
+		*/
 		
 		public function enableLeftKey(callback:Function):void
 		{
@@ -131,32 +131,37 @@ package org.flixel.plugin.photonstorm
 		{
 		}
 		
+		override public function draw():void
+		{
+			
+		}
+		
 		override public function update():void
 		{
-			//super.update();
-			
-			trace("c update");
+			entity.acceleration.x = 0;
 			
 			if (checkArrows)
 			{
-				if (FlxG.keys.pressed(upKey) && upCallback is Function)
+				if (FlxG.keys.pressed(upKey))
 				{
-					upCallback.call();
+					entity.velocity.y = -yVelocity;
 				}
 				
-				if (FlxG.keys.pressed(downKey) && downCallback is Function)
+				if (FlxG.keys.pressed(downKey))
 				{
-					downCallback.call();
+					entity.velocity.y = yVelocity;
 				}
 				
-				if (FlxG.keys.pressed(leftKey) && leftCallback is Function)
+				if (FlxG.keys.pressed(leftKey))
 				{
-					leftCallback.call();
+					entity.facing = FlxObject.LEFT;
+					entity.acceleration.x = -xVelocity;
 				}
 				
-				if (FlxG.keys.pressed(rightKey) && rightCallback is Function)
+				if (FlxG.keys.pressed(rightKey))
 				{
-					rightCallback.call();
+					entity.facing = FlxObject.RIGHT;
+					entity.acceleration.x = xVelocity;
 				}
 			}
 		}
