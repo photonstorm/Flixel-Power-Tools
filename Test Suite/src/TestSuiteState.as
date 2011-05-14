@@ -77,7 +77,7 @@ package
 			
 			options.push( { state: DelayTest1, color: [0xff6C3913, 0xffC96923] } );
 			
-			options.push( { state: ControlTest1, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: ControlTest3, color: [0xff2FA41E, 0xff266599] } );
 			
 			options.push( { newColumn: true } );
 			
