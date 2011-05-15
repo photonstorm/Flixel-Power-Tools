@@ -14,6 +14,7 @@
 package org.flixel.plugin.photonstorm 
 {
 	import org.flixel.*;
+	import flash.utils.getTimer;
 	
 	/**
 	 * Makes controlling an FlxSprite with the keyboard a LOT easier and quicker to set-up!<br>
@@ -30,15 +31,13 @@ package org.flixel.plugin.photonstorm
 	 * Redefined / Custom Key bindings
 	 * Hotkeys (bind a key to a user function - for like weapon select)
 	 * More Test Suite tests!
+	 * Variable gravity (based on height)
 	 */
-	public class FlxControls
+	public class FlxControlHandler
 	{
-		private var entity:FlxSprite = null;
+		public var enabled:Boolean = false;
 		
-		private var upMoveSpeed:int;
-		private var downMoveSpeed:int;
-		private var leftMoveSpeed:int;
-		private var rightMoveSpeed:int;
+		private var entity:FlxSprite = null;
 		
 		private var up:Boolean;
 		private var down:Boolean;
@@ -49,26 +48,43 @@ package org.flixel.plugin.photonstorm
 		private var xFacing:Boolean;
 		private var yFacing:Boolean;
 		
-		private var upKey:String = "UP";
-		private var downKey:String = "DOWN";
-		private var leftKey:String = "LEFT";
-		private var rightKey:String = "RIGHT";
-		private var fireKey:String = "CONTROL";	// ctrl
-		private var jumpKey:String = "SPACE";	// space
+		private var upMoveSpeed:int;
+		private var downMoveSpeed:int;
+		private var leftMoveSpeed:int;
+		private var rightMoveSpeed:int;
 		
-		public var fireCallback:Function;
-		public var jumpCallback:Function;
-		private var capVelocity:Boolean;
+		private var fireRate:int; // ms delay between shots
+		private var lastFiredTime:int; // when they last fired
+		private var fireContinuous:Boolean; // if fire key held down = stream of bullets
+		private var fireOnRelease:Boolean; // if true fires once per key release
+		private var fireCallback:Function;
 		
+		private var jumpRate:int; // ms delay between jumps
+		private var lastJumpTime:int; // when they last fired
+		private var jumpSurface:uint; // if true they can only jump if sprite is touching given surface (from FlxObject consts, bitwise supported)
+		private var jumpOnRelease:Boolean; // if true jumps when key is released, if false jumps when key is pressed down
+		private var jumpCallback:Function;
+		
+		private var checkCustomKeys:Boolean = false;		//	They've defined their own
 		private var checkArrows:Boolean = false;			//	Default
 		private var checkWASD:Boolean = false;				//	FPS Homeboy
 		private var checkESDF:Boolean = false;				//	Homerow (conflicts with WASD)
 		private var checkIJKL:Boolean = false;				//	Inverted T / Secondary Player
-		private var checkZQSD:Boolean = false;				//	Azerty
+		private var checkZQSD:Boolean = false;				//	Azerty keyboards
 		private var checkDvorakSimplified:Boolean = false;	//	,AOE
 		
 		private var movement:int;
 		private var stopping:int;
+		private var capVelocity:Boolean;
+		
+		//	Not yet used
+		private var hotkeys:Array;
+		private var customUpKey:String = "";
+		private var customDownKey:String = "";
+		private var customLeftKey:String = "";
+		private var customRightKey:String = "";
+		private var customFireKey:String = "";	// ctrl
+		private var customJumpKey:String = "";	// space
 		
 		//	Should these be split left/right/up/down??? So you could instant left and slide right - seems odd, but maybe?
 		
@@ -93,6 +109,10 @@ package org.flixel.plugin.photonstorm
 		 */
 		public static const STOPPING_NEVER:int = 2;
 		
+		public static const HOTKEY_MODE_FIRST_DOWN:int = 0;
+		public static const HOTKEY_MODE_KEY_DOWN:int = 1;
+		public static const HOTKEY_MODE_KEY_RELEASE:int = 2;
+		
 		/**
 		 * Sets the FlxSprite to be controlled by this class, and defines the initial movement and stopping types.<br>
 		 * After creating an instance of this class you should call setMovementSpeed, and one of the enableXControl functions if you need more than basic cursors.
@@ -105,7 +125,7 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @see		setMovementSpeed
 		 */
-		public function FlxControls(source:FlxSprite, movementType:int, stoppingType:int, updateFacing:Boolean = false, enableArrowKeys:Boolean = true)
+		public function FlxControlHandler(source:FlxSprite, movementType:int, stoppingType:int, updateFacing:Boolean = false, enableArrowKeys:Boolean = true)
 		{
 			entity = source;
 			
@@ -114,6 +134,8 @@ package org.flixel.plugin.photonstorm
 			
 			xFacing = updateFacing;
 			yFacing = updateFacing;
+			
+			enabled = true;
 			
 			enableCursorControl();
 		}
@@ -170,8 +192,8 @@ package org.flixel.plugin.photonstorm
 		 * Gravity can be applied to the sprite, pulling it in any direction.<br>
 		 * Gravity is given in pixels per second and is applied as acceleration. The speed the sprite reaches under gravity will never exceed the Maximum Movement Speeds set.
 		 * 
-		 * @param	xForce	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left.
-		 * @param	yForce	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up.
+		 * @param	xForce	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
+		 * @param	yForce	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up. Zero disables vertical gravity.
 		 */
 		public function setGravity(xForce:int, yForce:int):void
 		{
@@ -190,13 +212,19 @@ package org.flixel.plugin.photonstorm
 			setDeceleration(xDeceleration, yDeceleration);
 		}
 		
+		
+		public function addHotKey(key:String, callback:Function, mode:int):void
+		{
+			
+		}
+		
+		
 		//	TODO - vvvvvv style demo? :)
 		public function flipGravity():void
 		{
 		}
 		
 		//	Add functions to update values in real-time (for advanced users!)
-		//	Two player support should just be 2 FlxControls running, one per sprite - need to test though
 		
 		public function enableCursorControl(allowUp:Boolean = true, allowDown:Boolean = true, allowLeft:Boolean = true, allowRight:Boolean = true):void
 		{

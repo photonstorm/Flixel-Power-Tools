@@ -16,7 +16,7 @@ package tests.controls
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var controls:FlxControls;
+		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
 		private var scene:ControlTestScene1;
 		
@@ -30,20 +30,34 @@ package tests.controls
 			add(header);
 			
 			//	Test specific
+			
+			//	Enable the plugin - you only need do this once (unless you destroy the plugin)
+			if (FlxG.getPlugin(FlxControl) == null)
+			{
+				FlxG.addPlugin(new FlxControl);
+			}
 
 			player = new FlxSprite(64, 150, AssetsRegistry.ufoPNG);
 			
 			//	Control the player
 			
 			//	Rigid movement
-			controls = new FlxControls(player, FlxControls.MOVEMENT_INSTANT, FlxControls.STOPPING_INSTANT);
-			controls.setMovementSpeed(100, 100, 100, 100);
+			
+			//	You can either set-up the controls like this ...
+			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT);
+			FlxControl.player1.setMovementSpeed(100, 100, 100, 100);
+			
+			//	Or like this... both do the same thing, but this method is maybe more useful if you need fine-grained control over the returned ControlHandler
+			//	or don't like the look of the method above (would rather assign to a local var)
+			
+			//controls = FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT);
+			//controls.setMovementSpeed(100, 100, 100, 100);
 			
 			//	Slippy slidey
 			//controls = new FlxControls(player, FlxControls.MOVEMENT_INSTANT, FlxControls.STOPPING_DECELERATES);
 			//controls.setMovementSpeed(100, 100, 100, 100, 100, 100);
 			
-			//	A scene for our ufo to fly around
+			//	A basic scene for our ufo to fly around
 			scene = new ControlTestScene1;
 			
 			//	Bring up the Flixel debugger if you'd like to watch these values in real-time
@@ -62,9 +76,6 @@ package tests.controls
 			super.update();
 			
 			FlxG.collide(player, scene);
-			
-			//	You need to call this in your update() function, as it won't be called directly for you (yet :)
-			controls.update();
 		}
 		
 	}

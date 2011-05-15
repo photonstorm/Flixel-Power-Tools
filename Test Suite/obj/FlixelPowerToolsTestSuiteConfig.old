@@ -14,7 +14,7 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'14/05/2011'</value>
+      <value>'15/05/2011'</value>
     </define>
     <source-path append="true">
       <path-element>G:\Flash\Flixel-Power-Tools\Test Suite\src</path-element>
