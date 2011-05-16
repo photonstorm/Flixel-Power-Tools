@@ -2,7 +2,7 @@
  * FlxScrollZone
  * -- Part of the Flixel Power Tools set
  * 
- * v1.4 Added "clearRegion" support for when you use Sprites with transparency
+ * v1.4 Added "clearRegion" support for when you use Sprites with transparency and renamed parameter to onlyScrollOnscreen
  * v1.3 Swapped plugin update for draw, now smoother / faster in some fps cases
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
@@ -56,7 +56,7 @@ package org.flixel.plugin.photonstorm
 			
 			data.source = source;
 			data.scrolling = true;
-			data.onScreenScroller = onlyScrollOnscreen;
+			data.onlyScrollOnscreen = onlyScrollOnscreen;
 			data.zones = new Array;
 			
 			members[source] = data;
@@ -218,7 +218,7 @@ package org.flixel.plugin.photonstorm
 		{
 			for each (var obj:Object in members)
 			{
-				if ((obj.onScreenScroller == true && obj.source.onScreen()) && obj.scrolling == true && obj.source.exists)
+				if ((obj.onlyScrollOnscreen == true && obj.source.onScreen()) && obj.scrolling == true && obj.source.exists)
 				{
 					scroll(obj);
 				}
