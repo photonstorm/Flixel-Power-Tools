@@ -40,6 +40,10 @@ package
 		[Embed(source = '../assets/ufo.png')] public static var ufoPNG:Class;
 		[Embed(source = '../assets/thrust_ship.png')] public static var thrustShipPNG:Class;
 		[Embed(source = '../assets/shmup-ship.png')] public static var shmupShipPNG:Class;
+		[Embed(source = '../assets/player.png')] public static var invaderPNG:Class;
+		[Embed(source = '../assets/space-baddie.png')] public static var spaceBaddiePNG:Class;
+		[Embed(source = '../assets/bullet.png')] public static var bulletPNG:Class;
+		[Embed(source = '../assets/chunk.png')] public static var chunkPNG:Class;
 		
 		//	Pictures
 		[Embed(source='../assets/1984-nocooper-space.png')] public static var noCooper1984PNG:Class;
