@@ -65,11 +65,13 @@ package org.flixel.plugin.photonstorm
 		private var fireRate:int; // ms delay between shots
 		private var nextFireTime:int; // when they can next shoot
 		private var lastFiredTime:int; // when they last fired
-		private var fireContinuous:Boolean; // if fire key held down = stream of bullets
+		//private var fireContinuous:Boolean; // if fire key held down = stream of bullets
 		private var fireOnRelease:Boolean; // if true fires once per key release
 		private var fireCallback:Function;
 		
+		private var jumpHeight:int; // px to jump (taking drag into account)
 		private var jumpRate:int; // ms delay between jumps
+		private var nextJumpTime:int; // when they can next shoot
 		private var lastJumpTime:int; // when they last fired
 		private var jumpSurface:uint; // if true they can only jump if sprite is touching given surface (from FlxObject consts, bitwise supported)
 		private var jumpOnRelease:Boolean; // if true jumps when key is released, if false jumps when key is pressed down
@@ -311,6 +313,315 @@ package org.flixel.plugin.photonstorm
 			fire = true;
 		}
 		
+		//	JUMP
+		
+		public function setJumpButton(key:String, factor:int, surface:int, delay:uint = 0, callback:Function = null, onRelease:Boolean = false):void
+		{
+			jumpKey = key;
+			jumpHeight = factor;
+			jumpSurface = surface;
+			jumpRate = delay;
+			jumpCallback = callback;
+			jumpOnRelease = onRelease;
+			
+			jump = true;
+		}
+		
+		/**
+		 * Limits the sprite to only be allowed within this rectangle. If its x/y coordinates go outside it will be repositioned back inside.<br>
+		 * Coordinates should be given in GAME WORLD pixel values (not screen value, although often they are the two same things)
+		 * 
+		 * @param	x		The x coordinate of the top left corner of the area (in game world pixels)
+		 * @param	y		The y coordinate of the top left corner of the area (in game world pixels)
+		 * @param	width	The width of the area (in pixels)
+		 * @param	height	The height of the area (in pixels)
+		 */
+		public function setBounds(x:int, y:int, width:uint, height:uint):void
+		{
+			bounds = new Rectangle(x, y, width, height);
+		}
+		
+		/**
+		 * Clears any previously set sprite bounds
+		 */
+		public function removeBounds():void
+		{
+			bounds = null;
+		}
+		
+		private function moveUp():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(upKey))
+			{
+				move = true;
+				
+				if (yFacing)
+				{
+					entity.facing = FlxObject.UP;
+				}
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.y = upMoveSpeed;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.y = upMoveSpeed;
+				}
+				
+				if (bounds && entity.y < bounds.top)
+				{
+					entity.y = bounds.top;
+				}
+			}
+			
+			return move;
+		}
+		
+		private function moveDown():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(downKey))
+			{
+				move = true;
+				
+				if (yFacing)
+				{
+					entity.facing = FlxObject.DOWN;
+				}
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.y = downMoveSpeed;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.y = downMoveSpeed;
+				}
+				
+				if (bounds && entity.y > bounds.bottom)
+				{
+					entity.y = bounds.bottom;
+				}
+				
+			}
+			
+			return move;
+		}
+		
+		private function moveLeft():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(leftKey))
+			{
+				move = true;
+				
+				if (xFacing)
+				{
+					entity.facing = FlxObject.LEFT;
+				}
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = leftMoveSpeed;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = leftMoveSpeed;
+				}
+				
+				if (bounds && entity.x < bounds.x)
+				{
+					entity.x = bounds.x;
+				}
+			}
+			
+			return move;
+		}
+		
+		private function moveRight():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(rightKey))
+			{
+				move = true;
+				
+				if (xFacing)
+				{
+					entity.facing = FlxObject.RIGHT;
+				}
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = rightMoveSpeed;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = rightMoveSpeed;
+				}
+				
+				if (bounds && entity.x > bounds.right)
+				{
+					entity.x = bounds.right;
+				}
+			}
+			
+			return move;
+		}
+		
+		private function runFire():Boolean
+		{
+			var fired:Boolean = false;
+			
+			if ((fireOnRelease == true && FlxG.keys.justReleased(fireKey)) || (fireOnRelease == false && FlxG.keys.pressed(fireKey)))
+			{
+				if (getTimer() > nextFireTime)
+				{
+					lastFiredTime = getTimer();
+					nextFireTime = lastFiredTime + fireRate;
+					
+					fireCallback.call();
+					
+					fired = true;
+				}
+			}
+			
+			return fired;
+		}
+		
+		private function runJump():Boolean
+		{
+			var jumped:Boolean = false;
+			
+			if (entity.isTouching(jumpSurface) == false)
+			{
+				return jumped;
+			}
+			
+			if ((jumpOnRelease == true && FlxG.keys.justReleased(jumpKey)) || (jumpOnRelease == false && FlxG.keys.justPressed(jumpKey)))
+			{
+				if (jumpRate > 0 && getTimer() > nextJumpTime)
+				{
+					lastJumpTime = getTimer();
+					nextJumpTime = lastJumpTime + jumpRate;
+				}
+				
+				if (gravityY > 0)
+				{
+					//	Gravity is pulling them down to earth, so they are jumping up (negative)
+					entity.velocity.y = -jumpHeight;
+				}
+				else
+				{
+					//	Gravity is pulling them up, so they are jumping down (positive)
+					entity.velocity.y = jumpHeight;
+				}
+				
+				if (jumpCallback is Function)
+				{
+					jumpCallback.call();
+				}
+					
+				jumped = true;
+			}
+			
+			return jumped;
+		}
+		
+		public function update():void
+		{
+			if (entity == null)
+			{
+				return;
+			}
+			
+			if (stopping == STOPPING_INSTANT)
+			{
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = 0;
+					entity.velocity.y = 0;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = 0;
+					entity.acceleration.y = 0;
+				}
+			}
+			else if (stopping == STOPPING_DECELERATES)
+			{
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = 0;
+					entity.velocity.y = 0;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					if (gravityX == 0)
+					{
+						entity.acceleration.x = 0;
+					}
+					
+					if (gravityY == 0)
+					{
+						entity.acceleration.y = 0;
+					}
+				}
+			}
+			
+			var movedX:Boolean = false;
+			var movedY:Boolean = false;
+			
+			if (up)
+			{
+				movedY = moveUp();
+			}
+			
+			if (down && movedY == false)
+			{
+				moveDown();
+			}
+			
+			if (left)
+			{
+				movedX = moveLeft();
+			}
+			
+			if (right && movedX == false)
+			{
+				moveRight();
+			}
+			
+			if (fire)
+			{
+				runFire();
+			}
+			
+			if (jump)
+			{
+				runJump();
+			}
+			
+			if (capVelocity)
+			{
+				if (entity.velocity.x > entity.maxVelocity.x)
+				{
+					entity.velocity.x = entity.maxVelocity.x;
+				}
+				
+				if (entity.velocity.y > entity.maxVelocity.y)
+				{
+					entity.velocity.y = entity.maxVelocity.y;
+				}
+			}
+			
+		}
+		
 		/**
 		 * Sets Custom Key controls. Useful if none of the pre-defined sets work. All String values should be taken from org.flixel.system.input.Keyboard
 		 * Pass a blank (empty) String to disable that key from being checked.
@@ -523,239 +834,6 @@ package org.flixel.plugin.photonstorm
 			rightKey = "NUMPADSIX";
 		}
 		
-		/**
-		 * Limits the sprite to only be allowed within this rectangle. If its x/y coordinates go outside it will be repositioned back inside.<br>
-		 * Coordinates should be given in GAME WORLD pixel values (not screen value, although often they are the two same things)
-		 * 
-		 * @param	x		The x coordinate of the top left corner of the area (in game world pixels)
-		 * @param	y		The y coordinate of the top left corner of the area (in game world pixels)
-		 * @param	width	The width of the area (in pixels)
-		 * @param	height	The height of the area (in pixels)
-		 */
-		public function setBounds(x:int, y:int, width:uint, height:uint):void
-		{
-			bounds = new Rectangle(x, y, width, height);
-		}
-		
-		/**
-		 * Clears any previously set sprite bounds
-		 */
-		public function removeBounds():void
-		{
-			bounds = null;
-		}
-		
-		private function moveUp():Boolean
-		{
-			var move:Boolean = false;
-			
-			if (FlxG.keys.pressed(upKey))
-			{
-				move = true;
-				
-				if (yFacing)
-				{
-					entity.facing = FlxObject.UP;
-				}
-				
-				if (movement == MOVEMENT_INSTANT)
-				{
-					entity.velocity.y = upMoveSpeed;
-				}
-				else if (movement == MOVEMENT_ACCELERATES)
-				{
-					entity.acceleration.y = upMoveSpeed;
-				}
-				
-				if (bounds && entity.y < bounds.top)
-				{
-					entity.y = bounds.top;
-				}
-			}
-			
-			return move;
-		}
-		
-		private function moveDown():Boolean
-		{
-			var move:Boolean = false;
-			
-			if (FlxG.keys.pressed(downKey))
-			{
-				move = true;
-				
-				if (yFacing)
-				{
-					entity.facing = FlxObject.DOWN;
-				}
-				
-				if (movement == MOVEMENT_INSTANT)
-				{
-					entity.velocity.y = downMoveSpeed;
-				}
-				else if (movement == MOVEMENT_ACCELERATES)
-				{
-					entity.acceleration.y = downMoveSpeed;
-				}
-				
-				if (bounds && entity.y > bounds.bottom)
-				{
-					entity.y = bounds.bottom;
-				}
-				
-			}
-			
-			return move;
-		}
-		
-		private function moveLeft():Boolean
-		{
-			var move:Boolean = false;
-			
-			if (FlxG.keys.pressed(leftKey))
-			{
-				move = true;
-				
-				if (xFacing)
-				{
-					entity.facing = FlxObject.LEFT;
-				}
-				
-				if (movement == MOVEMENT_INSTANT)
-				{
-					entity.velocity.x = leftMoveSpeed;
-				}
-				else if (movement == MOVEMENT_ACCELERATES)
-				{
-					entity.acceleration.x = leftMoveSpeed;
-				}
-				
-				if (bounds && entity.x < bounds.x)
-				{
-					entity.x = bounds.x;
-				}
-			}
-			
-			return move;
-		}
-		
-		private function moveRight():Boolean
-		{
-			var move:Boolean = false;
-			
-			if (FlxG.keys.pressed(rightKey))
-			{
-				move = true;
-				
-				if (xFacing)
-				{
-					entity.facing = FlxObject.RIGHT;
-				}
-				
-				if (movement == MOVEMENT_INSTANT)
-				{
-					entity.velocity.x = rightMoveSpeed;
-				}
-				else if (movement == MOVEMENT_ACCELERATES)
-				{
-					entity.acceleration.x = rightMoveSpeed;
-				}
-				
-				if (bounds && entity.x > bounds.right)
-				{
-					entity.x = bounds.right;
-				}
-			}
-			
-			return move;
-		}
-		
-		private function runFire():Boolean
-		{
-			var fired:Boolean = false;
-			
-			if ((fireOnRelease == true && FlxG.keys.justReleased(fireKey)) || (fireOnRelease == false && FlxG.keys.pressed(fireKey)))
-			{
-				if (getTimer() > nextFireTime)
-				{
-					lastFiredTime = getTimer();
-					nextFireTime = lastFiredTime + fireRate;
-					
-					fireCallback.call();
-					
-					fired = true;
-				}
-			}
-			
-			return fired;
-		}
-		
-		public function update():void
-		{
-			if (entity == null)
-			{
-				return;
-			}
-			
-			if (stopping == STOPPING_INSTANT)
-			{
-				if (movement == MOVEMENT_INSTANT)
-				{
-					entity.velocity.x = 0;
-					entity.velocity.y = 0;
-				}
-				else if (movement == MOVEMENT_ACCELERATES)
-				{
-					entity.acceleration.x = 0;
-					entity.acceleration.y = 0;
-				}
-			}
-			else
-			{
-				if (capVelocity)
-				{
-					if (entity.velocity.x > entity.maxVelocity.x)
-					{
-						entity.velocity.x = entity.maxVelocity.x;
-					}
-					
-					if (entity.velocity.y > entity.maxVelocity.y)
-					{
-						entity.velocity.y = entity.maxVelocity.y;
-					}
-				}
-			}
-			
-			var movedX:Boolean = false;
-			var movedY:Boolean = false;
-			
-			if (up)
-			{
-				movedY = moveUp();
-			}
-			
-			if (down && movedY == false)
-			{
-				moveDown();
-			}
-			
-			if (left)
-			{
-				movedX = moveLeft();
-			}
-			
-			if (right && movedX == false)
-			{
-				moveRight();
-			}
-			
-			if (fire)
-			{
-				runFire();
-			}
-			
-			
-		}
 		
 	}
 

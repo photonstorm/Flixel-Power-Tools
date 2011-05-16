@@ -11,24 +11,13 @@ package tests.controls
 	{
 		//	Common variables
 		public static var title:String = "Controls 2";
-		public static var description:String = "";
-		private var instructions:String = "move";
+		public static var description:String = "Platformer controls with jump";
+		private var instructions:String = "LEFT/RIGHT to run, SPACE to jump";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var controls:FlxControls;
 		private var player:FlxSprite;
-		
-		private var scene:FlxGroup;
-		private var floor:FlxTileblock;
-		private var wallLeft:FlxTileblock;
-		private var wallRight:FlxTileblock;
-		private var platform1:FlxTileblock;
-		private var platform2:FlxTileblock;
-		
-		private var startTime:int;
-		private var stopTime:int;
-		private var hasStopped:Boolean;
+		private var scene:ControlTestScene1;
 		
 		public function ControlTest2() 
 		{
@@ -53,16 +42,25 @@ package tests.controls
 			player.offset.x = 2;
 			player.offset.y = 2;
 			
-			//	Physics values
-			//player.maxVelocity.x = 100;			//	Default walking speed
-			//player.maxVelocity.y = 100;			//	Default walking speed
-			//player.acceleration.y = 100;			//	Gravity (on the Y axis, dragging player down)
-			//player.drag.x = 200;		//	Deceleration (makes player slide to a stop)
-			//player.drag.y = 100;		//	Deceleration (makes player slide to a stop)
+			//	Enable the plugin - you only need do this once (unless you destroy the plugin)
+			if (FlxG.getPlugin(FlxControl) == null)
+			{
+				FlxG.addPlugin(new FlxControl);
+			}
 			
 			//	Control the sprite
-			controls = new FlxControls();
-			controls.basicCursorControl(player, 100, 100);
+			FlxControl.create(player, FlxControlHandler.MOVEMENT_ACCELERATES, FlxControlHandler.STOPPING_DECELERATES, 1, true, false);
+			FlxControl.player1.setCursorControl(false, false, true, true);
+			FlxControl.player1.setJumpButton("SPACE", 200, FlxObject.FLOOR);
+			
+			//	Because we are using the MOVEMENT_ACCELERATES type the first value is the acceleration speed of the sprite
+			//	Think of it as the time it takes to reach maximum velocity. A value of 100 means it would take 1 second. A value of 400 means it would take 0.25 of a second.
+			FlxControl.player1.setMovementSpeed(100, 0, 100, 200, 400, 0);
+			
+			FlxControl.player1.setGravity(0, 400);
+			
+			//	Is there some kind of correlation here? An easier way to set all these values?
+			
 			
 			//	The Animation sequences we need
 			player.addAnimation("idle", [0], 0, false);
@@ -74,37 +72,21 @@ package tests.controls
 			//	Changing this tells Flixel to flip the sprite frames to show the left-facing ones instead.
 			player.facing = FlxObject.RIGHT;
 			
-			//	This creates a little scene for our player to run around
-			
-			scene = new FlxGroup(5);
-			
-			floor = new FlxTileblock(0, 200, 320, 16);
-			floor.makeGraphic(320, 16, 0xaa689c16);
-			
-			wallLeft = new FlxTileblock(0, 30, 16, 170);
-			wallLeft.makeGraphic(16, 170, 0xaa689c16);
-			
-			wallRight = new FlxTileblock(304, 30, 16, 170);
-			wallRight.makeGraphic(16, 170, 0xaa689c16);
-			
-			platform1 = new FlxTileblock(100, 160, 128, 16);
-			platform1.makeGraphic(128, 16, 0xaa689c16);
-			
-			platform2 = new FlxTileblock(64, 100, 96, 16);
-			platform2.makeGraphic(96, 16, 0xaa689c16);
-			
-			scene.add(floor);
-			scene.add(wallLeft);
-			scene.add(wallRight);
-			scene.add(platform1);
-			scene.add(platform2);
+			//	A basic scene for our chick to jump around
+			scene = new ControlTestScene1;
 			
 			add(scene);
 			add(player);
 			
-			hasStopped = false;
-			startTime = getTimer();
-			stopTime = startTime + 1000;
+			//	Bring up the Flixel debugger if you'd like to watch these values in real-time
+			FlxG.watch(player.acceleration, "x", "ax");
+			FlxG.watch(player.acceleration, "y", "ay");
+			FlxG.watch(player.velocity, "x", "vx");
+			FlxG.watch(player.velocity, "y", "vy");
+			FlxG.watch(player.maxVelocity, "x", "mx");
+			FlxG.watch(player.maxVelocity, "y", "my");
+			FlxG.watch(player.drag, "x", "dx");
+			FlxG.watch(player.drag, "y", "dy");
 			
 			//	Header overlay
 			add(header.overlay);
@@ -115,26 +97,6 @@ package tests.controls
 			super.update();
 			
 			FlxG.collide(player, scene);
-			
-			//player.acceleration.x = 0;
-			//player.velocity.x = 0;
-			//
-			//if (hasStopped == false)
-			//{
-				//player.velocity.x = 100;
-				//
-				//if (getTimer() >= stopTime)
-				//{
-					//hasStopped = true;
-					//
-					//trace("Final x", player.x, "travelled", player.x - 64);
-					//trace("Final vx", player.velocity.x, "ax", player.acceleration.x);
-			//
-					//player.velocity.x = 0;
-				//}
-			//}
-			//
-			controls.update();
 		}
 		
 	}
