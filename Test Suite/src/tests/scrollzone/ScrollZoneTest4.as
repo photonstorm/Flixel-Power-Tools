@@ -15,6 +15,7 @@ package tests.scrollzone
 		
 		//	Test specific variables
 		private var pic:FlxSprite;
+		private var stars:FlxStarField;
 		
 		public function ScrollZoneTest4() 
 		{
@@ -46,7 +47,7 @@ package tests.scrollzone
 			//	The image consists of 5px high scrolling layers, this creates them quickly (top = fastest, getting slower as we move down)
 			for (var z:int = 0; z < 31; z++)
 			{
-				FlxScrollZone.createZone(pic, new Rectangle(0, y, pic.width, 5), speed, 0);
+				FlxScrollZone.createZone(pic, new Rectangle(0, y, pic.width, 5), speed, 0, true);
 				
 				if (z <= 14)
 				{
@@ -68,6 +69,10 @@ package tests.scrollzone
 				}
 			}
 			
+			stars = new FlxStarField(0, pic.y + 76, 320, 47, 50, 1);
+			stars.setStarSpeed(1, 0);
+			
+			add(stars);
 			add(pic);
 			
 			//	Header overlay

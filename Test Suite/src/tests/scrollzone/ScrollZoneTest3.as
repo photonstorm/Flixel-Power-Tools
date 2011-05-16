@@ -35,10 +35,13 @@ package tests.scrollzone
 				FlxG.addPlugin(new FlxScrollZone);
 			}
 			
-			//	Create a sprite from a 320x200 PNG (drawn by a friend of mine, Havoc, in just 16-colours on an Atari ST)
+			header.showDarkBackground();
+			
+			//	This is our sine-wavy scrolling background
 			pic = new FlxSprite(0, 32, AssetsRegistry.acfPNG);
 			
-			FlxScrollZone.add(pic, new Rectangle(0, 0, 320, 200), 0, 0);
+			//	Note that we pass "true" for the "clearRegion" parameter - set it to false to see why :)
+			FlxScrollZone.add(pic, new Rectangle(0, 0, 320, 200), 0, 0, true, true);
 			
 			add(pic);
 			

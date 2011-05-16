@@ -2,10 +2,11 @@
  * FlxScrollZone
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Added "clearRegion" support for when you use Sprites with transparency
  * v1.3 Swapped plugin update for draw, now smoother / faster in some fps cases
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 6th 2011
+ * @version 1.4 - May 16th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm. My thanks to Ralph Hauwert for help with this.
 */
@@ -41,9 +42,10 @@ package org.flixel.plugin.photonstorm
 		 * @param	distanceX			The distance in pixels you want to scroll on the X axis. Negative values scroll left. Positive scroll right. Floats allowed (0.5 would scroll at half speed)
 		 * @param	distanceY			The distance in pixels you want to scroll on the Y axis. Negative values scroll up. Positive scroll down. Floats allowed (0.5 would scroll at half speed)
 		 * @param	onlyScrollOnscreen	Only update this FlxSprite if visible onScreen (default true) Saves performance by not scrolling offscreen sprites, but this isn't always desirable
+		 * @param	clearRegion			Set to true if you want to clear the scrolling area of the FlxSprite with a 100% transparent fill before applying the scroll texture (default false)
 		 * @see		createZone
 		 */
-		public static function add(source:FlxSprite, region:Rectangle, distanceX:Number, distanceY:Number, onlyScrollOnscreen:Boolean = true):void
+		public static function add(source:FlxSprite, region:Rectangle, distanceX:Number, distanceY:Number, onlyScrollOnscreen:Boolean = true, clearRegion:Boolean = false):void
 		{
 			if (members[source])
 			{
@@ -59,7 +61,7 @@ package org.flixel.plugin.photonstorm
 			
 			members[source] = data;
 			
-			createZone(source, region, distanceX, distanceY);
+			createZone(source, region, distanceX, distanceY, clearRegion);
 		}
 		
 		/**
@@ -69,8 +71,9 @@ package org.flixel.plugin.photonstorm
 		 * @param	region				The region, specified as a Rectangle, of the FlxSprite that you wish to scroll
 		 * @param	distanceX			The distance in pixels you want to scroll on the X axis. Negative values scroll left. Positive scroll right. Floats allowed (0.5 would scroll at half speed)
 		 * @param	distanceY			The distance in pixels you want to scroll on the Y axis. Negative values scroll up. Positive scroll down. Floats allowed (0.5 would scroll at half speed)
+		 * @param	clearRegion			Set to true if you want to fill the scroll region of the FlxSprite with a 100% transparent fill before scrolling it (default false)
 		 */
-		public static function createZone(source:FlxSprite, region:Rectangle, distanceX:Number, distanceY:Number):void
+		public static function createZone(source:FlxSprite, region:Rectangle, distanceX:Number, distanceY:Number, clearRegion:Boolean = false):void
 		{
 			var texture:BitmapData = new BitmapData(region.width, region.height, true, 0x00000000);
 			texture.copyPixels(source.framePixels, region, zeroPoint, null, null, true);
@@ -80,6 +83,7 @@ package org.flixel.plugin.photonstorm
 			data.buffer = new Sprite;
 			data.texture = texture;
 			data.region = region;
+			data.clearRegion = clearRegion;
 			data.distanceX = distanceX;
 			data.distanceY = distanceY;
 			data.scrollMatrix = new Matrix();
@@ -230,10 +234,14 @@ package org.flixel.plugin.photonstorm
 				zone.scrollMatrix.ty += zone.distanceY;
 				
 				zone.buffer.graphics.clear();
-				
 				zone.buffer.graphics.beginBitmapFill(zone.texture, zone.scrollMatrix, true, false);
 				zone.buffer.graphics.drawRect(0, 0, zone.region.width, zone.region.height);
 				zone.buffer.graphics.endFill();
+				
+				if (zone.clearRegion)
+				{
+					data.source.pixels.fillRect(zone.region, 0x0);
+				}
 				
 				data.source.pixels.draw(zone.buffer, zone.drawMatrix);
 			}
