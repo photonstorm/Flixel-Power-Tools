@@ -42,6 +42,11 @@ package tests.controls
 			player.offset.x = 2;
 			player.offset.y = 2;
 			
+			//	The animation our sprite has
+			player.addAnimation("idle", [0], 0, false);
+			player.addAnimation("walk", [0, 1, 0, 2], 10, true);
+			player.addAnimation("jump", [1], 0, false);
+			
 			//	Enable the plugin - you only need do this once (unless you destroy the plugin)
 			if (FlxG.getPlugin(FlxControl) == null)
 			{
@@ -55,22 +60,13 @@ package tests.controls
 			
 			//	Because we are using the MOVEMENT_ACCELERATES type the first value is the acceleration speed of the sprite
 			//	Think of it as the time it takes to reach maximum velocity. A value of 100 means it would take 1 second. A value of 400 means it would take 0.25 of a second.
-			FlxControl.player1.setMovementSpeed(100, 0, 100, 200, 400, 0);
+			FlxControl.player1.setMovementSpeed(400, 0, 100, 200, 400, 0);
 			
 			FlxControl.player1.setGravity(0, 400);
 			
 			//	Is there some kind of correlation here? An easier way to set all these values?
 			
 			
-			//	The Animation sequences we need
-			player.addAnimation("idle", [0], 0, false);
-			player.addAnimation("walk", [0, 1, 0, 2], 10, true);
-			player.addAnimation("jump", [1], 0, false);
-			player.addAnimation("hurt", [4], 0, false);
-			
-			//	By defaylt the sprite is facing to the right.
-			//	Changing this tells Flixel to flip the sprite frames to show the left-facing ones instead.
-			player.facing = FlxObject.RIGHT;
 			
 			//	A basic scene for our chick to jump around
 			scene = new ControlTestScene1;

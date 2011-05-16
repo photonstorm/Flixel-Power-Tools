@@ -131,7 +131,7 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * Runs update on all currently active FlxControlHandlers
 		 */
-		override public function update():void
+		override public function draw():void
 		{
 			for each (var handler:FlxControlHandler in members)
 			{
