@@ -46,12 +46,13 @@ package tests.controls
 			
 			FlxControl.player1.setFireButton("SPACE", 1000, fire);
 			
+			FlxControl.player1.setBounds(16, 200, 280, 16);
+			
 			
 			//	Bring up the Flixel debugger if you'd like to watch these values in real-time
 			FlxG.watch(player.velocity, "x", "vx");
 			FlxG.watch(player.velocity, "y", "vy");
 			
-			add(scene);
 			add(player);
 			
 			//	Header overlay

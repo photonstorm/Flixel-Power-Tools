@@ -13,6 +13,7 @@
 
 package org.flixel.plugin.photonstorm 
 {
+	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import flash.utils.getTimer;
 	
@@ -37,6 +38,8 @@ package org.flixel.plugin.photonstorm
 		public var enabled:Boolean = false;
 		
 		private var entity:FlxSprite = null;
+		
+		private var bounds:Rectangle;
 		
 		private var up:Boolean;
 		private var down:Boolean;
@@ -308,8 +311,6 @@ package org.flixel.plugin.photonstorm
 			fire = true;
 		}
 		
-		
-		
 		/**
 		 * Sets Custom Key controls. Useful if none of the pre-defined sets work. All String values should be taken from org.flixel.system.input.Keyboard
 		 * Pass a blank (empty) String to disable that key from being checked.
@@ -522,6 +523,28 @@ package org.flixel.plugin.photonstorm
 			rightKey = "NUMPADSIX";
 		}
 		
+		/**
+		 * Limits the sprite to only be allowed within this rectangle. If its x/y coordinates go outside it will be repositioned back inside.<br>
+		 * Coordinates should be given in GAME WORLD pixel values (not screen value, although often they are the two same things)
+		 * 
+		 * @param	x		The x coordinate of the top left corner of the area (in game world pixels)
+		 * @param	y		The y coordinate of the top left corner of the area (in game world pixels)
+		 * @param	width	The width of the area (in pixels)
+		 * @param	height	The height of the area (in pixels)
+		 */
+		public function setBounds(x:int, y:int, width:uint, height:uint):void
+		{
+			bounds = new Rectangle(x, y, width, height);
+		}
+		
+		/**
+		 * Clears any previously set sprite bounds
+		 */
+		public function removeBounds():void
+		{
+			bounds = null;
+		}
+		
 		private function moveUp():Boolean
 		{
 			var move:Boolean = false;
@@ -542,6 +565,11 @@ package org.flixel.plugin.photonstorm
 				else if (movement == MOVEMENT_ACCELERATES)
 				{
 					entity.acceleration.y = upMoveSpeed;
+				}
+				
+				if (bounds && entity.y < bounds.top)
+				{
+					entity.y = bounds.top;
 				}
 			}
 			
@@ -569,6 +597,12 @@ package org.flixel.plugin.photonstorm
 				{
 					entity.acceleration.y = downMoveSpeed;
 				}
+				
+				if (bounds && entity.y > bounds.bottom)
+				{
+					entity.y = bounds.bottom;
+				}
+				
 			}
 			
 			return move;
@@ -595,6 +629,11 @@ package org.flixel.plugin.photonstorm
 				{
 					entity.acceleration.x = leftMoveSpeed;
 				}
+				
+				if (bounds && entity.x < bounds.x)
+				{
+					entity.x = bounds.x;
+				}
 			}
 			
 			return move;
@@ -620,6 +659,11 @@ package org.flixel.plugin.photonstorm
 				else if (movement == MOVEMENT_ACCELERATES)
 				{
 					entity.acceleration.x = rightMoveSpeed;
+				}
+				
+				if (bounds && entity.x > bounds.right)
+				{
+					entity.x = bounds.right;
 				}
 			}
 			
@@ -709,6 +753,7 @@ package org.flixel.plugin.photonstorm
 			{
 				runFire();
 			}
+			
 			
 		}
 		
