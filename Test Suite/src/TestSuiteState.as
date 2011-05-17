@@ -126,10 +126,10 @@ package
 			
 			options.push( { newColumn: true } );
 			
-			options.push( { state: ControlTest1, color: [0xff2FA41E, 0xff266599] } );
-			options.push( { state: ControlTest2, color: [0xff2FA41E, 0xff266599] } );
-			options.push( { state: ControlTest3, color: [0xff2FA41E, 0xff266599] } );
-			options.push( { state: ControlTest4, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: ControlTest1, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest2, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest3, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest4, color: [0xff8000FF, 0xffBE7DFF] } );
 			
 		}
 		

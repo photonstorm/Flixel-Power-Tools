@@ -73,7 +73,7 @@ package org.flixel.plugin.photonstorm
 		private var nextJumpTime:int; 		// The internal time when they can next jump
 		private var lastJumpTime:int; 		// The internal time of when when they last jumped
 		private var jumpFromFallTime:int; 	// TODO: A short window of opportunity for them to jump having just fallen off the edge of a surface
-		private var lastSurfaceTime:int; 	// TODO: Internal time of when they last collided with a valid jumpSurface
+		private var extraSurfaceTime:int; 	// TODO: Internal time of when they last collided with a valid jumpSurface
 		private var jumpSurface:uint; 		// The surfaces from FlxObject they can jump from (i.e. FlxObject.FLOOR)
 		private var jumpCallback:Function;	// A function to call every time they jump
 		
@@ -534,30 +534,44 @@ package org.flixel.plugin.photonstorm
 		{
 			var jumped:Boolean = false;
 			
-			//	0 = Pressed
-			//	1 = Just Down
-			//	2 = Just Released
-			if ((jumpKeyMode == 0 && FlxG.keys.pressed(jumpKey)) || (jumpKeyMode == 1 && FlxG.keys.justPressed(jumpKey)) || (jumpKeyMode == 2 && FlxG.keys.justReleased(jumpKey)))
+			//	This should be called regardless if they've pressed jump or not
+			if (entity.isTouching(jumpSurface))
 			{
-				//	Sprite not touching a valid jump surface AND it's past the jump fall time, then return false
-				if (entity.isTouching(jumpSurface) == false || (jumpFromFallTime > 0 && (getTimer() > lastSurfaceTime)))
+				extraSurfaceTime = getTimer() + jumpFromFallTime;
+			}
+			
+			if ((jumpKeyMode == KEYMODE_PRESSED && FlxG.keys.pressed(jumpKey)) || (jumpKeyMode == KEYMODE_JUST_DOWN && FlxG.keys.justPressed(jumpKey)) || (jumpKeyMode == KEYMODE_RELEASED && FlxG.keys.justReleased(jumpKey)))
+			{
+				//	Sprite not touching a valid jump surface
+				if (entity.isTouching(jumpSurface) == false)
 				{
-					return jumped;
+					//	They've run out of time to jump
+					if (getTimer() > extraSurfaceTime)
+					{
+						return jumped;
+					}
+					else
+					{
+						//	Still within the fall-jump window of time, but have jumped recently
+						if (lastJumpTime > (extraSurfaceTime - jumpFromFallTime))
+						{
+							return jumped;
+						}
+					}
+					
+					//	If there is a jump repeat rate set and we're still less than it then return
+					if (getTimer() < nextJumpTime)
+					{
+						return jumped;
+					}
 				}
 				else
 				{
-					//	This is an internal timer allowing us to jump after we start falling (need a velocity check - otherwise it'd allow a double-jump in the air)
-					lastSurfaceTime = getTimer() + jumpFromFallTime;
-				}
-				
-				if (jumpRate > 0 && getTimer() > nextJumpTime)
-				{
-					lastJumpTime = getTimer();
-					nextJumpTime = lastJumpTime + jumpRate;
-				}
-				else
-				{
-					return jumped;
+					//	If there is a jump repeat rate set and we're still less than it then return
+					if (getTimer() < nextJumpTime)
+					{
+						return jumped;
+					}
 				}
 				
 				if (gravityY > 0)
@@ -575,6 +589,9 @@ package org.flixel.plugin.photonstorm
 				{
 					jumpCallback.call();
 				}
+				
+				lastJumpTime = getTimer();
+				nextJumpTime = lastJumpTime + jumpRate;
 					
 				jumped = true;
 			}
