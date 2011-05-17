@@ -1,22 +1,18 @@
 package tests.controls 
 {
-	import flash.display.BitmapData;
-	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import flash.utils.getTimer;
 	import tests.TestsHeader;
 
 	public class ControlTest1 extends FlxState
 	{
 		//	Common variables
 		public static var title:String = "Controls 1";
-		public static var description:String = "";
-		private var instructions:String = "move";
+		public static var description:String = "Basic cursor key movement";
+		private var instructions:String = "Move with the cursor / arrow keys";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
 		private var scene:ControlTestScene1;
 		
@@ -41,21 +37,8 @@ package tests.controls
 			
 			//	Control the player
 			
-			//	Rigid movement
-			
-			//	You can either set-up the controls like this ...
 			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT);
 			FlxControl.player1.setMovementSpeed(100, 100, 100, 100);
-			
-			//	Or like this... both do the same thing, but this method is maybe more useful if you need fine-grained control over the returned ControlHandler
-			//	or don't like the look of the method above (would rather assign to a local var)
-			
-			//controls = FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT);
-			//controls.setMovementSpeed(100, 100, 100, 100);
-			
-			//	Slippy slidey
-			//controls = new FlxControls(player, FlxControls.MOVEMENT_INSTANT, FlxControls.STOPPING_DECELERATES);
-			//controls.setMovementSpeed(100, 100, 100, 100, 100, 100);
 			
 			//	A basic scene for our ufo to fly around
 			scene = new ControlTestScene1;

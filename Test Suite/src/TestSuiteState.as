@@ -77,8 +77,6 @@ package
 			
 			options.push( { state: DelayTest1, color: [0xff6C3913, 0xffC96923] } );
 			
-			options.push( { state: ControlTest2, color: [0xff2FA41E, 0xff266599] } );
-			
 			options.push( { newColumn: true } );
 			
 			options.push( { state: FlodTest1, color: [0xffC0C0C0, 0xff808080] } );
@@ -105,7 +103,6 @@ package
 			options.push( { state: ScrollZoneTest2, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: ScrollZoneTest3, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: ScrollZoneTest4, color: [0xff008000, 0xff00FF00] } );
-			//options.push( { state: ScrollZoneTest5, color: [0xff008000, 0xff00FF00] } );
 			
 			options.push( { spacer: true } );
 			
@@ -127,9 +124,12 @@ package
 			options.push( { state: DropDownTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest2, color: [0xff2E2E2E, 0xff606060] } );
 			
-			options.push( { spacer: true } );
+			options.push( { newColumn: true } );
 			
 			options.push( { state: ControlTest1, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: ControlTest2, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: ControlTest3, color: [0xff2FA41E, 0xff266599] } );
+			options.push( { state: ControlTest4, color: [0xff2FA41E, 0xff266599] } );
 			
 		}
 		

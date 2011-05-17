@@ -1,10 +1,7 @@
 package tests.controls 
 {
-	import flash.display.BitmapData;
-	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import flash.utils.getTimer;
 	import tests.TestsHeader;
 
 	public class ControlTest2 extends FlxState
@@ -56,17 +53,14 @@ package tests.controls
 			//	Control the sprite
 			FlxControl.create(player, FlxControlHandler.MOVEMENT_ACCELERATES, FlxControlHandler.STOPPING_DECELERATES, 1, true, false);
 			FlxControl.player1.setCursorControl(false, false, true, true);
-			FlxControl.player1.setJumpButton("SPACE", 200, FlxObject.FLOOR);
+			FlxControl.player1.setJumpButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 200, FlxObject.FLOOR, 250);
 			
 			//	Because we are using the MOVEMENT_ACCELERATES type the first value is the acceleration speed of the sprite
 			//	Think of it as the time it takes to reach maximum velocity. A value of 100 means it would take 1 second. A value of 400 means it would take 0.25 of a second.
 			FlxControl.player1.setMovementSpeed(400, 0, 100, 200, 400, 0);
 			
+			//	Set a downward gravity of 400px/sec
 			FlxControl.player1.setGravity(0, 400);
-			
-			//	Is there some kind of correlation here? An easier way to set all these values?
-			
-			
 			
 			//	A basic scene for our chick to jump around
 			scene = new ControlTestScene1;
@@ -93,6 +87,23 @@ package tests.controls
 			super.update();
 			
 			FlxG.collide(player, scene);
+			
+			if (player.touching == FlxObject.FLOOR)
+			{
+				if (player.velocity.x != 0)
+				{
+					player.play("walk");
+				}
+				else
+				{
+					player.play("idle");
+				}
+			}
+			else if (player.velocity.y < 0)
+			{
+				player.play("jump");
+			}
+			
 		}
 		
 	}

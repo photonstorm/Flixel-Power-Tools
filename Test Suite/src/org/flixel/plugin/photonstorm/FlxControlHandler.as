@@ -25,16 +25,14 @@ package org.flixel.plugin.photonstorm
 	 * TODO
 	 * ----
 	 * 
-	 * Gravity + Flipping
-	 * Jump Key
-	 * Action Key (fire, etc - hook to user function)
-	 * Specify animation frames to play per direction (or speed?)
-	 * Hotkeys (bind a key to a user function - for like weapon select)
+	 * Specify animation frames to play based on velocity
+	 * Hotkeys (bind a key to a user function - like for weapon select)
 	 * More Test Suite tests!
 	 * Variable gravity (based on height)
 	 */
 	public class FlxControlHandler
 	{
+		//	Used by the FlxControl plugin
 		public var enabled:Boolean = false;
 		
 		private var entity:FlxSprite = null;
@@ -48,6 +46,7 @@ package org.flixel.plugin.photonstorm
 		private var fire:Boolean;
 		private var altFire:Boolean;
 		private var jump:Boolean;
+		private var altJump:Boolean;
 		private var xFacing:Boolean;
 		private var yFacing:Boolean;
 		
@@ -62,35 +61,36 @@ package org.flixel.plugin.photonstorm
 		private var gravityX:int;
 		private var gravityY:int;
 		
-		private var fireRate:int; // ms delay between shots
-		private var nextFireTime:int; // when they can next shoot
-		private var lastFiredTime:int; // when they last fired
-		//private var fireContinuous:Boolean; // if fire key held down = stream of bullets
-		private var fireOnRelease:Boolean; // if true fires once per key release
-		private var fireCallback:Function;
+		private var fireRate:int; 			// The ms delay between firing when the key is held down
+		private var nextFireTime:int; 		// The internal time when they can next fire
+		private var lastFiredTime:int; 		// The internal time of when when they last fired
+		private var fireKeyMode:uint;		// The fire key mode
+		private var fireCallback:Function;	// A function to call every time they fire
 		
-		private var jumpHeight:int; // px to jump (taking drag into account)
-		private var jumpRate:int; // ms delay between jumps
-		private var nextJumpTime:int; // when they can next shoot
-		private var lastJumpTime:int; // when they last fired
-		private var jumpSurface:uint; // if true they can only jump if sprite is touching given surface (from FlxObject consts, bitwise supported)
-		private var jumpOnRelease:Boolean; // if true jumps when key is released, if false jumps when key is pressed down
-		private var jumpCallback:Function;
+		private var jumpHeight:int; 		// The pixel height amount they jump (drag and gravity also both influence this)
+		private var jumpRate:int; 			// The ms delay between jumping when the key is held down
+		private var jumpKeyMode:uint;		// The jump key mode
+		private var nextJumpTime:int; 		// The internal time when they can next jump
+		private var lastJumpTime:int; 		// The internal time of when when they last jumped
+		private var jumpFromFallTime:int; 	// TODO: A short window of opportunity for them to jump having just fallen off the edge of a surface
+		private var lastSurfaceTime:int; 	// TODO: Internal time of when they last collided with a valid jumpSurface
+		private var jumpSurface:uint; 		// The surfaces from FlxObject they can jump from (i.e. FlxObject.FLOOR)
+		private var jumpCallback:Function;	// A function to call every time they jump
 		
 		private var movement:int;
 		private var stopping:int;
 		private var capVelocity:Boolean;
 		
-		//	Not yet used
-		private var hotkeys:Array;
+		private var hotkeys:Array;			// TODO
 		
 		private var upKey:String;
 		private var downKey:String;
 		private var leftKey:String;
 		private var rightKey:String;
 		private var fireKey:String;
-		private var altFireKey:String;
+		private var altFireKey:String;		// TODO
 		private var jumpKey:String;
+		private var altJumpKey:String;		// TODO
 		
 		/**
 		 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
@@ -113,9 +113,20 @@ package org.flixel.plugin.photonstorm
 		 */
 		public static const STOPPING_NEVER:int = 2;
 		
-		public static const HOTKEY_MODE_FIRST_DOWN:int = 0;
-		public static const HOTKEY_MODE_KEY_DOWN:int = 1;
-		public static const HOTKEY_MODE_KEY_RELEASE:int = 2;
+		/**
+		 * This keymode fires for as long as the key is held down
+		 */
+		public static const KEYMODE_PRESSED:int = 0;
+		
+		/**
+		 * This keyboard fires when the key has just been pressed down, and not again until it is released and re-pressed
+		 */
+		public static const KEYMODE_JUST_DOWN:int = 1;
+		
+		/**
+		 * This keyboard fires only when the key has been pressed and then released again
+		 */
+		public static const KEYMODE_RELEASED:int = 2;
 		
 		/**
 		 * Sets the FlxSprite to be controlled by this class, and defines the initial movement and stopping types.<br>
@@ -295,34 +306,56 @@ package org.flixel.plugin.photonstorm
 			
 		}
 		
-		//	FIRE
-		
-		public function setFireButton(key:String, delay:uint, callback:Function, onRelease:Boolean = false, altKey:String = ""):void
+		/**
+		 * Enable a fire button
+		 * 
+		 * @param	key				The key to use as the fire button (String from org.flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
+		 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
+		 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (250 would allow it to fire 4 times per second)
+		 * @param	callback		A user defined function to call when it fires
+		 * @param	altKey			Specify an alternative fire key that works AS WELL AS the primary fire key (TODO)
+		 */
+		public function setFireButton(key:String, keymode:uint, repeatDelay:uint, callback:Function, altKey:String = ""):void
 		{
 			fireKey = key;
+			fireKeyMode = keymode;
+			fireRate = repeatDelay;
+			fireCallback = callback;
 			
 			if (altKey != "")
 			{
 				altFireKey = altKey;
 			}
 			
-			fireRate = delay;
-			fireCallback = callback;
-			fireOnRelease = onRelease;
-			
 			fire = true;
 		}
 		
-		//	JUMP
-		
-		public function setJumpButton(key:String, factor:int, surface:int, delay:uint = 0, callback:Function = null, onRelease:Boolean = false):void
+		/**
+		 * Enable a jump button
+		 * 
+		 * @param	key				The key to use as the jump button (String from org.flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
+		 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
+		 * @param	height			The height in pixels/sec that the Sprite will attempt to jump (gravity and acceleration can influence this actual height obtained)
+		 * @param	surface			A bitwise combination of all valid surfaces the Sprite can jump off (from FlxObject, such as FlxObject.FLOOR)
+		 * @param	repeatDelay		Time delay in ms between which the jumping can repeat (250 would be 4 times per second)
+		 * @param	jumpFromFall	A time in ms that allows the Sprite to still jump even if it's just fallen off a platform, if still within ths time limit
+		 * @param	callback		A user defined function to call when the Sprite jumps
+		 * @param	altKey			Specify an alternative jump key that works AS WELL AS the primary jump key (TODO)
+		 */
+		public function setJumpButton(key:String, keymode:uint, height:int, surface:int, repeatDelay:uint = 250, jumpFromFall:int = 0, callback:Function = null, altKey:String = ""):void
 		{
 			jumpKey = key;
-			jumpHeight = factor;
+			jumpKeyMode = keymode;
+			jumpHeight = height;
 			jumpSurface = surface;
-			jumpRate = delay;
+			jumpRate = repeatDelay;
+			jumpFromFallTime = jumpFromFall;
 			jumpCallback = callback;
-			jumpOnRelease = onRelease;
+			
+			if (altKey != "")
+			{
+				altJumpKey = altKey;
+			}
 			
 			jump = true;
 		}
@@ -478,7 +511,10 @@ package org.flixel.plugin.photonstorm
 		{
 			var fired:Boolean = false;
 			
-			if ((fireOnRelease == true && FlxG.keys.justReleased(fireKey)) || (fireOnRelease == false && FlxG.keys.pressed(fireKey)))
+			//	0 = Pressed
+			//	1 = Just Down
+			//	2 = Just Released
+			if ((fireKeyMode == 0 && FlxG.keys.pressed(fireKey)) || (fireKeyMode == 1 && FlxG.keys.justPressed(fireKey)) || (fireKeyMode == 2 && FlxG.keys.justReleased(fireKey)))
 			{
 				if (getTimer() > nextFireTime)
 				{
@@ -498,17 +534,30 @@ package org.flixel.plugin.photonstorm
 		{
 			var jumped:Boolean = false;
 			
-			if (entity.isTouching(jumpSurface) == false)
+			//	0 = Pressed
+			//	1 = Just Down
+			//	2 = Just Released
+			if ((jumpKeyMode == 0 && FlxG.keys.pressed(jumpKey)) || (jumpKeyMode == 1 && FlxG.keys.justPressed(jumpKey)) || (jumpKeyMode == 2 && FlxG.keys.justReleased(jumpKey)))
 			{
-				return jumped;
-			}
-			
-			if ((jumpOnRelease == true && FlxG.keys.justReleased(jumpKey)) || (jumpOnRelease == false && FlxG.keys.justPressed(jumpKey)))
-			{
+				//	Sprite not touching a valid jump surface AND it's past the jump fall time, then return false
+				if (entity.isTouching(jumpSurface) == false || (jumpFromFallTime > 0 && (getTimer() > lastSurfaceTime)))
+				{
+					return jumped;
+				}
+				else
+				{
+					//	This is an internal timer allowing us to jump after we start falling (need a velocity check - otherwise it'd allow a double-jump in the air)
+					lastSurfaceTime = getTimer() + jumpFromFallTime;
+				}
+				
 				if (jumpRate > 0 && getTimer() > nextJumpTime)
 				{
 					lastJumpTime = getTimer();
 					nextJumpTime = lastJumpTime + jumpRate;
+				}
+				else
+				{
+					return jumped;
 				}
 				
 				if (gravityY > 0)
@@ -533,6 +582,9 @@ package org.flixel.plugin.photonstorm
 			return jumped;
 		}
 		
+		/**
+		 * Called by the FlxControl plugin
+		 */
 		public function update():void
 		{
 			if (entity == null)
