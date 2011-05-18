@@ -1,6 +1,5 @@
 package  
 {
-	import tests.TestsAssets;
 	import tests.TestsHeader;
 	
 	public class Registry 

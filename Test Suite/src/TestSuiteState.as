@@ -1,11 +1,12 @@
 /**
  * Flixel Power Tools Test Suite
  * 
+ * v1.6 - FlxControl and new Special FX Plugins
  * v1.5 - Massive restructure to split the tests up and move to git
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
  * v1.3 - Updated for Flixel v2.53
  * 
- * @version 1.5 - May 10th 2011
+ * @version 1.6 - May 18th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -19,6 +20,7 @@ package
 	import tests.buttonplus.*;
 	import tests.collision.*;
 	import tests.color.*;
+	import tests.controls.*;
 	import tests.delay.*;
 	import tests.flod.*;
 	import tests.gradient.*;
@@ -34,11 +36,12 @@ package
 	{
 		[Embed(source = '../assets/menu_burd.png')] private var menuBurdPNG:Class;
 		
-		private var version:String = "- Test Suite v1.5 -";
+		private var version:String = "- Test Suite v1.6 -";
 		private var options:Array;
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
+		private var shortcut:Class = ControlTest5;
 		
 		public function TestSuiteState()
 		{
@@ -102,13 +105,14 @@ package
 			options.push( { state: ScrollZoneTest2, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: ScrollZoneTest3, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: ScrollZoneTest4, color: [0xff008000, 0xff00FF00] } );
-			//options.push( { state: ScrollZoneTest5, color: [0xff008000, 0xff00FF00] } );
 			
 			options.push( { spacer: true } );
 			
 			options.push( { state: ScrollingTextTest1, color: [0xff0080FF, 0xff80FFFF] } );
 			options.push( { state: ScrollingTextTest2, color: [0xff0080FF, 0xff80FFFF] } );
 			options.push( { state: ScrollingTextTest3, color: [0xff0080FF, 0xff80FFFF] } );
+			
+			//	SCREEN THREE
 			
 			options.push( { newColumn: true } );
 			
@@ -121,6 +125,14 @@ package
 			options.push( { state: PlasmaTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest2, color: [0xff2E2E2E, 0xff606060] } );
+			
+			options.push( { newColumn: true } );
+			
+			options.push( { state: ControlTest1, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest2, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest3, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest4, color: [0xff8000FF, 0xffBE7DFF] } );
+			options.push( { state: ControlTest5, color: [0xff8000FF, 0xffBE7DFF] } );
 			
 		}
 		
@@ -197,6 +209,12 @@ package
 				{
 					dolly.x = 480;
 				}
+			}
+			
+			//	Short-cut to save scrolling when debugging!
+			if (FlxG.keys.justReleased("SPACE"))
+			{
+				startTest(shortcut);
 			}
 		}
 		

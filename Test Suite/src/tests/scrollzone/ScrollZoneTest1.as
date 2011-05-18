@@ -37,7 +37,7 @@ package tests.scrollzone
 			pic = new FlxSprite(0, 32, AssetsRegistry.ohCrikeyPNG);
 			
 			//	This will scroll the whole image to the left by 2 pixels every frame
-			FlxScrollZone.add(pic, new Rectangle(0, 0, pic.width, pic.height), -2, 0);
+			FlxScrollZone.add(pic, new Rectangle(0, 0, pic.width, pic.height), -2, 0, true);
 			
 			add(pic);
 			

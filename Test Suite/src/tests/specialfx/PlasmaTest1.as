@@ -10,7 +10,7 @@ package tests.specialfx
 		//	Common variables
 		public static var title:String = "Plasma 1";
 		public static var description:String = "Plasma FX Plugin";
-		private var instructions:String = "stuff";
+		private var instructions:String = "Pretty init :)";
 		private var header:TestsHeader;
 		
 		//	Test specific variables

@@ -46,9 +46,9 @@ package tests.scrollingtext
 			font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
 			
 			//	Then create a scrolling text using it - this is just an FlxSprite, you can move it around, collide with it, all the things you can do with a sprite
-			scroller = FlxScrollingText.add(font, new Rectangle(14, 40, 292, 32), 1, 0, "WELCOME!   ");
+			scroller = FlxScrollingText.add(font, new Rectangle(14, 40, 292, 32), 2, 0, "WELCOME!   ");
 			
-			FlxScrollingText.addText(scroller, "THIS IS AN EXAMPLE OF SROLLING BITMAP FONTS IN FLIXEL  ");
+			FlxScrollingText.addText(scroller, "THIS IS AN EXAMPLE OF SCROLLING BITMAP FONTS IN FLIXEL ");
 			FlxScrollingText.addText(scroller, "NICE AND EASY TO SET-UP, NICE AND EASY TO USE :)       ");
 			FlxScrollingText.addText(scroller, "OK IT IS TIME TO WRAP ..............................   ");
 			FlxScrollingText.addText(scroller, ":)                   ");
