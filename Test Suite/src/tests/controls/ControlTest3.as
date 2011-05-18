@@ -27,11 +27,13 @@ package tests.controls
 			add(header);
 			
 			//	Test specific
-			player1 = new FlxSprite(64, 150).makeGraphic(16, 16, 0xff950000);
+			player1 = new FlxSprite(64, 64, AssetsRegistry.redPNG);
 			player1.solid = true;
+			player1.elasticity = 0.9;
 			
-			player2 = new FlxSprite(240, 150).makeGraphic(16, 16, 0xff00ff00);
+			player2 = new FlxSprite(240, 150, AssetsRegistry.greenPNG);
 			player2.solid = true;
+			player2.elasticity = 0.9;
 			
 			//	Enable the plugin - you only need do this once (unless you destroy the plugin)
 			if (FlxG.getPlugin(FlxControl) == null)
@@ -41,13 +43,13 @@ package tests.controls
 			
 			//	Control the players
 			
-			FlxControl.create(player1, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 1, false, false);
+			FlxControl.create(player1, FlxControlHandler.MOVEMENT_ACCELERATES, FlxControlHandler.STOPPING_DECELERATES, 1, false, false);
 			FlxControl.player1.setWASDControl();
-			FlxControl.player1.setMovementSpeed(100, 100, 100, 100);
+			FlxControl.player1.setStandardSpeed(200);
 			
-			FlxControl.create(player2, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 2, false, false);
+			FlxControl.create(player2, FlxControlHandler.MOVEMENT_ACCELERATES, FlxControlHandler.STOPPING_DECELERATES, 2, false, false);
 			FlxControl.player2.setIJKLControl();
-			FlxControl.player2.setMovementSpeed(100, 100, 100, 100);
+			FlxControl.player2.setStandardSpeed(200);
 			
 			//	A scene for our players to move around
 			scene = new ControlTestScene1;
@@ -67,6 +69,14 @@ package tests.controls
 			FlxG.collide(player1, player2);
 			FlxG.collide(player1, scene);
 			FlxG.collide(player2, scene);
+		}
+		
+		override public function destroy():void
+		{
+			//	Important! Clear out the plugin otherwise resources will get messed right up after a while
+			FlxControl.clear();
+			
+			super.destroy();
 		}
 		
 	}

@@ -1,9 +1,9 @@
 Flixel Power Tools
 ==================
 
-Version 1.6 Beta 1
+Version 1.6
 
-May 17th 2011
+May 18th 2011
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
@@ -25,7 +25,10 @@ directory structure of your project should be:
 
 and within the `photonstorm` folder you'll find all the classes listed below.
 
-Note for the dev branch:
+Now read the Getting Started Guide in the Doc folder. It contains important information that will 
+help you compile!
+
+Dev branch users:
 
 I don't keep the zip file as up to date as the src in the Test Suite. So ignore the above and 
 instead copy the photonstorm folder out of:
@@ -33,6 +36,7 @@ instead copy the photonstorm folder out of:
     Test Suite/src/org/flixel/plugin
 
 to your Flixel plugin folder
+
 
 Getting Started Guide
 ---------------------

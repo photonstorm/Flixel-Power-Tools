@@ -14,7 +14,7 @@ package tests.controls
 		
 		//	Test specific variables
 		private var player:FlxSprite;
-		private var scene:ControlTestScene1;
+		private var scene:ControlTestScene2;
 		
 		public function ControlTest2() 
 		{
@@ -63,7 +63,7 @@ package tests.controls
 			FlxControl.player1.setGravity(0, 400);
 			
 			//	A basic scene for our chick to jump around
-			scene = new ControlTestScene1;
+			scene = new ControlTestScene2;
 			
 			add(scene);
 			add(player);
@@ -86,7 +86,7 @@ package tests.controls
 		{
 			super.update();
 			
-			FlxG.collide(player, scene);
+			FlxG.collide(player, scene.map);
 			
 			if (player.touching == FlxObject.FLOOR)
 			{
@@ -103,8 +103,16 @@ package tests.controls
 			{
 				player.play("jump");
 			}
-			
 		}
+		
+		override public function destroy():void
+		{
+			//	Important! Clear out the plugin otherwise resources will get messed right up after a while
+			FlxControl.clear();
+			
+			super.destroy();
+		}
+		
 		
 	}
 

@@ -56,6 +56,16 @@ package
 		[Embed(source = '../assets/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;
 		[Embed(source = '../assets/yo_africa.MOD', mimeType = 'application/octet-stream')] public static var yoAfricaMOD:Class;
 		
+		//	Platformer Game
+		[Embed(source = '../assets/platformer_tiles.png')] public static var platformerTilesPNG:Class;
+		[Embed(source = '../assets/platformer_backdrop.png')] public static var platformerBackdropPNG:Class;
+		[Embed(source = '../assets/platformer_map.csv', mimeType = 'application/octet-stream')] public static var platformerMapCSV:Class;
+		
+		//	Sci-Fi Game
+		[Embed(source = '../assets/humstar.png')] public static var humstarPNG:Class;
+		[Embed(source = '../assets/sci-fi-tiles.png')] public static var scifiTilesPNG:Class;
+		[Embed(source = '../assets/mapCSV_SciFi_Map1.csv', mimeType = 'application/octet-stream')] public static var scifiMap1CSV:Class;
+		
 		public function AssetsRegistry() 
 		{
 		}

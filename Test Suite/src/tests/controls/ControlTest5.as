@@ -4,11 +4,11 @@ package tests.controls
 	import org.flixel.plugin.photonstorm.*;
 	import tests.TestsHeader;
 
-	public class ControlTest1 extends FlxState
+	public class ControlTest5 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "Controls 1";
-		public static var description:String = "Basic cursor key movement";
+		public static var title:String = "Controls 5";
+		public static var description:String = "Acceleration and Deceleration Example";
 		private var instructions:String = "Move with the cursor / arrow keys";
 		private var header:TestsHeader;
 		
@@ -16,7 +16,7 @@ package tests.controls
 		private var player:FlxSprite;
 		private var scene:ControlTestScene1;
 		
-		public function ControlTest1() 
+		public function ControlTest5() 
 		{
 		}
 		
@@ -33,14 +33,16 @@ package tests.controls
 				FlxG.addPlugin(new FlxControl);
 			}
 
-			player = new FlxSprite(64, 64, AssetsRegistry.ufoPNG);
+			player = new FlxSprite(64, 64);
+			player.loadGraphic(AssetsRegistry.humstarPNG, true, false, 32, 32, true);
+			player.elasticity = 0.8;
+			player.addAnimation("boing", [0,1,2,3,4,5,6], 10, true);
+			player.play("boing");
 			
 			//	Control the player
-			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT);
-			FlxControl.player1.setStandardSpeed(100, false);
 			
-			//	setStandardSpeed is a special short-cut function, you can get more control (and the same result) by calling this instead:
-			//FlxControl.player1.setMovementSpeed(100, 100, 100, 100);
+			FlxControl.create(player, FlxControlHandler.MOVEMENT_ACCELERATES, FlxControlHandler.STOPPING_DECELERATES);
+			FlxControl.player1.setMovementSpeed(200, 200, 200, 200, 100, 100);
 			
 			//	A basic scene for our ufo to fly around
 			scene = new ControlTestScene1;
