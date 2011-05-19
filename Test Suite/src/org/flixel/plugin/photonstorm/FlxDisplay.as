@@ -20,6 +20,18 @@ package org.flixel.plugin.photonstorm
 		{
 		}
 		
+		public function pad():void
+		{
+			//	Pad the sprite out with empty pixels left/right/above/below it
+		}
+		
+		public function flip():void
+		{
+			//	mirror / reverse?
+			//	Flip image data horizontally / vertically without changing the angle
+		}
+		
+		
 		/**
 		 * Centers the given FlxSprite on the screen, either by the X axis, Y axis, or both
 		 * 

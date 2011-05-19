@@ -31,6 +31,7 @@ package org.flixel.plugin.photonstorm.FX
 		private var clsColor:uint;
 		
 		private var waveType:uint;
+		private var waveLength:uint;
 		private var waveHeight:uint;
 		private var waveFrequency:Number;
 		private var wavePixelChunk:uint;
@@ -54,21 +55,28 @@ package org.flixel.plugin.photonstorm.FX
 		{
 		}
 		
-		public function createFromFlxSprite(source:FlxSprite, type:uint, sincosHeight:int, frequency:Number = 2.0, pixelsPerChunk:uint = 1, updateOnLoop:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
+		public function createFromFlxSprite(source:FlxSprite, type:uint, sinHeight:int, sinLength:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, updateOnLoop:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
 		{
 			waveType = type;
-			waveHeight = sincosHeight;
+			//	works for freq 1 and 2 then breaks!
+			waveHeight = sinHeight / frequency;
+			//waveHeight = sinHeight;
 			waveFrequency = frequency;
 			wavePixelChunk = pixelsPerChunk;
 			
 			//	The FlxSprite into which the sine-wave effect is drawn
-			sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width, source.height + ((waveHeight * 2) * frequency), backgroundColor);
+			
+			sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width, source.height + ((waveHeight * 2)), backgroundColor);
+			
+			//sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width, source.height + ((waveHeight * 2) * waveFrequency), backgroundColor);
 			
 			//	The scratch bitmapData where we prepare the final sine-waved image
 			canvas = new BitmapData(sprite.width, sprite.height, true, backgroundColor);
 			
 			//	Our local copy of the sprite image data
 			image = source.pixels;
+			
+			waveLength = (image.width * sinLength) / pixelsPerChunk;
 			
 			updateFromSource = updateOnLoop;
 			
@@ -80,15 +88,17 @@ package org.flixel.plugin.photonstorm.FX
 			clsColor = backgroundColor;
 			clsRect = new Rectangle(0, 0, canvas.width, canvas.height);
 			
-			//	ODD frequency values cause the image to split half-way through the sine
+			//	ODD frequency values cause the image to split half-way through the sine, probably the result of the * 2 value below?
+			//	ODD numbers get half the sine, need * 2 below? or should we split that out to a SineLength value? (could be a multiple of the image width?)
 			
 			if (waveType == WAVETYPE_SINE)
 			{
-				waveData = FlxMath.sinCosGenerator(canvas.width * 2, waveHeight, 1.0, waveFrequency);
+				waveData = FlxMath.sinCosGenerator(waveLength, waveHeight, 1.0, waveFrequency);
+				//waveData = FlxMath.sinCosGenerator(image.width * waveLength, waveHeight, 1.0, waveFrequency);
 			}
 			else if (waveType == WAVETYPE_COSINE)
 			{
-				waveData = FlxMath.sinCosGenerator(canvas.width * 2, 1.0, waveHeight, waveFrequency);
+				//waveData = FlxMath.sinCosGenerator(canvas.width * 2, 1.0, waveHeight, waveFrequency);
 			}
 			else
 			{
@@ -160,9 +170,9 @@ package org.flixel.plugin.photonstorm.FX
 				
 				canvas.fillRect(clsRect, clsColor);
 				
-				//sineData = FlxMath.sinCosGenerator(image.width, f, 1.0, f / 20);
-				
 				var s:uint = 0;
+				
+				//	Could move these to constructor actually, save creating any objects at run-time
 				var copyRect:Rectangle = new Rectangle(0, 0, wavePixelChunk, image.height);
 				var copyPoint:Point = new Point(0, 0);
 				
@@ -179,7 +189,6 @@ package org.flixel.plugin.photonstorm.FX
 				}
 				
 				//	Cycle through the wave data - this is what causes the image to "undulate"
-				//	Need to test with non-equal image sizes!
 				var t:Number = waveData.shift();
 				waveData.push(t);
 				

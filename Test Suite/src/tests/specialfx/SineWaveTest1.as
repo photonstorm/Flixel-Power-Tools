@@ -51,18 +51,20 @@ package tests.specialfx
 			FlxScrollingText.addText(scroller, "OK IT IS TIME TO WRAP ..............................   ");
 			FlxScrollingText.addText(scroller, ":)                   ");
 			
-			var pic:FlxSprite = new FlxSprite(0, 32, AssetsRegistry.overdoseEyePNG);
+			var pic:FlxSprite = new FlxSprite(0, 0, AssetsRegistry.overdoseEyePNG);
+			//var pic:FlxSprite = new FlxSprite(0, 32, AssetsRegistry.ballsPNG);
 			FlxDisplay.screenCenter(pic);
 			
 			sinewave = FlxSpecialFX.sineWave();
 			
-			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32);
+			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32, 1, 2, 2);
+			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 16);
 			
 			//soPretty = sinewave.create(pic, 0, 32, pic.width, pic.height);
 			//soPretty = sinewave.create(pic, 0, 0, 320, 256);
 			//soPretty = sinewave.create(pic, 0, 0, 320, 256);
 			
-			//soPretty.y = 32;
+			soPretty.y = 32;
 			
 			sinewave.start(0);
 			
