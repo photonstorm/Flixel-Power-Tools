@@ -24,6 +24,7 @@ package org.flixel.plugin.photonstorm
 	 * 
 	 * TODO
 	 * ----
+	 * If moving diagonally compensate speed parameter (times x,y velocities by 0.707 or cos/sin(45))
 	 * Support for angles! Thrust like spaceship movement
 	 * Specify animation frames to play based on velocity
 	 * Hotkeys (bind a key to a user function - like for weapon select)

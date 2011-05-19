@@ -3,7 +3,7 @@
  * 
  * Version information and constants the other classes in this package can reference
  * 
- * @version 1.6
+ * @version 1.7
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -14,7 +14,7 @@ package org.flixel.plugin.photonstorm
 	{
 		public static const LIBRARY_NAME:String = "flixel power tools";
 		public static const LIBRARY_MAJOR_VERSION:int = 1;
-		public static const LIBRARY_MINOR_VERSION:int = 6;
+		public static const LIBRARY_MINOR_VERSION:int = 7;
 		
 		public function FlxPowerTools() 
 		{

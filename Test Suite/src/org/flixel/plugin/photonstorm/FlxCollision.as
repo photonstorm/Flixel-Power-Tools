@@ -2,11 +2,11 @@
  * FlxCollision
  * -- Part of the Flixel Power Tools set
  * 
- * Updated for the Flixel 2.5 Plugin system
- * 
+ * v1.4 Added pixelPerfectPointCheck()
  * v1.3 Update fixes bug where it wouldn't accurately perform collision on AutoBuffered rotated sprites, or sprites with offsets
+ * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - April 27th 2011
+ * @version 1.4 - May 19th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -93,6 +93,37 @@ package org.flixel.plugin.photonstorm
 			else
 			{
 				return true;
+			}
+		}
+		
+		/**
+		 * A Pixel Perfect Collision check between a given x/y coordinate and an FlxSprite<br>
+		 * 
+		 * @param	pointX			The x coordinate of the point given in local space (relative to the FlxSprite, not game world coordinates)
+		 * @param	pointY			The y coordinate of the point given in local space (relative to the FlxSprite, not game world coordinates)
+		 * @param	target			The FlxSprite to check the point against
+		 * @param	alphaTolerance	The alpha tolerance level above which pixels are counted as colliding. Default to 255 (must be fully transparent for collision)
+		 * 
+		 * @return	Boolean True if the x/y point collides with the FlxSprite, false if not
+		 */
+		public static function pixelPerfectPointCheck(pointX:uint, pointY:uint, target:FlxSprite, alphaTolerance:int = 255):Boolean
+		{
+			//	Intersect check
+			if (FlxMath.pointInCoordinates(pointX, pointY, target.x, target.y, target.width, target.height) == false)
+			{
+				return false;
+			}
+			
+			//	How deep is pointX/Y within the rect?
+			var test:BitmapData = target.framePixels;
+			
+			if (FlxColor.getAlpha(test.getPixel32(pointX - target.x, pointY - target.y)) >= alphaTolerance)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 		

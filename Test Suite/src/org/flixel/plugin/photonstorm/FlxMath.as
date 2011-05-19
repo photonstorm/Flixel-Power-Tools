@@ -2,15 +2,19 @@
  * FlxMath
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Added pointInCoordinates, pointInFlxRect and pointInRectangle
  * v1.4 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - April 23rd 2011
+ * @version 1.5 - May 19th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
 package org.flixel.plugin.photonstorm 
 {
+	import flash.geom.Rectangle;
+	import org.flixel.FlxRect;
+	
 	/**
 	 * Adds a set of fast Math functions and extends a few commonly used ones
 	 */
@@ -27,6 +31,67 @@ package org.flixel.plugin.photonstorm
 		
 		public function FlxMath() 
 		{
+		}
+		
+		/**
+		 * Returns true if the given x/y coordinate is within the given rectangular block
+		 * 
+		 * @param	pointX		The X value to test
+		 * @param	pointY		The Y value to test
+		 * @param	rectX		The X value of the region to test within
+		 * @param	rectY		The Y value of the region to test within
+		 * @param	rectWidth	The width of the region to test within
+		 * @param	rectHeight	The height of the region to test within
+		 * 
+		 * @return	true if pointX/pointY is within the region, otherwise false
+		 */
+		public static function pointInCoordinates(pointX:int, pointY:int, rectX:int, rectY:int, rectWidth:int, rectHeight:int):Boolean
+		{
+			if (pointX >= rectX && pointX <= (rectX + rectWidth))
+			{
+				if (pointY >= rectY && pointY <= (rectY + rectHeight))
+				{
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		/**
+		 * Returns true if the given x/y coordinate is within the given rectangular block
+		 * 
+		 * @param	pointX		The X value to test
+		 * @param	pointY		The Y value to test
+		 * @param	rect		The FlxRect to test within
+		 * @return	true if pointX/pointY is within the FlxRect, otherwise false
+		 */
+		public static function pointInFlxRect(pointX:int, pointY:int, rect:FlxRect):Boolean
+		{
+			if (pointX >= rect.x && pointX <= rect.right && pointY >= rect.y && pointY <= rect.bottom)
+			{
+				return true;
+			}
+			
+			return false;
+		}
+		
+		/**
+		 * Returns true if the given x/y coordinate is within the Rectangle
+		 * 
+		 * @param	pointX		The X value to test
+		 * @param	pointY		The Y value to test
+		 * @param	rect		The Rectangle to test within
+		 * @return	true if pointX/pointY is within the Rectangle, otherwise false
+		 */
+		public static function pointInRectangle(pointX:int, pointY:int, rect:Rectangle):Boolean
+		{
+			if (pointX >= rect.x && pointX <= rect.right && pointY >= rect.y && pointY <= rect.bottom)
+			{
+				return true;
+			}
+			
+			return false;
 		}
 		
 		/**

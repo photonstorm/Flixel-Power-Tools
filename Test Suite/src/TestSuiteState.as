@@ -22,6 +22,7 @@ package
 	import tests.color.*;
 	import tests.controls.*;
 	import tests.delay.*;
+	import tests.extendedsprite.*;
 	import tests.flod.*;
 	import tests.gradient.*;
 	import tests.healthbar.*;
@@ -36,17 +37,16 @@ package
 	{
 		[Embed(source = '../assets/menu_burd.png')] private var menuBurdPNG:Class;
 		
-		private var version:String = "- Test Suite v1.6 -";
+		private var version:String;
 		private var options:Array;
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		private var shortcut:Class = ControlTest5;
+		private var shortcut:Class = ExtendedSpriteTest1;
 		
 		public function TestSuiteState()
 		{
 			options = new Array;
-			
 			
 			options.push( { state: VelocityTest1, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: VelocityTest2, color: [0xff008000, 0xff00FF00] } );
@@ -138,6 +138,8 @@ package
 		
 		override public function create():void
 		{
+			version = "- Test Suite v" + FlxPowerTools.LIBRARY_MAJOR_VERSION + "." + FlxPowerTools.LIBRARY_MINOR_VERSION + " -";
+			
 			header = new TestsHeader(version, false);
 			add(header);
 			
