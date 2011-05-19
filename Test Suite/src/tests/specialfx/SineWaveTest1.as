@@ -11,7 +11,7 @@ package tests.specialfx
 		//	Common variables
 		public static var title:String = "SineWave 1";
 		public static var description:String = "SineWave FX Plugin";
-		private var instructions:String = "Click to start the drop down effect";
+		private var instructions:String = "The standard sine-wave effect";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
@@ -34,10 +34,12 @@ package tests.specialfx
 			{
 				FlxG.addPlugin(new FlxSpecialFX);
 			}
+			
 			if (FlxG.getPlugin(FlxScrollingText) == null)
 			{
 				FlxG.addPlugin(new FlxScrollingText);
 			}
+			
 			//	Create an FlxBitmapFont in the usual way
 			font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
 			
@@ -49,13 +51,18 @@ package tests.specialfx
 			FlxScrollingText.addText(scroller, "OK IT IS TIME TO WRAP ..............................   ");
 			FlxScrollingText.addText(scroller, ":)                   ");
 			
-			var pic:FlxSprite = new FlxSprite(0, 0, AssetsRegistry.ohCrikeyPNG);
+			var pic:FlxSprite = new FlxSprite(0, 32, AssetsRegistry.overdoseEyePNG);
+			FlxDisplay.screenCenter(pic);
 			
 			sinewave = FlxSpecialFX.sineWave();
 			
+			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32);
+			
 			//soPretty = sinewave.create(pic, 0, 32, pic.width, pic.height);
-			soPretty = sinewave.create(pic, 0, 0, 320, 256);
-			soPretty.y = 64;				
+			//soPretty = sinewave.create(pic, 0, 0, 320, 256);
+			//soPretty = sinewave.create(pic, 0, 0, 320, 256);
+			
+			//soPretty.y = 32;
 			
 			sinewave.start(0);
 			
@@ -69,9 +76,8 @@ package tests.specialfx
 		{
 			super.update();
 			
-			sinewave.image = scroller.pixels;
-			
-			header.instructions.text = sinewave.f.toString();
+			//sinewave.image = scroller.pixels;
+			//header.instructions.text = sinewave.f.toString();
 		}
 		
 		override public function destroy():void

@@ -24,22 +24,85 @@ package org.flixel.plugin.photonstorm.FX
 	 */
 	public class SineWaveFX extends BaseFX
 	{
-		public var image:BitmapData;
-		private var chunk:uint;
-		private var offset:uint;
+		private var image:BitmapData;
+		private var sourceRef:FlxSprite;
+		private var updateFromSource:Boolean;
+		private var clsRect:Rectangle;
+		private var clsColor:uint;
+		
+		private var waveType:uint;
+		private var waveHeight:uint;
+		private var waveFrequency:Number;
+		private var wavePixelChunk:uint;
+		private var waveData:Array;
+		
+		private var waveDataCounter:uint = 0;
+		
+		//	For staggered drawing updates
 		private var updateLimit:uint = 0;
 		private var lastUpdate:uint = 0;
-		private var complete:Boolean = false;
+		//private var complete:Boolean = false;
 		private var ready:Boolean = false;
-		public var f:Number = 1;
-		public var up:Boolean = true;
 		
-		private var sineData:Array;
+		//public var f:Number = 1;
+		//public var up:Boolean = true;
+		
+		public static const WAVETYPE_SINE:uint = 0;
+		public static const WAVETYPE_COSINE:uint = 1;
 		
 		public function SineWaveFX() 
 		{
 		}
 		
+		public function createFromFlxSprite(source:FlxSprite, type:uint, sincosHeight:int, frequency:Number = 2.0, pixelsPerChunk:uint = 1, updateOnLoop:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
+		{
+			waveType = type;
+			waveHeight = sincosHeight;
+			waveFrequency = frequency;
+			wavePixelChunk = pixelsPerChunk;
+			
+			//	The FlxSprite into which the sine-wave effect is drawn
+			sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width, source.height + ((waveHeight * 2) * frequency), backgroundColor);
+			
+			//	The scratch bitmapData where we prepare the final sine-waved image
+			canvas = new BitmapData(sprite.width, sprite.height, true, backgroundColor);
+			
+			//	Our local copy of the sprite image data
+			image = source.pixels;
+			
+			updateFromSource = updateOnLoop;
+			
+			if (updateOnLoop)
+			{
+				sourceRef = source;
+			}
+			
+			clsColor = backgroundColor;
+			clsRect = new Rectangle(0, 0, canvas.width, canvas.height);
+			
+			//	ODD frequency values cause the image to split half-way through the sine
+			
+			if (waveType == WAVETYPE_SINE)
+			{
+				waveData = FlxMath.sinCosGenerator(canvas.width * 2, waveHeight, 1.0, waveFrequency);
+			}
+			else if (waveType == WAVETYPE_COSINE)
+			{
+				waveData = FlxMath.sinCosGenerator(canvas.width * 2, 1.0, waveHeight, waveFrequency);
+			}
+			else
+			{
+				throw new Error("SineWaveFX: Invalid WAVETYPE");
+				
+				return null;
+			}
+			
+			active = true;
+			
+			return sprite;
+		}
+		
+		/*
 		public function create(source:FlxSprite, x:int, y:int, width:uint, height:uint, chunks:uint = 1, backgroundColor:uint = 0x0):FlxSprite
 		{
 			sprite = new FlxSprite(x, y).makeGraphic(width, height, backgroundColor);
@@ -63,6 +126,8 @@ package org.flixel.plugin.photonstorm.FX
 			return sprite;
 		}
 		
+		*/
+		
 		/**
 		 * Starts the Effect runnning
 		 * 
@@ -77,7 +142,7 @@ package org.flixel.plugin.photonstorm.FX
 		
 		public function draw():void
 		{
-			if (ready && complete == false)
+			if (ready)
 			{
 				if (lastUpdate != updateLimit)
 				{
@@ -86,45 +151,68 @@ package org.flixel.plugin.photonstorm.FX
 					return;
 				}
 				
-				canvas.fillRect(new Rectangle(0, 0, image.width, image.height), 0x0);
+				if (updateFromSource)
+				{
+					image = sourceRef.framePixels;
+				}
 				
 				canvas.lock();
-			
+				
+				canvas.fillRect(clsRect, clsColor);
+				
 				//sineData = FlxMath.sinCosGenerator(image.width, f, 1.0, f / 20);
 				
 				var s:uint = 0;
+				var copyRect:Rectangle = new Rectangle(0, 0, wavePixelChunk, image.height);
+				var copyPoint:Point = new Point(0, 0);
 				
-				for (var x:int = 0; x < image.width; x++)
+				for (var x:int = 0; x < image.width; x += wavePixelChunk)
 				{
-					canvas.copyPixels(image, new Rectangle(x, 0, 1, image.height), new Point(x, sineData[s]));
+					copyPoint.x = x;
+					copyPoint.y = waveHeight + waveData[s];
+					
+					canvas.copyPixels(image, copyRect, copyPoint);
+					
+					copyRect.x += wavePixelChunk;
+					
 					s++;
 				}
 				
-				var t:Number = sineData.shift();
-				sineData.push(t);
+				//	Cycle through the wave data - this is what causes the image to "undulate"
+				//	Need to test with non-equal image sizes!
+				var t:Number = waveData.shift();
+				waveData.push(t);
 				
-				if (up)
+				waveDataCounter++;
+				
+				if (waveDataCounter == waveData.length)
 				{
-					f += 1;
-					
-					if (f > 64)
-					{
-						up = false;
-					}
-				}
-				else
-				{
-					f -= 1;
-					
-					if (f <= 0)
-					{
-						up = true;
-					}
+					waveDataCounter = 0;
+					trace("wave data loop");
 				}
 				
-				lastUpdate = 0;
+				//if (up)
+				//{
+					//f += 1;
+					//
+					//if (f > 64)
+					//{
+						//up = false;
+					//}
+				//}
+				//else
+				//{
+					//f -= 1;
+					//
+					//if (f <= 0)
+					//{
+						//up = true;
+					//}
+				//}
 				
 				canvas.unlock();
+				
+				lastUpdate = 0;
 				
 				sprite.pixels = canvas;
 				sprite.dirty = true;
