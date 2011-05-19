@@ -35,8 +35,9 @@ package org.flixel.plugin.photonstorm.FX
 		private var clsColor:uint;
 		
 		private var waveType:uint;
+		private var waveVertical:Boolean;
 		private var waveLength:uint;
-		private var waveHeight:uint;
+		private var waveSize:uint;
 		private var waveFrequency:Number;
 		private var wavePixelChunk:uint;
 		private var waveData:Array;
@@ -52,8 +53,10 @@ package org.flixel.plugin.photonstorm.FX
 		private var copyRect:Rectangle;
 		private var copyPoint:Point;
 		
-		public static const WAVETYPE_SINE:uint = 0;
-		public static const WAVETYPE_COSINE:uint = 1;
+		public static const WAVETYPE_VERTICAL_SINE:uint = 0;
+		public static const WAVETYPE_VERTICAL_COSINE:uint = 1;
+		public static const WAVETYPE_HORIZONTAL_SINE:uint = 2;
+		public static const WAVETYPE_HORIZONTAL_COSINE:uint = 3;
 		
 		public function SineWaveFX() 
 		{
@@ -65,18 +68,18 @@ package org.flixel.plugin.photonstorm.FX
 		 * For really cool effects you can SineWave an FlxSprite that is constantly updating (either through animation or an FX chain).
 		 * 
 		 * @param	source				The FlxSprite providing the image data for this effect. The resulting FlxSprite takes on the source width, height, x/y positions and scrollfactor.
-		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
-		 * @param	height				The height in pixels of the sine wave
-		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	type				WAVETYPE_VERTICAL_SINE, WAVETYPE_VERTICAL_COSINE, WAVETYPE_HORIZONTAL_SINE or WAVETYPE_HORIZONTAL_COSINE
+		 * @param	size				The size in pixels of the sine wave. Either the height of the wave or the width (for vertical or horizontal waves)
+		 * @param	length				The length of the wave in pixels. You should usually set this to the width or height of the source image, or a multiple of it.
 		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
-		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but much faster effect. Make sure source.width divides by this value evenly.
-		 * @param	updateFrame			When this FX is created it takes a copy of the FlxSprite image data and uses it. If this is set to true it grabs a new copy of the image data every frame.
-		 * @param	backgroundColor		The background color in 0xAARRGGBB format to draw behind the effect (default 0x0 = transparent)
+		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but faster effect. Make sure source.width/height divides by this value evenly.
+		 * @param	updateFrame			When this effect is created it takes a copy of the source image data and stores it. Set this to true to grab a new copy of the image data every frame.
+		 * @param	backgroundColor		The background color (0xAARRGGBB format) to draw behind the effect (default 0x0 = transparent)
 		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
 		 */
-		public function createFromFlxSprite(source:FlxSprite, type:uint, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, updateFrame:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
+		public function createFromFlxSprite(source:FlxSprite, type:uint, size:uint, length:uint, frequency:uint = 2, pixelsPerChunk:uint = 1, updateFrame:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
 		{
-			var result:FlxSprite = create(source.pixels, source.x, source.y, type, height, length, frequency, pixelsPerChunk, backgroundColor);
+			var result:FlxSprite = create(source.pixels, source.x, source.y, type, size, length, frequency, pixelsPerChunk, backgroundColor);
 			
 			updateFromSource = updateFrame;
 			
@@ -93,19 +96,19 @@ package org.flixel.plugin.photonstorm.FX
 		 * If you need to update the source data at run-time then use createFromFlxSprite
 		 * 
 		 * @param	source				The Class providing the bitmapData for this effect, usually from an Embedded bitmap.
-		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
 		 * @param	x					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
 		 * @param	y					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
-		 * @param	height				The height in pixels of the sine wave
-		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	type				WAVETYPE_VERTICAL_SINE, WAVETYPE_VERTICAL_COSINE, WAVETYPE_HORIZONTAL_SINE or WAVETYPE_HORIZONTAL_COSINE
+		 * @param	size				The size in pixels of the sine wave. Either the height of the wave or the width (for vertical or horizontal waves)
+		 * @param	length				The length of the wave in pixels. You should usually set this to the width or height of the source image, or a multiple of it.
 		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
-		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but much faster effect. Make sure source.width divides by this value evenly.
+		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but faster effect. Make sure source.width/height divides by this value evenly.
 		 * @param	backgroundColor		The background color in 0xAARRGGBB format to draw behind the effect (default 0x0 = transparent)
 		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
 		 */
-		public function createFromClass(source:Class, type:uint, x:int, y:int, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
+		public function createFromClass(source:Class, x:int, y:int, type:uint, size:uint, length:uint, frequency:uint = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
 		{
-			var result:FlxSprite = create((new source).bitmapData, x, y, type, height, length, frequency, pixelsPerChunk, backgroundColor);
+			var result:FlxSprite = create((new source).bitmapData, x, y, type, size, length, frequency, pixelsPerChunk, backgroundColor);
 			
 			updateFromSource = false;
 			
@@ -117,60 +120,52 @@ package org.flixel.plugin.photonstorm.FX
 		 * If you need to update the source data at run-time then use createFromFlxSprite
 		 * 
 		 * @param	source				The bitmapData image to use for this effect.
-		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
 		 * @param	x					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
 		 * @param	y					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
-		 * @param	height				The height in pixels of the sine wave
-		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	type				WAVETYPE_VERTICAL_SINE, WAVETYPE_VERTICAL_COSINE, WAVETYPE_HORIZONTAL_SINE or WAVETYPE_HORIZONTAL_COSINE
+		 * @param	size				The size in pixels of the sine wave. Either the height of the wave or the width (for vertical or horizontal waves)
+		 * @param	length				The length of the wave in pixels. You should usually set this to the width or height of the source image, or a multiple of it.
 		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
-		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but much faster effect. Make sure source.width divides by this value evenly.
+		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but faster effect. Make sure source.width/height divides by this value evenly.
 		 * @param	backgroundColor		The background color in 0xAARRGGBB format to draw behind the effect (default 0x0 = transparent)
 		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
 		 */
-		public function createFromBitmapData(source:BitmapData, type:uint, x:int, y:int, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
+		public function createFromBitmapData(source:BitmapData, x:int, y:int, type:uint, size:uint, length:uint, frequency:uint = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
 		{
-			var result:FlxSprite = create(source, x, y, type, height, length, frequency, pixelsPerChunk, backgroundColor);
+			var result:FlxSprite = create(source, x, y, type, size, length, frequency, pixelsPerChunk, backgroundColor);
 			
 			updateFromSource = false;
 			
 			return result;
 		}
 		
-		//	Internal function fed from createFromFlxSprite / createFromClass / createFromBitmapData
-		private function create(source:BitmapData, x:int, y:int, type:uint, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
+		/**
+		 * Internal function fed from createFromFlxSprite / createFromClass / createFromBitmapData
+		 * 
+		 * @param	source				The bitmapData image to use for this effect.
+		 * @param	x					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
+		 * @param	y					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
+		 * @param	type				WAVETYPE_VERTICAL_SINE, WAVETYPE_VERTICAL_COSINE, WAVETYPE_HORIZONTAL_SINE or WAVETYPE_HORIZONTAL_COSINE
+		 * @param	size				The size in pixels of the sine wave. Either the height of the wave or the width (for vertical or horizontal waves)
+		 * @param	length				The length of the wave in pixels. You should usually set this to the width or height of the source image, or a multiple of it.
+		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
+		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but faster effect. Make sure source.width/height divides by this value evenly.
+		 * @param	backgroundColor		The background color in 0xAARRGGBB format to draw behind the effect (default 0x0 = transparent)
+		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
+		 */
+		private function create(source:BitmapData, x:int, y:int, type:uint, size:uint, length:uint, frequency:uint = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
 		{
-			if (type != WAVETYPE_SINE && type != WAVETYPE_COSINE)
-			{
-				throw new Error("SineWaveFX: Invalid WAVETYPE");
-				return null;
-			}
-			
-			if (pixelsPerChunk >= source.width)
-			{
-				throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width");
-				return null;
-			}
-			
-			if (FlxMath.isOdd(frequency))
-			{
-				throw new Error("SineWaveFX: frequency must be an even number");
-				return null;
-			}
-			
-			waveType = type;
-			waveHeight = height / 2;
-			waveLength = (source.width * length) / pixelsPerChunk;
-			waveFrequency = frequency;
-			wavePixelChunk = pixelsPerChunk;
-			waveData = FlxMath.sinCosGenerator(waveLength, waveHeight, waveHeight, waveFrequency);
-			
-			if (waveType == WAVETYPE_COSINE)
-			{
-				waveData = FlxMath.getCosTable();
-			}
+			updateWaveData(type, size, length, frequency, pixelsPerChunk);
 			
 			//	The FlxSprite into which the sine-wave effect is drawn
-			sprite = new FlxSprite(x, y).makeGraphic(source.width, source.height + ((waveHeight * 3)), backgroundColor);
+			if (waveVertical)
+			{
+				sprite = new FlxSprite(x, y).makeGraphic(source.width, source.height + (waveSize * 3), backgroundColor);
+			}
+			else
+			{
+				sprite = new FlxSprite(x, y).makeGraphic(source.width + (waveSize * 3), source.height, backgroundColor);
+			}
 			
 			//	The scratch bitmapData where we prepare the final sine-waved image
 			canvas = new BitmapData(sprite.width, sprite.height, true, backgroundColor);
@@ -192,40 +187,51 @@ package org.flixel.plugin.photonstorm.FX
 		 * Update the SineWave data without modifying the source image being used.<br>
 		 * This call is fast enough that you can modify it in real-time.
 		 * 
-		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
-		 * @param	height				The height in pixels of the sine wave
-		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	type				WAVETYPE_VERTICAL_SINE, WAVETYPE_VERTICAL_COSINE, WAVETYPE_HORIZONTAL_SINE or WAVETYPE_HORIZONTAL_COSINE
+		 * @param	size				The size in pixels of the sine wave. Either the height of the wave or the width (for vertical or horizontal waves)
+		 * @param	length				The length of the wave in pixels. You should usually set this to the width or height of the source image, or a multiple of it.
 		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
-		 * @param	pixelsPerChunk		How many pixels to use per step. 1 = the smoothest but most intensive. Make sure source.width divides by this value evenly.
+		 * @param	pixelsPerChunk		How many pixels to use per step. Higher numbers make a more chunky but faster effect. Make sure source.width/height divides by this value evenly.
 		 */
-		public function updateWaveData(type:uint, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1):void
+		public function updateWaveData(type:uint, size:uint, length:uint, frequency:uint = 2, pixelsPerChunk:uint = 1):void
 		{
-			if (type != WAVETYPE_SINE && type != WAVETYPE_COSINE)
+			if (type > WAVETYPE_HORIZONTAL_COSINE)
 			{
 				throw new Error("SineWaveFX: Invalid WAVETYPE");
-				return null;
 			}
 			
-			if (pixelsPerChunk >= canvas.width)
+			if (type == WAVETYPE_VERTICAL_SINE || type == WAVETYPE_VERTICAL_COSINE)
 			{
-				throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width");
-				return null;
+				waveVertical = true;
+				
+				if (pixelsPerChunk >= source.width)
+				{
+					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width with WAVETYPE_VERTICAL");
+				}
+			}
+			else
+			{
+				waveVertical = false;
+				
+				if (pixelsPerChunk >= source.height)
+				{
+					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.height with WAVETYPE_HORIZONTAL");
+				}
 			}
 			
 			if (FlxMath.isOdd(frequency))
 			{
 				throw new Error("SineWaveFX: frequency must be an even number");
-				return null;
 			}
 			
 			waveType = type;
-			waveHeight = height / 2;
-			waveLength = (canvas.width * length) / pixelsPerChunk;
+			waveSize = uint(size * 0.5);
+			waveLength = uint(length / pixelsPerChunk);
 			waveFrequency = frequency;
 			wavePixelChunk = pixelsPerChunk;
-			waveData = FlxMath.sinCosGenerator(waveLength, waveHeight, waveHeight, waveFrequency);
+			waveData = FlxMath.sinCosGenerator(waveLength, waveSize, waveSize, waveFrequency);
 			
-			if (waveType == WAVETYPE_COSINE)
+			if (waveType == WAVETYPE_VERTICAL_COSINE || waveType == WAVETYPE_HORIZONTAL_COSINE)
 			{
 				waveData = FlxMath.getCosTable();
 			}
@@ -243,7 +249,7 @@ package org.flixel.plugin.photonstorm.FX
 		}
 		
 		/**
-		 * Starts the Effect runnning
+		 * Starts the effect runnning.
 		 * 
 		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 updates per second. A value of 1 means it will do 15 updates per second, etc.
 		 */
@@ -254,6 +260,17 @@ package org.flixel.plugin.photonstorm.FX
 			ready = true;
 		}
 		
+		/**
+		 * Pauses the effect from running.
+		 */
+		public function stop():void
+		{
+			ready = false;
+		}
+		
+		/**
+		 * Called by the FlxSpecialFX plugin. Should not be called directly.
+		 */
 		public function draw():void
 		{
 			if (ready)
@@ -277,17 +294,35 @@ package org.flixel.plugin.photonstorm.FX
 				var s:uint = 0;
 				
 				copyRect.x = 0;
+				copyRect.y = 0;
 				
-				for (var x:int = 0; x < image.width; x += wavePixelChunk)
+				if (waveVertical)
 				{
-					copyPoint.x = x;
-					copyPoint.y = waveHeight + (waveHeight/2) + waveData[s];
-					
-					canvas.copyPixels(image, copyRect, copyPoint);
-					
-					copyRect.x += wavePixelChunk;
-					
-					s++;
+					for (var x:int = 0; x < image.width; x += wavePixelChunk)
+					{
+						copyPoint.x = x;
+						copyPoint.y = waveSize + (waveSize / 2) + waveData[s];
+						
+						canvas.copyPixels(image, copyRect, copyPoint);
+						
+						copyRect.x += wavePixelChunk;
+						
+						s++;
+					}
+				}
+				else
+				{
+					for (var y:int = 0; y < image.height; y += wavePixelChunk)
+					{
+						copyPoint.x = waveSize + (waveSize / 2) + waveData[s];
+						copyPoint.y = y;
+						
+						canvas.copyPixels(image, copyRect, copyPoint);
+						
+						copyRect.y += wavePixelChunk;
+						
+						s++;
+					}
 				}
 				
 				//	Cycle through the wave data - this is what causes the image to "undulate"
