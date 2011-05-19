@@ -452,6 +452,30 @@ package org.flixel.plugin.photonstorm
             return (Math.random() > 0.5) ? 1 : -1;
         }
 		
+		public static function isOdd(n:Number):Boolean
+		{
+			if (n & 1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		public static function isEven(n:Number):Boolean
+		{
+			if (n & 1)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		
 		/**
 		 * Converts a Radian value into a Degree
 		 * <p>

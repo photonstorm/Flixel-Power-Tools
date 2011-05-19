@@ -38,15 +38,12 @@ package org.flixel.plugin.photonstorm.FX
 		private var waveData:Array;
 		
 		private var waveDataCounter:uint = 0;
+		private var waveLoopCallback:Function;
 		
 		//	For staggered drawing updates
 		private var updateLimit:uint = 0;
 		private var lastUpdate:uint = 0;
-		//private var complete:Boolean = false;
 		private var ready:Boolean = false;
-		
-		//public var f:Number = 1;
-		//public var up:Boolean = true;
 		
 		public static const WAVETYPE_SINE:uint = 0;
 		public static const WAVETYPE_COSINE:uint = 1;
@@ -55,93 +52,144 @@ package org.flixel.plugin.photonstorm.FX
 		{
 		}
 		
-		public function createFromFlxSprite(source:FlxSprite, type:uint, sinHeight:int, sinLength:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, updateOnLoop:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
+		/**
+		 * Creates a new SineWaveFX Effect from the given FlxSprite. The original sprite remains unmodified.<br>
+		 * The resulting FlxSprite will take on the same width / height and x/y coordinates of the source FlxSprite.<br>
+		 * For really cool effects you can SineWave an FlxSprite that is constantly updating (either through animation or an FX chain).
+		 * 
+		 * @param	source				The FlxSprite providing the image data for this effect. The resulting FlxSprite takes on the source width, height, x/y positions and scrollfactor.
+		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
+		 * @param	height				The height in pixels of the sine wave
+		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
+		 * @param	pixelsPerChunk		How many pixels to use per step. 1 = the smoothest but most intensive. Make sure source.width divides by this value evenly.
+		 * @param	updateFrame			When this FX is created it takes a copy of the FlxSprite image data and uses it. If this is set to true it grabs a new copy of the image data every frame.
+		 * @param	backgroundColor		The background color to draw behind the effect (default 0x0 = transparent)
+		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
+		 */
+		public function createFromFlxSprite(source:FlxSprite, type:uint, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, updateFrame:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
 		{
-			waveType = type;
-			//	works for freq 1 and 2 then breaks!
-			waveHeight = sinHeight / frequency;
-			//waveHeight = sinHeight;
-			waveFrequency = frequency;
-			wavePixelChunk = pixelsPerChunk;
+			var result:FlxSprite = create(source.pixels, source.x, source.y, type, height, length, frequency, pixelsPerChunk, backgroundColor);
 			
-			//	The FlxSprite into which the sine-wave effect is drawn
-			
-			sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width, source.height + ((waveHeight * 2)), backgroundColor);
-			
-			//sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width, source.height + ((waveHeight * 2) * waveFrequency), backgroundColor);
-			
-			//	The scratch bitmapData where we prepare the final sine-waved image
-			canvas = new BitmapData(sprite.width, sprite.height, true, backgroundColor);
-			
-			//	Our local copy of the sprite image data
-			image = source.pixels;
-			
-			waveLength = (image.width * sinLength) / pixelsPerChunk;
-			
-			updateFromSource = updateOnLoop;
+			updateFromSource = updateFrame;
 			
 			if (updateOnLoop)
 			{
 				sourceRef = source;
 			}
 			
+			return result;
+		}
+		
+		/**
+		 * Creates a new SineWaveFX Effect from the given Class (which must contain a Bitmap).<br>
+		 * If you need to update the source data at run-time then use createFromFlxSprite
+		 * 
+		 * @param	source				The Class providing the bitmapData for this effect, usually from an Embedded bitmap.
+		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
+		 * @param	x					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
+		 * @param	y					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
+		 * @param	height				The height in pixels of the sine wave
+		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
+		 * @param	pixelsPerChunk		How many pixels to use per step. 1 = the smoothest but most intensive. Make sure source.width divides by this value evenly.
+		 * @param	backgroundColor		The background color to draw behind the effect (default 0x0 = transparent)
+		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
+		 */
+		public function createFromClass(source:Class, type:uint, x:int, y:int, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
+		{
+			var result:FlxSprite = create((new source).bitmapData, x, y, type, height, length, frequency, pixelsPerChunk, backgroundColor);
+			
+			updateFromSource = false;
+			
+			return result;
+		}
+		
+		/**
+		 * Creates a new SineWaveFX Effect from the given bitmapData.<br>
+		 * If you need to update the source data at run-time then use createFromFlxSprite
+		 * 
+		 * @param	source				The bitmapData image to use for this effect.
+		 * @param	type				WAVETYPE_SINE (0) or WAVETYPE_COSINE (1)
+		 * @param	x					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
+		 * @param	y					The x coordinate (in game world pixels) that the resulting FlxSprite will be created at.
+		 * @param	height				The height in pixels of the sine wave
+		 * @param	length				The length of the wave. This is based on the source width. A value of 1 means source.width. A value of 2 means source.width * 2, etc.
+		 * @param	frequency			The frequency of the peaks in the wave. MUST BE AN EVEN NUMBER! 2, 4, 6, 8, etc.
+		 * @param	pixelsPerChunk		How many pixels to use per step. 1 = the smoothest but most intensive. Make sure source.width divides by this value evenly.
+		 * @param	backgroundColor		The background color to draw behind the effect (default 0x0 = transparent)
+		 * @return	An FlxSprite with the effect running through it, which should be started with a call to SineWaveFX.start()
+		 */
+		public function createFromBitmapData(source:BitmapData, type:uint, x:int, y:int, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
+		{
+			var result:FlxSprite = create(source, x, y, type, height, length, frequency, pixelsPerChunk, backgroundColor);
+			
+			updateFromSource = false;
+			
+			return result;
+		}
+		
+		private function create(source:BitmapData, x:int, y:int, type:uint, height:int, length:uint = 1, frequency:Number = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
+		{
+			if (type != WAVETYPE_SINE && type != WAVETYPE_COSINE)
+			{
+				throw new Error("SineWaveFX: Invalid WAVETYPE");
+				return null;
+			}
+			
+			if (height >= source.height)
+			{
+				throw new Error("SineWaveFX: height cannot be >= source.height");
+				return null;
+			}
+			
+			if (pixelsPerChunk >= source.width)
+			{
+				throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width");
+				return null;
+			}
+			
+			waveType = type;
+			
+			if (frequency > 1)
+			{
+				waveHeight = height / 2;
+			}
+			
+			waveLength = (source.width * length) / pixelsPerChunk;
+			waveFrequency = frequency;
+			wavePixelChunk = pixelsPerChunk;
+			
+			//	The FlxSprite into which the sine-wave effect is drawn
+			sprite = new FlxSprite(x, y).makeGraphic(source.width, source.height + ((waveHeight * 2)), backgroundColor);
+			
+			//	The scratch bitmapData where we prepare the final sine-waved image
+			canvas = new BitmapData(sprite.width, sprite.height, true, backgroundColor);
+			
+			//	Our local copy of the sprite image data
+			image = source.clone();
+			
 			clsColor = backgroundColor;
 			clsRect = new Rectangle(0, 0, canvas.width, canvas.height);
-			
-			//	ODD frequency values cause the image to split half-way through the sine, probably the result of the * 2 value below?
-			//	ODD numbers get half the sine, need * 2 below? or should we split that out to a SineLength value? (could be a multiple of the image width?)
 			
 			if (waveType == WAVETYPE_SINE)
 			{
 				waveData = FlxMath.sinCosGenerator(waveLength, waveHeight, 1.0, waveFrequency);
-				//waveData = FlxMath.sinCosGenerator(image.width * waveLength, waveHeight, 1.0, waveFrequency);
 			}
 			else if (waveType == WAVETYPE_COSINE)
 			{
-				//waveData = FlxMath.sinCosGenerator(canvas.width * 2, 1.0, waveHeight, waveFrequency);
-			}
-			else
-			{
-				throw new Error("SineWaveFX: Invalid WAVETYPE");
-				
-				return null;
+				waveData = FlxMath.sinCosGenerator(waveLength, 1.0, waveHeight, waveFrequency);
 			}
 			
 			active = true;
 			
 			return sprite;
 		}
-		
-		/*
-		public function create(source:FlxSprite, x:int, y:int, width:uint, height:uint, chunks:uint = 1, backgroundColor:uint = 0x0):FlxSprite
-		{
-			sprite = new FlxSprite(x, y).makeGraphic(width, height, backgroundColor);
-			
-			canvas = new BitmapData(width, height, true, backgroundColor);
-			
-			if (source.pixels.width != width || source.pixels.height != height)
-			{
-				image = new BitmapData(width, height, true, backgroundColor);
-				image.copyPixels(source.pixels, new Rectangle(0, 0, source.pixels.width, source.pixels.height), new Point(0, height - source.pixels.height));
-			}
-			else
-			{
-				image = source.pixels;
-			}
-			
-			active = true;
-				
-			sineData = FlxMath.sinCosGenerator(image.width * 2, 32, 1.0, 6.0);
-			
-			return sprite;
-		}
-		
-		*/
 		
 		/**
 		 * Starts the Effect runnning
 		 * 
-		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 drops per second. A value of 1 means it will do 15 drops per second, etc.
+		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 updates per second. A value of 1 means it will do 15 updates per second, etc.
 		 */
 		public function start(delay:uint = 0):void
 		{
@@ -197,27 +245,12 @@ package org.flixel.plugin.photonstorm.FX
 				if (waveDataCounter == waveData.length)
 				{
 					waveDataCounter = 0;
-					trace("wave data loop");
+					
+					if (waveLoopCallback is Function)
+					{
+						waveLoopCallback.call();
+					}
 				}
-				
-				//if (up)
-				//{
-					//f += 1;
-					//
-					//if (f > 64)
-					//{
-						//up = false;
-					//}
-				//}
-				//else
-				//{
-					//f -= 1;
-					//
-					//if (f <= 0)
-					//{
-						//up = true;
-					//}
-				//}
 				
 				canvas.unlock();
 				

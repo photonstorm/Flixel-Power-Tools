@@ -57,7 +57,8 @@ package tests.specialfx
 			
 			sinewave = FlxSpecialFX.sineWave();
 			
-			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32, 1, 2, 2);
+			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32, 1, 3);
+			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32, 1, 2, 2);
 			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 16);
 			
 			//soPretty = sinewave.create(pic, 0, 32, pic.width, pic.height);
