@@ -145,12 +145,6 @@ package org.flixel.plugin.photonstorm.FX
 				return null;
 			}
 			
-			if (height >= source.height)
-			{
-				throw new Error("SineWaveFX: height cannot be >= source.height");
-				return null;
-			}
-			
 			if (pixelsPerChunk >= source.width)
 			{
 				throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width");
@@ -169,6 +163,11 @@ package org.flixel.plugin.photonstorm.FX
 			waveFrequency = frequency;
 			wavePixelChunk = pixelsPerChunk;
 			waveData = FlxMath.sinCosGenerator(waveLength, waveHeight, waveHeight, waveFrequency);
+			
+			if (waveType == WAVETYPE_COSINE)
+			{
+				waveData = FlxMath.getCosTable();
+			}
 			
 			//	The FlxSprite into which the sine-wave effect is drawn
 			sprite = new FlxSprite(x, y).makeGraphic(source.width, source.height + ((waveHeight * 3)), backgroundColor);
@@ -207,12 +206,6 @@ package org.flixel.plugin.photonstorm.FX
 				return null;
 			}
 			
-			if (height >= canvas.height)
-			{
-				throw new Error("SineWaveFX: height cannot be >= source.height");
-				return null;
-			}
-			
 			if (pixelsPerChunk >= canvas.width)
 			{
 				throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width");
@@ -231,6 +224,11 @@ package org.flixel.plugin.photonstorm.FX
 			waveFrequency = frequency;
 			wavePixelChunk = pixelsPerChunk;
 			waveData = FlxMath.sinCosGenerator(waveLength, waveHeight, waveHeight, waveFrequency);
+			
+			if (waveType == WAVETYPE_COSINE)
+			{
+				waveData = FlxMath.getCosTable();
+			}
 		}
 		
 		/**
