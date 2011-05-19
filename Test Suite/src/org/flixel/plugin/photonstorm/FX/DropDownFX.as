@@ -11,7 +11,6 @@
 
 package org.flixel.plugin.photonstorm.FX 
 {
-	import com.greensock.motionPaths.RectanglePath2D;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;

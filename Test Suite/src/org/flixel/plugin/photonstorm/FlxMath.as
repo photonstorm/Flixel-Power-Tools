@@ -139,14 +139,15 @@ package org.flixel.plugin.photonstorm
 		 * The parameters allow you to specify the length, amplitude and frequency of the wave. Once you have called this function
 		 * you should get the results via getSinTable() and getCosTable(). This generator is fast enough to be used in real-time.
 		 * </p>
-		 * @param length The length of the wave
-		 * @param sinAmplitude The amplitude to apply to the sine table (default 1.0) if you need values between say -+ 125 then give 125 as the value
-		 * @param cosAmplitude The amplitude to apply to the cosine table (default 1.0) if you need values between say -+ 125 then give 125 as the value
-		 * @param frequency The frequency of the sine and cosine table data
+		 * @param length 		The length of the wave
+		 * @param sinAmplitude 	The amplitude to apply to the sine table (default 1.0) if you need values between say -+ 125 then give 125 as the value
+		 * @param cosAmplitude 	The amplitude to apply to the cosine table (default 1.0) if you need values between say -+ 125 then give 125 as the value
+		 * @param frequency 	The frequency of the sine and cosine table data
+		 * @return	Returns the sine table
 		 * @see getSinTable
 		 * @see getCosTable
 		 */
-		public static function sinCosGenerator(length:uint, sinAmplitude:Number = 1.0, cosAmplitude:Number = 1.0, frequency:Number = 1.0):void
+		public static function sinCosGenerator(length:uint, sinAmplitude:Number = 1.0, cosAmplitude:Number = 1.0, frequency:Number = 1.0):Array
 		{
 			var sin:Number = sinAmplitude;
 			var cos:Number = cosAmplitude;
@@ -163,6 +164,8 @@ package org.flixel.plugin.photonstorm
 				cosTable[c] = cos;
 				sinTable[c] = sin;
 			}
+			
+			return sinTable;
 		}
 		
 		/**

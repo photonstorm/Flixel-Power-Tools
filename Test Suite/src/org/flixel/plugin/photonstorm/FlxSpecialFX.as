@@ -2,6 +2,7 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.1 Added SineWaveFX
  * v1.0 First release of the new FlxSpecialFX system
  * 
  * @version 1.0 - May 9th 2011
@@ -16,6 +17,7 @@ package org.flixel.plugin.photonstorm
 	import org.flixel.plugin.photonstorm.FX.DropDownFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
 	import org.flixel.plugin.photonstorm.FX.RainbowLineFX;
+	import org.flixel.plugin.photonstorm.FX.SineWaveFX;
 	
 	/**
 	 * FlxSpecialFX is a single point of access to all of the FX Plugins available in the Flixel Power Tools
@@ -66,6 +68,20 @@ package org.flixel.plugin.photonstorm
 		public static function dropDown():DropDownFX
 		{
 			var temp:DropDownFX = new DropDownFX;
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
+		
+		/**
+		 * Creates a Sine Wave Down Effect
+		 * 
+		 * @return	SineWaveFX
+		 */
+		public static function sineWave():SineWaveFX
+		{
+			var temp:SineWaveFX = new SineWaveFX;
 			
 			members[temp] = temp;
 			
