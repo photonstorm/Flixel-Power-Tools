@@ -155,6 +155,25 @@ package org.flixel.plugin.photonstorm.FX
 		 */
 		private function create(source:BitmapData, x:int, y:int, type:uint, size:uint, length:uint, frequency:uint = 2, pixelsPerChunk:uint = 1, backgroundColor:uint = 0x0):FlxSprite
 		{
+			if (type == WAVETYPE_VERTICAL_SINE || type == WAVETYPE_VERTICAL_COSINE)
+			{
+				waveVertical = true;
+				
+				if (pixelsPerChunk >= source.width)
+				{
+					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width with WAVETYPE_VERTICAL");
+				}
+			}
+			else
+			{
+				waveVertical = false;
+				
+				if (pixelsPerChunk >= source.height)
+				{
+					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.height with WAVETYPE_HORIZONTAL");
+				}
+			}
+			
 			updateWaveData(type, size, length, frequency, pixelsPerChunk);
 			
 			//	The FlxSprite into which the sine-wave effect is drawn
@@ -175,12 +194,28 @@ package org.flixel.plugin.photonstorm.FX
 			
 			clsColor = backgroundColor;
 			clsRect = new Rectangle(0, 0, canvas.width, canvas.height);
-			copyRect = new Rectangle(0, 0, wavePixelChunk, image.height);
+			
 			copyPoint = new Point(0, 0);
+			
+			if (waveVertical)
+			{
+				copyRect = new Rectangle(0, 0, wavePixelChunk, image.height);
+			}
+			else
+			{
+				copyRect = new Rectangle(0, 0, image.width, wavePixelChunk);
+			}
 			
 			active = true;
 			
 			return sprite;
+		}
+		
+		public function toString():String
+		{
+			var output:Array = [ "Type: " + waveType, "Size: " + waveSize, "Length: " + waveLength, "Frequency: " + waveFrequency, "Chunks: " + wavePixelChunk, "clsRect: " + clsRect ];
+			
+			return output.join(",");
 		}
 		
 		/**
@@ -198,25 +233,6 @@ package org.flixel.plugin.photonstorm.FX
 			if (type > WAVETYPE_HORIZONTAL_COSINE)
 			{
 				throw new Error("SineWaveFX: Invalid WAVETYPE");
-			}
-			
-			if (type == WAVETYPE_VERTICAL_SINE || type == WAVETYPE_VERTICAL_COSINE)
-			{
-				waveVertical = true;
-				
-				if (pixelsPerChunk >= source.width)
-				{
-					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width with WAVETYPE_VERTICAL");
-				}
-			}
-			else
-			{
-				waveVertical = false;
-				
-				if (pixelsPerChunk >= source.height)
-				{
-					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.height with WAVETYPE_HORIZONTAL");
-				}
 			}
 			
 			if (FlxMath.isOdd(frequency))
@@ -315,6 +331,7 @@ package org.flixel.plugin.photonstorm.FX
 					for (var y:int = 0; y < image.height; y += wavePixelChunk)
 					{
 						copyPoint.x = waveSize + (waveSize / 2) + waveData[s];
+						//copyPoint.x = waveData[s];
 						copyPoint.y = y;
 						
 						canvas.copyPixels(image, copyRect, copyPoint);

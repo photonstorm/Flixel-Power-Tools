@@ -63,21 +63,21 @@ package tests.specialfx
 			sinewave = FlxSpecialFX.sineWave();
 			sinewave2 = FlxSpecialFX.sineWave();
 			
-			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_SINE, 32, 1, 2, 2);
-			soPretty.x = 64;
+			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, pic.width, 2, 1, false, 0xffFF75BA);
+			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 64, pic.height * 2, 2, 1, false);
 			
-			//soPretty2 = sinewave2.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_COSINE, 32, 1, 2, 2);
-			//soPretty2.x = 160 + 16;
-			//soPretty = sinewave.createFromFlxSprite(scroller, SineWaveFX.WAVETYPE_SINE, 32, 1, 2, 2, true);
+			trace(sinewave);
+			
+			soPretty.x = 64;
 			
 			soPretty.y = 32;
 			//soPretty2.y = 32;
 			
 			sinewave.start();
-			sinewave2.start();
+			//sinewave2.start();
 			
 			add(soPretty);
-			add(soPretty2);
+			//add(soPretty2);
 			
 			//	Header overlay
 			add(header.overlay);
