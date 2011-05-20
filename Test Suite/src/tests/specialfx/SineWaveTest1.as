@@ -43,7 +43,10 @@ package tests.specialfx
 			}
 			
 			//	Create an FlxBitmapFont in the usual way
-			font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
+			//font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
+			//font = new FlxBitmapFont(AssetsRegistry.steelFontPNG, 32, 32, FlxBitmapFont.TEXT_SET10 + "0123456789.!?\"", 10);
+			//font = new FlxBitmapFont(AssetsRegistry.metalFontPNG, 46, 48, FlxBitmapFont.TEXT_SET10 + "0123456789?!().,", 6, 2, 2);
+			font = new FlxBitmapFont(AssetsRegistry.knightHawksPurpleFontPNG, 31, 25, FlxBitmapFont.TEXT_SET6, 10, 1, 1);
 			
 			//	Then create a scrolling text using it - this is just an FlxSprite, you can move it around, collide with it, all the things you can do with a sprite
 			scroller = FlxScrollingText.add(font, new Rectangle(14, 40, 292, 32), 4, 0, "WELCOME!   ");
@@ -58,20 +61,33 @@ package tests.specialfx
 			//var pic:FlxSprite = new FlxSprite(0, 32, AssetsRegistry.ballsPNG);
 			FlxDisplay.screenCenter(pic);
 			
-			FlxScrollingText.stopScrolling(scroller);
+			//FlxScrollingText.stopScrolling(scroller);
 			
 			sinewave = FlxSpecialFX.sineWave();
 			sinewave2 = FlxSpecialFX.sineWave();
 			
-			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, pic.width, 2, 1, false, 0xffFF75BA);
-			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 64, pic.height * 2, 2, 1, false);
+			//	Rock on :)
 			
-			trace(sinewave);
 			
-			soPretty.x = 64;
 			
+			//soPretty = sinewave.createFromFlxSprite(scroller, SineWaveFX.WAVETYPE_VERTICAL_SINE, 8, scroller.width, 2, 1, true);
+			//soPretty2 = sinewave2.createFromFlxSprite(soPretty, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 8, scroller.height * 2, 2, 1, true);
+			
+			
+			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, pic.width, 2, 1, false);
+			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 32, pic.width, 2, 1, false);
+			
+			
+			
+			//soPretty2 = sinewave2.createFromFlxSprite(soPretty, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 64, pic.height * 2, 2, 1, true);
+			
+			//soPretty2.scale = new FlxPoint(2, 2);
+			
+			//trace(sinewave);
+			
+			//soPretty.x = 64;
 			soPretty.y = 32;
-			//soPretty2.y = 32;
+			//soPretty2.y = 64;
 			
 			sinewave.start();
 			//sinewave2.start();

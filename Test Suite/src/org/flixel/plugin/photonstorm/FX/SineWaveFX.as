@@ -4,7 +4,7 @@
  * 
  * v1.0 First release
  * 
- * @version 1.0 - May 19th 2011
+ * @version 1.0 - May 20th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -20,11 +20,7 @@ package org.flixel.plugin.photonstorm.FX
 	import org.flixel.plugin.photonstorm.*;
 	
 	/**
-	 * Creates a sine-wave effect through an FlxSprite
-	 * 
-	 * TODO:
-	 * 
-	 * Allow the sine-wave to run horizontally rather than just vertically
+	 * Creates a sine-wave effect through an FlxSprite which can be applied vertically or horizontally
 	 */
 	public class SineWaveFX extends BaseFX
 	{
@@ -83,7 +79,7 @@ package org.flixel.plugin.photonstorm.FX
 			
 			updateFromSource = updateFrame;
 			
-			if (updateFrame)
+			if (updateFromSource)
 			{
 				sourceRef = source;
 			}
@@ -164,7 +160,7 @@ package org.flixel.plugin.photonstorm.FX
 					throw new Error("SineWaveFX: pixelsPerChunk cannot be >= source.width with WAVETYPE_VERTICAL");
 				}
 			}
-			else
+			else if (type == WAVETYPE_HORIZONTAL_SINE || type == WAVETYPE_HORIZONTAL_COSINE)
 			{
 				waveVertical = false;
 				
@@ -177,6 +173,7 @@ package org.flixel.plugin.photonstorm.FX
 			updateWaveData(type, size, length, frequency, pixelsPerChunk);
 			
 			//	The FlxSprite into which the sine-wave effect is drawn
+			
 			if (waveVertical)
 			{
 				sprite = new FlxSprite(x, y).makeGraphic(source.width, source.height + (waveSize * 3), backgroundColor);
@@ -209,13 +206,6 @@ package org.flixel.plugin.photonstorm.FX
 			active = true;
 			
 			return sprite;
-		}
-		
-		public function toString():String
-		{
-			var output:Array = [ "Type: " + waveType, "Size: " + waveSize, "Length: " + waveLength, "Frequency: " + waveFrequency, "Chunks: " + wavePixelChunk, "clsRect: " + clsRect ];
-			
-			return output.join(",");
 		}
 		
 		/**
@@ -277,7 +267,8 @@ package org.flixel.plugin.photonstorm.FX
 		}
 		
 		/**
-		 * Pauses the effect from running.
+		 * Pauses the effect from running. The draw function is still called each loop, but the sine wave and pixel data is stopped from updating.<br>
+		 * To disable the SpecialFX Plugin from calling SineWaveFX set the "active" parameter to false.
 		 */
 		public function stop():void
 		{
@@ -304,7 +295,6 @@ package org.flixel.plugin.photonstorm.FX
 				}
 				
 				canvas.lock();
-				
 				canvas.fillRect(clsRect, clsColor);
 				
 				var s:uint = 0;
@@ -331,7 +321,6 @@ package org.flixel.plugin.photonstorm.FX
 					for (var y:int = 0; y < image.height; y += wavePixelChunk)
 					{
 						copyPoint.x = waveSize + (waveSize / 2) + waveData[s];
-						//copyPoint.x = waveData[s];
 						copyPoint.y = y;
 						
 						canvas.copyPixels(image, copyRect, copyPoint);
@@ -365,6 +354,13 @@ package org.flixel.plugin.photonstorm.FX
 				sprite.pixels = canvas;
 				sprite.dirty = true;
 			}
+		}
+		
+		public function toString():String
+		{
+			var output:Array = [ "Type: " + waveType, "Size: " + waveSize, "Length: " + waveLength, "Frequency: " + waveFrequency, "Chunks: " + wavePixelChunk, "clsRect: " + clsRect ];
+			
+			return output.join(",");
 		}
 		
 	}
