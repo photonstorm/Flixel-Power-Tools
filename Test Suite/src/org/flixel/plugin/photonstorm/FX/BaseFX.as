@@ -1,5 +1,7 @@
 package org.flixel.plugin.photonstorm.FX 
 {
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import org.flixel.FlxSprite;
 	import flash.display.BitmapData;
 	
@@ -18,17 +20,54 @@ package org.flixel.plugin.photonstorm.FX
 		/**
 		 * A scratch bitmapData used to build-up the effect before passing to sprite.pixels
 		 */
-		public var canvas:BitmapData;
+		internal var canvas:BitmapData;
 		
 		/**
 		 * TODO A snapshot of the sprite background before the effect is applied
 		 */
-		public var back:BitmapData;
+		internal var back:BitmapData;
+		
+		internal var image:BitmapData;
+		internal var sourceRef:FlxSprite;
+		internal var updateFromSource:Boolean;
+		internal var clsRect:Rectangle;
+		internal var clsColor:uint;
+		
+		//	For staggered drawing updates
+		internal var updateLimit:uint = 0;
+		internal var lastUpdate:uint = 0;
+		internal var ready:Boolean = false;
+		
+		internal var copyRect:Rectangle;
+		internal var copyPoint:Point;
+		
 		
 		public function BaseFX() 
 		{
 			active = false;
 		}
+		
+		/**
+		 * Starts the effect runnning
+		 * 
+		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 drops per second. A value of 1 means it will do 15 drops per second, etc.
+		 */
+		public function start(delay:uint = 0):void
+		{
+			updateLimit = delay;
+			lastUpdate = 0;
+			ready = true;
+		}
+		
+		/**
+		 * Pauses the effect from running. The draw function is still called each loop, but the sine wave and pixel data is stopped from updating.<br>
+		 * To disable the SpecialFX Plugin from calling SineWaveFX set the "active" parameter to false.
+		 */
+		public function stop():void
+		{
+			ready = false;
+		}
+		
 		
 	}
 

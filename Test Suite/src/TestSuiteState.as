@@ -35,7 +35,8 @@ package
 	
 	public class TestSuiteState extends FlxState
 	{
-		[Embed(source = '../assets/menu_burd.png')] private var menuBurdPNG:Class;
+		[Embed(source = '../assets/suite/menu_burd.png')] private var menuBurdPNG:Class;
+		[Embed(source = '../assets/suite/mouse.png')] public static var mouseCursorPNG:Class;
 		
 		private var version:String;
 		private var options:Array;
@@ -43,7 +44,8 @@ package
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
 		//private var shortcut:Class = ExtendedSpriteTest1;
-		private var shortcut:Class = SineWaveTest1;
+		//private var shortcut:Class = SineWaveTest4;
+		private var shortcut:Class = GlitchTest1;
 		
 		public function TestSuiteState()
 		{
@@ -143,6 +145,8 @@ package
 			
 			header = new TestsHeader(version, false);
 			add(header);
+			
+			FlxG.mouse.load(mouseCursorPNG, 2);
 			
 			//	Our camera tracks this invisible sprite
 			dolly = new FlxSprite(Registry.menuOffsetX, 0);

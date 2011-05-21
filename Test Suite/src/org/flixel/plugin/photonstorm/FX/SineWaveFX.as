@@ -4,7 +4,7 @@
  * 
  * v1.0 First release
  * 
- * @version 1.0 - May 20th 2011
+ * @version 1.0 - May 21st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -12,7 +12,6 @@
 package org.flixel.plugin.photonstorm.FX 
 {
 	import flash.display.BitmapData;
-	import flash.display.ColorCorrectionSupport;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -24,12 +23,6 @@ package org.flixel.plugin.photonstorm.FX
 	 */
 	public class SineWaveFX extends BaseFX
 	{
-		private var image:BitmapData;
-		private var sourceRef:FlxSprite;
-		private var updateFromSource:Boolean;
-		private var clsRect:Rectangle;
-		private var clsColor:uint;
-		
 		private var waveType:uint;
 		private var waveVertical:Boolean;
 		private var waveLength:uint;
@@ -37,17 +30,8 @@ package org.flixel.plugin.photonstorm.FX
 		private var waveFrequency:Number;
 		private var wavePixelChunk:uint;
 		private var waveData:Array;
-		
 		private var waveDataCounter:uint = 0;
 		private var waveLoopCallback:Function;
-		
-		//	For staggered drawing updates
-		private var updateLimit:uint = 0;
-		private var lastUpdate:uint = 0;
-		private var ready:Boolean = false;
-		
-		private var copyRect:Rectangle;
-		private var copyPoint:Point;
 		
 		public static const WAVETYPE_VERTICAL_SINE:uint = 0;
 		public static const WAVETYPE_VERTICAL_COSINE:uint = 1;
@@ -255,27 +239,6 @@ package org.flixel.plugin.photonstorm.FX
 		}
 		
 		/**
-		 * Starts the effect runnning.
-		 * 
-		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 updates per second. A value of 1 means it will do 15 updates per second, etc.
-		 */
-		public function start(delay:uint = 0):void
-		{
-			updateLimit = delay;
-			lastUpdate = 0;
-			ready = true;
-		}
-		
-		/**
-		 * Pauses the effect from running. The draw function is still called each loop, but the sine wave and pixel data is stopped from updating.<br>
-		 * To disable the SpecialFX Plugin from calling SineWaveFX set the "active" parameter to false.
-		 */
-		public function stop():void
-		{
-			ready = false;
-		}
-		
-		/**
 		 * Called by the FlxSpecialFX plugin. Should not be called directly.
 		 */
 		public function draw():void
@@ -289,7 +252,7 @@ package org.flixel.plugin.photonstorm.FX
 					return;
 				}
 				
-				if (updateFromSource)
+				if (updateFromSource && sourceRef.exists)
 				{
 					image = sourceRef.framePixels;
 				}

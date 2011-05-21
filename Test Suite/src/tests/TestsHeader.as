@@ -5,9 +5,9 @@ package tests
 	
 	public class TestsHeader extends FlxGroup
 	{
-		[Embed(source = '../../assets/hud.png')] private var hudPNG:Class;
-		[Embed(source = '../../assets/back_button_up.png')] private var backUpPNG:Class;
-		[Embed(source = '../../assets/back_button_down.png')] private var backDownPNG:Class;
+		[Embed(source = '../../assets/suite/hud.png')] private var hudPNG:Class;
+		[Embed(source = '../../assets/suite/back_button_up.png')] private var backUpPNG:Class;
+		[Embed(source = '../../assets/suite/back_button_down.png')] private var backDownPNG:Class;
 		
 		public var overlay:FlxGroup;
 		private var background:FlxSprite;

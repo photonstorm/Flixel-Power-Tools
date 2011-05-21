@@ -15,6 +15,7 @@ package org.flixel.plugin.photonstorm
 	import flash.utils.Dictionary;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FX.DropDownFX;
+	import org.flixel.plugin.photonstorm.FX.GlitchFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
 	import org.flixel.plugin.photonstorm.FX.RainbowLineFX;
 	import org.flixel.plugin.photonstorm.FX.SineWaveFX;
@@ -82,6 +83,20 @@ package org.flixel.plugin.photonstorm
 		public static function sineWave():SineWaveFX
 		{
 			var temp:SineWaveFX = new SineWaveFX;
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
+		
+		/**
+		 * Creates a Glitch Effect
+		 * 
+		 * @return	GlitchFX
+		 */
+		public static function glitch():GlitchFX
+		{
+			var temp:GlitchFX = new GlitchFX;
 			
 			members[temp] = temp;
 			

@@ -16,11 +16,7 @@ package tests.specialfx
 		
 		//	Test specific variables
 		private var sinewave:SineWaveFX;
-		private var sinewave2:SineWaveFX;
-		private var soPretty:FlxSprite;
-		private var soPretty2:FlxSprite;
-		private var font:FlxBitmapFont;
-		private var scroller:FlxSprite;
+		private var wibbleWobble:FlxSprite;
 		
 		public function SineWaveTest1() 
 		{
@@ -37,63 +33,31 @@ package tests.specialfx
 				FlxG.addPlugin(new FlxSpecialFX);
 			}
 			
-			if (FlxG.getPlugin(FlxScrollingText) == null)
-			{
-				FlxG.addPlugin(new FlxScrollingText);
-			}
-			
-			//	Create an FlxBitmapFont in the usual way
-			//font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
-			//font = new FlxBitmapFont(AssetsRegistry.steelFontPNG, 32, 32, FlxBitmapFont.TEXT_SET10 + "0123456789.!?\"", 10);
-			//font = new FlxBitmapFont(AssetsRegistry.metalFontPNG, 46, 48, FlxBitmapFont.TEXT_SET10 + "0123456789?!().,", 6, 2, 2);
-			font = new FlxBitmapFont(AssetsRegistry.knightHawksPurpleFontPNG, 31, 25, FlxBitmapFont.TEXT_SET6, 10, 1, 1);
-			
-			//	Then create a scrolling text using it - this is just an FlxSprite, you can move it around, collide with it, all the things you can do with a sprite
-			scroller = FlxScrollingText.add(font, new Rectangle(14, 40, 292, 32), 4, 0, "WELCOME!   ");
-			
-			FlxScrollingText.addText(scroller, "THIS IS AN EXAMPLE OF SCROLLING BITMAP FONTS IN FLIXEL ");
-			FlxScrollingText.addText(scroller, "NICE AND EASY TO SET-UP, NICE AND EASY TO USE :)       ");
-			FlxScrollingText.addText(scroller, "OK IT IS TIME TO WRAP ..............................   ");
-			FlxScrollingText.addText(scroller, ":)                   ");
-			
-			var pic:FlxSprite = new FlxSprite(0, 0, AssetsRegistry.overdoseEyePNG);
-			//var pic:FlxSprite = new FlxSprite(0, 0, AssetsRegistry.ohCrikeyPNG);
-			//var pic:FlxSprite = new FlxSprite(0, 32, AssetsRegistry.ballsPNG);
-			FlxDisplay.screenCenter(pic);
-			
-			//FlxScrollingText.stopScrolling(scroller);
-			
+			//	Get a sinewave effect from FlxSpecialFX
 			sinewave = FlxSpecialFX.sineWave();
-			sinewave2 = FlxSpecialFX.sineWave();
 			
-			//	Rock on :)
+			//	There are 3 ways to create a sine wave effect, first is from an existing FlxSprite such as this one ...
+			var pic:FlxSprite = new FlxSprite(96, 32, AssetsRegistry.overdoseEyePNG);
 			
+			//	You then call createFromFlxSprite() and pass the sprite in. A copy of the FlxSprite image data is taken, so it's safe to delete the FlxSprite if you need
+			//	without messing up the sinewave (the only restriction being for dynamically updating effects - see SineWaveTest2)
 			
+			//	You have 2 different wave types available (sine and cosine) which give subtly different patterns, 
+			//	and 2 directions - vertical and horizontal. Play with them to see the difference!
 			
-			//soPretty = sinewave.createFromFlxSprite(scroller, SineWaveFX.WAVETYPE_VERTICAL_SINE, 8, scroller.width, 2, 1, true);
-			//soPretty2 = sinewave2.createFromFlxSprite(soPretty, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 8, scroller.height * 2, 2, 1, true);
+			//	The value 32 is the height of the wave in the effect at its maximum peak.
+			//	The final parameter here is the width of the wave. This should be at least the width of the source image, but can be much longer if you want a slow undulating effect
+			wibbleWobble = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, pic.width);
 			
+			//	You don't have to create from an FlxSprite, the following 2 lines both give the same end result but create from a Class or BitmapData
 			
-			soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, pic.width, 2, 1, false);
-			//soPretty = sinewave.createFromFlxSprite(pic, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 32, pic.width, 2, 1, false);
+			//wibbleWobble = sinewave.createFromClass(AssetsRegistry.overdoseEyePNG, 32, 32, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, 64, 2, 1);
+			//wibbleWobble = sinewave.createFromBitmapData((new AssetsRegistry.overdoseEyePNG).bitmapData, 32, 32, SineWaveFX.WAVETYPE_VERTICAL_SINE, 32, 64, 2, 1);
 			
-			
-			
-			//soPretty2 = sinewave2.createFromFlxSprite(soPretty, SineWaveFX.WAVETYPE_HORIZONTAL_SINE, 64, pic.height * 2, 2, 1, true);
-			
-			//soPretty2.scale = new FlxPoint(2, 2);
-			
-			//trace(sinewave);
-			
-			//soPretty.x = 64;
-			soPretty.y = 32;
-			//soPretty2.y = 64;
-			
+			//	Forget this and you'll have a very static effect :)
 			sinewave.start();
-			//sinewave2.start();
 			
-			add(soPretty);
-			//add(soPretty2);
+			add(wibbleWobble);
 			
 			//	Header overlay
 			add(header.overlay);

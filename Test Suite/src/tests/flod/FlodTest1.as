@@ -55,7 +55,7 @@ package tests.flod
 			else
 			{
 				playback.text = "Stop Music";
-				FlxFlod.playMod(AssetsRegistry.battlechips3MOD);
+				FlxFlod.playMod(AssetsRegistry.alpineCutMOD);
 				pause.text = "Pause";
 				pause.visible = true;
 			}

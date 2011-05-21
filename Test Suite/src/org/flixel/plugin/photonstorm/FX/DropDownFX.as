@@ -23,13 +23,9 @@ package org.flixel.plugin.photonstorm.FX
 	 */
 	public class DropDownFX extends BaseFX
 	{
-		private var image:BitmapData;
+		private var complete:Boolean;
 		private var chunk:uint;
 		private var offset:uint;
-		private var updateLimit:uint = 0;
-		private var lastUpdate:uint = 0;
-		private var complete:Boolean = false;
-		private var ready:Boolean = false;
 		private var dropDirection:uint;
 		private var dropRect:Rectangle;
 		private var dropPoint:Point;
@@ -80,18 +76,6 @@ package org.flixel.plugin.photonstorm.FX
 			active = true;
 			
 			return sprite;
-		}
-		
-		/**
-		 * Starts the Effect runnning
-		 * 
-		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 drops per second. A value of 1 means it will do 15 drops per second, etc.
-		 */
-		public function start(delay:uint = 0):void
-		{
-			updateLimit = delay;
-			lastUpdate = 0;
-			ready = true;
 		}
 		
 		public function draw():void
