@@ -20,6 +20,12 @@ package org.flixel.plugin.photonstorm.FX
 	
 	/**
 	 * Creates a static / glitch / monitor-corruption style effect on an FlxSprite
+	 * 
+	 * TODO:
+	 * 
+	 * Add reduction from really high glitch value down to zero, will smooth the image into place and look cool :)
+	 * Add option to glitch vertically?
+	 * 
 	 */
 	public class GlitchFX extends BaseFX
 	{
