@@ -21,6 +21,13 @@ package org.flixel.plugin.photonstorm
 	/**
 	 * FlxHealthBar is a quick and easy way to create a graphical health bar which can
 	 * be used as part of your UI/HUD, or positioned next to a sprite.
+	 * 
+	 * TODO
+	 * 
+	 * Support vertical bars
+	 * Hook to any variable, not just health (HealthBar can then extend FlxBar)
+	 * Callbacks for full / empty (just trigger once)
+	 * 
 	 */
 	public class FlxHealthBar extends FlxSprite
 	{
