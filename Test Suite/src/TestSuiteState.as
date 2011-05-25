@@ -30,7 +30,6 @@ package
 	import tests.scrollingtext.*;
 	import tests.scrollzone.*;
 	import tests.specialfx.*;
-	import tests.starfield.*;
 	import tests.velocity.*;
 	
 	public class TestSuiteState extends FlxState
@@ -119,17 +118,22 @@ package
 			
 			options.push( { newColumn: true } );
 			
-			options.push( { state: StarFieldTest1, color: [0xff2FA41E, 0xff266599] } );
-			options.push( { state: StarFieldTest2, color: [0xff2FA41E, 0xff266599] } );
-			
-			options.push( { spacer: true } );
-			
 			options.push( { state: RainbowLineTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: PlasmaTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: DropDownTest2, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: StarFieldTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: StarFieldTest2, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: GlitchTest1, color: [0xff2E2E2E, 0xff606060] } );
 			
 			options.push( { newColumn: true } );
+			
+			options.push( { state: SineWaveTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: SineWaveTest2, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: SineWaveTest3, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: SineWaveTest4, color: [0xff2E2E2E, 0xff606060] } );
+			
+			options.push( { spacer: true } );
 			
 			options.push( { state: ControlTest1, color: [0xff8000FF, 0xffBE7DFF] } );
 			options.push( { state: ControlTest2, color: [0xff8000FF, 0xffBE7DFF] } );

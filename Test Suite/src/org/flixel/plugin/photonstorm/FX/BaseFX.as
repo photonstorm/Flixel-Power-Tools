@@ -31,6 +31,7 @@ package org.flixel.plugin.photonstorm.FX
 		internal var sourceRef:FlxSprite;
 		internal var updateFromSource:Boolean;
 		internal var clsRect:Rectangle;
+		internal var clsPoint:Point;
 		internal var clsColor:uint;
 		
 		//	For staggered drawing updates
@@ -68,6 +69,32 @@ package org.flixel.plugin.photonstorm.FX
 			ready = false;
 		}
 		
+		public function destroy():void
+		{
+			if (sprite)
+			{
+				sprite.kill();
+			}
+			
+			if (canvas)
+			{
+				canvas.dispose();
+			}
+			
+			if (back)
+			{
+				back.dispose();
+			}
+			
+			if (image)
+			{
+				image.dispose();
+			}
+			
+			sourceRef = null;
+			
+			active = false;
+		}
 		
 	}
 

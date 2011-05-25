@@ -5,6 +5,7 @@ package tests.scrollingtext
 	
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 
 	import com.greensock.TweenMax;
 	import com.greensock.easing.Sine;
@@ -20,7 +21,8 @@ package tests.scrollingtext
 		
 		//	Test specific variables
 		private var canvas:FlxSprite;
-		private var stars:FlxStarField;
+		private var stars:StarfieldFX;
+		private var starfield:FlxSprite;
 		
 		private var font:FlxBitmapFont;
 		private var scroller:FlxSprite;
@@ -42,6 +44,11 @@ package tests.scrollingtext
 				FlxG.addPlugin(new FlxScrollingText);
 			}
 			
+			if (FlxG.getPlugin(FlxSpecialFX) == null)
+			{
+				FlxG.addPlugin(new FlxSpecialFX);
+			}
+			
 			//	Create an FlxBitmapFont in the usual way
 			font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
 			
@@ -61,11 +68,12 @@ package tests.scrollingtext
 			canvas.drawLine(0, 0, canvas.width, 0, 0xffffffff);
 			canvas.drawLine(0, canvas.height - 1, canvas.width, canvas.height - 1, 0xffffffff);
 			
-			stars = new FlxStarField(14, 33, 292, 174, 90);
+			stars = FlxSpecialFX.starfield();
+			starfield = stars.create(14, 33, 292, 174, 90);
 			stars.setBackgroundColor(0x00);
 			
 			add(canvas);
-			add(stars);
+			add(starfield);
 			add(scroller);
 			
 			//	Header overlay
@@ -93,6 +101,7 @@ package tests.scrollingtext
 		{
 			//	Important! Clear out the plugin otherwise it'll crash when changing state
 			FlxScrollingText.clear();
+			FlxSpecialFX.clear();
 			
 			super.destroy();
 		}

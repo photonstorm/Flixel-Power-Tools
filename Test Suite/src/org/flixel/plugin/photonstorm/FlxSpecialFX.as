@@ -2,10 +2,11 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.2 Added GlitchFX and StarfieldFX
  * v1.1 Added SineWaveFX
  * v1.0 First release of the new FlxSpecialFX system
  * 
- * @version 1.0 - May 9th 2011
+ * @version 1.2 - May 25th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -19,6 +20,7 @@ package org.flixel.plugin.photonstorm
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
 	import org.flixel.plugin.photonstorm.FX.RainbowLineFX;
 	import org.flixel.plugin.photonstorm.FX.SineWaveFX;
+	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 	
 	/**
 	 * FlxSpecialFX is a single point of access to all of the FX Plugins available in the Flixel Power Tools
@@ -97,6 +99,20 @@ package org.flixel.plugin.photonstorm
 		public static function glitch():GlitchFX
 		{
 			var temp:GlitchFX = new GlitchFX;
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
+		
+		/**
+		 * Creates a 2D or 3D Starfield Effect
+		 * 
+		 * @return	StarfieldFX
+		 */
+		public static function starfield():StarfieldFX
+		{
+			var temp:StarfieldFX = new StarfieldFX;
 			
 			members[temp] = temp;
 			
@@ -190,9 +206,7 @@ package org.flixel.plugin.photonstorm
 		{
 			if (members[source])
 			{
-				members[source].active = false;
-				members[source].sprite.kill();
-				members[source].canvas.dispose;
+				members[source].destroy();
 				
 				delete members[source];
 				

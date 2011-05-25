@@ -196,8 +196,10 @@ package org.flixel.system.input
 			//update the x, y, screenX, and screenY variables based on the default camera
 			var camera:FlxCamera = FlxG.camera;
 			getScreenPosition(camera,_point);
-			screenX = (_point.x - camera.x)/camera.zoom;
-			screenY = (_point.y - camera.y)/camera.zoom;
+			//screenX = (_point.x - camera.x)/camera.zoom;
+			//screenY = (_point.y - camera.y)/camera.zoom;
+			screenX = (_point.x - camera.x);
+			screenY = (_point.y - camera.y);
 			x = screenX + camera.scroll.x;
 			y = screenY + camera.scroll.y;
 		}

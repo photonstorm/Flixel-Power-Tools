@@ -3,6 +3,7 @@ package tests.scrollzone
 	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 	import tests.TestsHeader;
 
 	public class ScrollZoneTest4 extends FlxState
@@ -15,7 +16,8 @@ package tests.scrollzone
 		
 		//	Test specific variables
 		private var pic:FlxSprite;
-		private var stars:FlxStarField;
+		private var stars:StarfieldFX;
+		private var starfield:FlxSprite;
 		
 		public function ScrollZoneTest4() 
 		{
@@ -32,6 +34,11 @@ package tests.scrollzone
 			if (FlxG.getPlugin(FlxScrollZone) == null)
 			{
 				FlxG.addPlugin(new FlxScrollZone);
+			}
+			
+			if (FlxG.getPlugin(FlxSpecialFX) == null)
+			{
+				FlxG.addPlugin(new FlxSpecialFX);
 			}
 			
 			//	Create a sprite from a 320x200 PNG
@@ -69,10 +76,11 @@ package tests.scrollzone
 				}
 			}
 			
-			stars = new FlxStarField(0, pic.y + 76, 320, 47, 50, 1);
+			stars = FlxSpecialFX.starfield();
+			starfield = stars.create(0, pic.y + 76, 320, 47, 50, 1);
 			stars.setStarSpeed(1, 0);
 			
-			add(stars);
+			add(starfield);
 			add(pic);
 			
 			//	Header overlay
@@ -88,6 +96,7 @@ package tests.scrollzone
 		{
 			//	Important! Clear out the scrolling image from the plugin, otherwise resources will get messed right up after a while
 			FlxScrollZone.clear();
+			FlxSpecialFX.clear();
 			
 			super.destroy();
 		}

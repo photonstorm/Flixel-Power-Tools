@@ -3,6 +3,7 @@ package tests.screengrab
 	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 	import tests.TestsHeader;
 
 	public class ScreenGrabTest1 extends FlxState
@@ -16,7 +17,8 @@ package tests.screengrab
 		//	Test specific variables
 		private var canvas:FlxSprite;
 		private var pic:FlxSprite;
-		private var stars:FlxStarField;
+		private var stars:StarfieldFX;
+		private var starfield:FlxSprite;
 		private var balls:FlxEmitter;
 		
 		public function ScreenGrabTest1() 
@@ -36,6 +38,11 @@ package tests.screengrab
 				FlxG.addPlugin(new FlxScreenGrab);
 			}
 			
+			if (FlxG.getPlugin(FlxSpecialFX) == null)
+			{
+				FlxG.addPlugin(new FlxSpecialFX);
+			}
+			
 			//	Define our hotkey (string value taken from FlxG.keys) the parameters simply say "save it right away" and "hide the mouse first"
 			FlxScreenGrab.defineHotKey("F1", true, true);
 			
@@ -44,7 +51,8 @@ package tests.screengrab
 			canvas.drawLine(0, 0, canvas.width, 0, 0xffffffff);
 			canvas.drawLine(0, canvas.height - 1, canvas.width, canvas.height - 1, 0xffffffff);
 			
-			stars = new FlxStarField(0, canvas.y + 1, 320, canvas.height - 50, 90);
+			stars = FlxSpecialFX.starfield();
+			starfield = stars.create(0, canvas.y + 1, 320, canvas.height - 50, 90);
 			stars.setBackgroundColor(0x00);
 			
 			pic = new FlxSprite(0, 0, AssetsRegistry.spazPNG);
@@ -59,7 +67,7 @@ package tests.screengrab
 			
 			add(canvas);
 			add(pic);
-			add(stars);
+			add(starfield);
 			add(balls);
 			
 			//	Header overlay
@@ -73,6 +81,7 @@ package tests.screengrab
 		
 		override public function destroy():void
 		{
+			FlxSpecialFX.clear();
 			super.destroy();
 		}
 		

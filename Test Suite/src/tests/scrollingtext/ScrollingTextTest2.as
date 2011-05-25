@@ -4,6 +4,7 @@ package tests.scrollingtext
 	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 	import tests.TestsHeader;
 
 	public class ScrollingTextTest2 extends FlxState
@@ -16,7 +17,8 @@ package tests.scrollingtext
 		
 		//	Test specific variables
 		private var canvas:FlxSprite;
-		private var stars:FlxStarField;
+		private var stars:StarfieldFX;
+		private var starfield:FlxSprite;
 		
 		private var font:FlxBitmapFont;
 	
@@ -47,6 +49,11 @@ package tests.scrollingtext
 			if (FlxG.getPlugin(FlxScrollingText) == null)
 			{
 				FlxG.addPlugin(new FlxScrollingText);
+			}
+			
+			if (FlxG.getPlugin(FlxSpecialFX) == null)
+			{
+				FlxG.addPlugin(new FlxSpecialFX);
 			}
 			
 			//	Our font - it's a lovely golden 16x16 font set from the Bitmap Brothers game Gods on the Atari ST
@@ -96,11 +103,12 @@ package tests.scrollingtext
 			canvas.drawLine(0, 0, canvas.width, 0, 0xffffffff);
 			canvas.drawLine(0, canvas.height - 1, canvas.width, canvas.height - 1, 0xffffffff);
 			
-			stars = new FlxStarField(14, 33, 292, 174, 90);
+			stars = FlxSpecialFX.starfield();
+			starfield = stars.create(14, 33, 292, 174, 90);
 			stars.setBackgroundColor(0x00);
 			
 			add(canvas);
-			add(stars);
+			add(starfield);
 			
 			add(scroller1);
 			add(scroller2);
@@ -142,6 +150,7 @@ package tests.scrollingtext
 		{
 			//	Important! Clear out the plugin otherwise it'll crash when changing state
 			FlxScrollingText.clear();
+			FlxSpecialFX.clear();
 			
 			super.destroy();
 		}

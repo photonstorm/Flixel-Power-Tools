@@ -1,9 +1,10 @@
-package tests.starfield 
+package tests.specialfx 
 {
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 	import tests.TestsHeader;
 
 	public class StarFieldTest1 extends FlxState
@@ -15,7 +16,8 @@ package tests.starfield
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var stars:FlxStarField;
+		private var stars:FlxSprite;
+		private var starfield:StarfieldFX;
 		
 		public function StarFieldTest1() 
 		{
@@ -27,7 +29,15 @@ package tests.starfield
 			add(header);
 			
 			//	Test specific
-			stars = new FlxStarField(0, 32, 320, 176, 256);
+			
+			if (FlxG.getPlugin(FlxSpecialFX) == null)
+			{
+				FlxG.addPlugin(new FlxSpecialFX);
+			}
+			
+			starfield = FlxSpecialFX.starfield();
+			
+			stars = starfield.create(0, 32, 320, 176, 256);
 			
 			add(stars);
 			
@@ -41,10 +51,17 @@ package tests.starfield
 			
 			if (FlxG.mouse.justPressed())
 			{
-				stars.setStarSpeed(FlxMath.randFloat(-1, 1), FlxMath.randFloat(-1, 1));
+				starfield.setStarSpeed(FlxMath.randFloat(-1, 1), FlxMath.randFloat(-1, 1));
 			}
 		}
 		
+		override public function destroy():void
+		{
+			//	Important! Clear out the plugin, otherwise resources will get messed right up after a while
+			FlxSpecialFX.clear();
+			
+			super.destroy();
+		}
 	}
 
 }
