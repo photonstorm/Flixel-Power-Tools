@@ -2,7 +2,7 @@
  * FlxBar
  * -- Part of the Flixel Power Tools set
  * 
- * v1.3 Rename from FlxHealthBar and made less specific / more flexible
+ * v1.3 Renamed from FlxHealthBar and made less specific / far more flexible
  * v1.2 Fixed colour values for fill and gradient to include alpha
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
@@ -30,57 +30,71 @@ package org.flixel.plugin.photonstorm
 	 * Hook to any variable, not just health (HealthBar can then extend FlxBar)
 	 * Callbacks for full / empty (just trigger once)
 	 */
-	public class FlxBar extends FlxSprite
+	public class FlxBar
 	{
-		private var sprite:FlxSprite;
+		//	Used by the FlxBarManager plugin
+		public var enabled:Boolean = false;
+		
+		public var sprite:FlxSprite;
+		private var canvas:BitmapData;
 		
 		private var barWidth:uint;
 		private var barHeight:uint;
 		
-		private var parent:Class;
+		private var parent:*;
 		private var parentVariable:String;
 		
 		public var fixedPosition:Boolean = true;
-		
+		public var positionOverSprite:Boolean = false;
 		public var positionOffset:FlxPoint;
 		
-		public var positionOverSprite:Boolean = false;
-		
-		private var prevValue:Number;
 		private var min:Number;
 		private var max:Number;
+		private var pct:Number;
+		private var value:Number;
 		private var pxPerPercent:Number;
 		
-		private var zeroOffset:Point = new Point;
-		
 		private var emptyCallback:Function;
+		private var emptyCallbackReset:Boolean;
 		private var emptyBar:BitmapData;
 		private var emptyBarRect:Rectangle;
+		private var emptyBarPoint:Point;
+		private var zeroOffset:Point = new Point;
 		
 		private var filledCallback:Function;
+		private var filledCallbackReset:Boolean;
 		private var filledBar:BitmapData;
 		private var filledBarRect:Rectangle;
+		private var filledBarPoint:Point;
 		
-		private var fillDirection:int;
+		private var fillDirection:uint;
+		private var fillHorizontal:Boolean;
 		
-		public static const FILL_LEFT_TO_RIGHT:int = 1;
-		public static const FILL_RIGHT_TO_LEFT:int = 2;
-		public static const FILL_INSIDE_OUT:int = 3;
-		public static const FILL_TOP_TO_BOTTOM:int = 4;
-		public static const FILL_BOTTOM_TO_TOP:int = 5;
-		public static const FILL_OUTSIDE_IN:int = 6;
+		public static const FILL_LEFT_TO_RIGHT:uint = 1;
+		public static const FILL_RIGHT_TO_LEFT:uint = 2;
+		public static const FILL_TOP_TO_BOTTOM:uint = 3;
+		public static const FILL_BOTTOM_TO_TOP:uint = 4;
+		public static const FILL_HORIZONTAL_INSIDE_OUT:uint = 5;
+		public static const FILL_HORIZONTAL_OUTSIDE_IN:uint = 6;
+		public static const FILL_VERTICAL_INSIDE_OUT:uint = 7;
+		public static const FILL_VERTICAL_OUTSIDE_IN:uint = 8;
 		
-		private var barType:int;
+		private var barType:uint;
 		
-		private static const BAR_FILLED:int = 1;
-		private static const BAR_GRADIENT:int = 2;
-		private static const BAR_IMAGE:int = 3;
+		private static const BAR_FILLED:uint = 1;
+		private static const BAR_GRADIENT:uint = 2;
+		private static const BAR_IMAGE:uint = 3;
+		
+		public function FlxBar()
+		{
+		}
 		
 		/**
 		 * Create a new FlxBar Object
 		 * 
 		 * @param	width		The width of the bar in pixels
 		 * @param	height		The height of the bar in pixels
+		 * @param	direction 	One of the FlxBar.FILL_ constants (such as FILL_LEFT_TO_RIGHT, FILL_TOP_TO_BOTTOM etc)
 		 * @param	min			The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
 		 * @param	max			The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
 		 * @param	parentRef	A reference to an object in your game that you wish the bar to track
@@ -89,30 +103,41 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @return	FlxSprite	An FlxSprite containing the FlxBar to display in your State
 		 */
-		public function FlxBar(width:int, height:int, min:Number = 0, max:Number = 100, parentRef:Class = null, variable:String = "", border:Boolean = false):FlxSprite
+		public function create(width:int, height:int, direction:uint = FILL_LEFT_TO_RIGHT, min:Number = 0, max:Number = 100, parentRef:* = null, variable:String = "", border:Boolean = false):FlxSprite
 		{
 			barWidth = width;
 			barHeight = height;
 			
 			if (border)
 			{
-				barWidth += 2;
-				barHeight += 2;
+				sprite = new FlxSprite().makeGraphic(barWidth + 2, barHeight + 2, 0xffffffff, true);
+				filledBarPoint = new Point(1, 1);
 			}
-				
-			sprite = new FlxSprite().makeGraphic(barWidth, barHeight, 0xffffffff, true);
+			else
+			{
+				sprite = new FlxSprite().makeGraphic(barWidth, barHeight, 0xffffffff, true);
+				filledBarPoint = new Point(0, 0);
+			}
+			
+			canvas = new BitmapData(sprite.width, sprite.height, true, 0x0);
 			
 			if (parentRef)
 			{
 				parent = parentRef;
 				parentVariable = variable;
+				
+				trace(parent[parentVariable]);
 			}
 			
-			fillDirection = FILL_LEFT_TO_RIGHT;
+			setFillDirection(direction);
 			
 			setRange(min, max);
 			
 			createFilledBar(0xff005100, 0xff00F400, border);
+			
+			enabled = true;
+			
+			return sprite;
 		}
 		
 		/**
@@ -130,8 +155,11 @@ package org.flixel.plugin.photonstorm
 			
 			positionOffset = new FlxPoint(offsetX, offsetY);
 			
-			scrollFactor.x = parent.scrollFactor.x;
-			scrollFactor.y = parent.scrollFactor.y;
+			if (parent.scrollFactor)
+			{
+				sprite.scrollFactor.x = parent.scrollFactor.x;
+				sprite.scrollFactor.y = parent.scrollFactor.y;
+			}
 		}
 		
 		/**
@@ -144,8 +172,8 @@ package org.flixel.plugin.photonstorm
 		{
 			fixedPosition = true;
 			
-			x = posX;
-			y = posY;
+			sprite.x = posX;
+			sprite.y = posY;
 		}
 		
 		/**
@@ -156,29 +184,32 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function setRange(Min:Number, Max:Number):void
 		{
-			if (Max == 0 || Min == Max)
+			if (Max <= Min)
 			{
-				return;
-			}
-			
-			if (Max < Min)
-			{
-				throw Error("FlxHealthBar: max cannot be less than min");
+				throw Error("FlxBar: max cannot be less than or equal to min");
 				return;
 			}
 			
 			min = Min;
 			max = Max;
+			pct = 100 / (max - min);
 			
-			pxPerPercent = Math.floor(barWidth / (max - min));
+			if (fillHorizontal)
+			{
+				pxPerPercent = barWidth / 100;
+			}
+			else
+			{
+				pxPerPercent = barHeight / 100;
+			}
 		}
 		
 		/**
 		 * Creates a solid-colour filled health bar in the given colours, with optional 1px thick border.<br />
 		 * All colour values are in 0xAARRGGBB format, so if you want a slightly transparent health bar give it lower AA values.
 		 * 
-		 * @param	empty		The color of the health bar when empty in 0xAARRGGBB format (the background colour)
-		 * @param	fill		The color of the health bar when full in 0xAARRGGBB format (the foreground colour)
+		 * @param	empty		The color of the bar when empty in 0xAARRGGBB format (the background colour)
+		 * @param	fill		The color of the bar when full in 0xAARRGGBB format (the foreground colour)
 		 * @param	showBorder	Should the bar be outlined with a 1px solid border?
 		 * @param	border		The border colour in 0xAARRGGBB format
 		 */
@@ -188,18 +219,18 @@ package org.flixel.plugin.photonstorm
 			
 			if (showBorder)
 			{
-				emptyBar = new BitmapData(width, height, true, border);
-				emptyBar.fillRect(new Rectangle(1, 1, width - 2, height - 2), empty);
+				emptyBar = new BitmapData(barWidth, barHeight, true, border);
+				emptyBar.fillRect(new Rectangle(1, 1, barWidth - 2, barHeight - 2), empty);
 				
-				filledBar = new BitmapData(width, height, true, border);
-				filledBar.fillRect(new Rectangle(1, 1, width - 2, height - 2), fill);
+				filledBar = new BitmapData(barWidth, barHeight, true, border);
+				filledBar.fillRect(new Rectangle(1, 1, barWidth - 2, barHeight - 2), fill);
 			}
 			else
 			{
-				emptyBar = new BitmapData(width, height, true, empty);
-				filledBar = new BitmapData(width, height, true, fill);
+				emptyBar = new BitmapData(barWidth, barHeight, true, empty);
+				filledBar = new BitmapData(barWidth, barHeight, true, fill);
 			}
-				
+			
 			filledBarRect = new Rectangle(0, 0, filledBar.width, filledBar.height);
 			emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
 		}
@@ -221,16 +252,16 @@ package org.flixel.plugin.photonstorm
 			
 			if (showBorder)
 			{
-				emptyBar = new BitmapData(width, height, true, border);
-				FlxGradient.overlayGradientOnBitmapData(emptyBar, width - 2, height - 2, empty, 1, 1, chunkSize, rotation);
+				emptyBar = new BitmapData(barWidth, barHeight, true, border);
+				FlxGradient.overlayGradientOnBitmapData(emptyBar, barWidth - 2, barHeight - 2, empty, 1, 1, chunkSize, rotation);
 				
-				filledBar = new BitmapData(width, height, true, border);
-				FlxGradient.overlayGradientOnBitmapData(filledBar, width - 2, height - 2, fill, 1, 1, chunkSize, rotation);
+				filledBar = new BitmapData(barWidth, barHeight, true, border);
+				FlxGradient.overlayGradientOnBitmapData(filledBar, barWidth - 2, barHeight - 2, fill, 1, 1, chunkSize, rotation);
 			}
 			else
 			{
-				emptyBar = FlxGradient.createGradientBitmapData(width, height, empty, chunkSize, rotation);
-				filledBar = FlxGradient.createGradientBitmapData(width, height, fill, chunkSize, rotation);
+				emptyBar = FlxGradient.createGradientBitmapData(barWidth, barHeight, empty, chunkSize, rotation);
+				filledBar = FlxGradient.createGradientBitmapData(barWidth, barHeight, fill, chunkSize, rotation);
 			}
 			
 			emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
@@ -262,7 +293,7 @@ package org.flixel.plugin.photonstorm
 			}
 			else
 			{
-				emptyBar = new BitmapData(width, height, true, emptyBackground);
+				emptyBar = new BitmapData(barWidth, barHeight, true, emptyBackground);
 			}
 			
 			if (fill)
@@ -271,30 +302,61 @@ package org.flixel.plugin.photonstorm
 			}
 			else
 			{
-				filledBar = new BitmapData(width, height, true, fillBackground);
+				filledBar = new BitmapData(barWidth, barHeight, true, fillBackground);
 			}
 			
 			emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
 			filledBarRect = new Rectangle(0, 0, filledBar.width, filledBar.height);
 			
-			if (emptyBarRect.width != width || emptyBarRect.height != height)
+			if (emptyBarRect.width != barWidth || emptyBarRect.height != barHeight)
 			{
-				width = emptyBarRect.width;
-				height = emptyBarRect.height;
+				barWidth = emptyBarRect.width;
+				barHeight = emptyBarRect.height;
 			}
 		}
 		
 		/**
 		 * Set the direction from which the health bar will fill-up. Default is from left to right. Change takes effect immediately.
 		 * 
-		 * @param	direction Either FILL_LEFT_TO_RIGHT, FILL_RIGHT_TO_LEFT or FILL_INSIDE_OUT
+		 * @param	direction 			One of the FlxBar.FILL_ constants (such as FILL_LEFT_TO_RIGHT, FILL_TOP_TO_BOTTOM etc)
 		 */
-		public function setFillDirection(direction:int):void
+		public function setFillDirection(direction:uint):void
 		{
-			if (direction == FILL_LEFT_TO_RIGHT || direction == FILL_RIGHT_TO_LEFT || direction == FILL_INSIDE_OUT)
+			switch (direction)
 			{
-				fillDirection = direction;
+				case FILL_LEFT_TO_RIGHT:
+				case FILL_RIGHT_TO_LEFT:
+				case FILL_HORIZONTAL_INSIDE_OUT:
+				case FILL_HORIZONTAL_OUTSIDE_IN:
+					fillDirection = direction;
+					fillHorizontal = true;
+					break;
+					
+				case FILL_TOP_TO_BOTTOM:
+				case FILL_BOTTOM_TO_TOP:
+				case FILL_VERTICAL_INSIDE_OUT:
+				case FILL_VERTICAL_OUTSIDE_IN:
+					fillDirection = direction;
+					fillHorizontal = false;
+					break;
 			}
+		}
+		
+		private function updateValue():void
+		{
+			var newValue:Number = parent[parentVariable];
+			
+			if (newValue > max)
+			{
+				newValue = max;
+			}
+			
+			if (newValue < min)
+			{
+				newValue = min;
+			}
+			
+			value = newValue;
 		}
 		
 		/**
@@ -303,65 +365,93 @@ package org.flixel.plugin.photonstorm
 		 */
 		private function updateBar():void
 		{
-			var temp:BitmapData = pixels;
-			
-			temp.copyPixels(emptyBar, emptyBarRect, zeroOffset);
-			
-			if (parent.health < min)
+			if (fillHorizontal)
 			{
-				filledBarRect.width = int(min * pxPerHealth);
-			}
-			else if (parent.health > max)
-			{
-				filledBarRect.width = int(max * pxPerHealth);
+				filledBarRect.width = int(percent * pxPerPercent);
 			}
 			else
 			{
-				filledBarRect.width = int(parent.health * pxPerHealth);
+				filledBarRect.height = int(percent * pxPerPercent);
 			}
 			
-			if (parent.health != 0)
+			canvas.copyPixels(emptyBar, emptyBarRect, zeroOffset);
+			
+			if (percent > 0)
 			{
 				switch (fillDirection)
 				{
 					case FILL_LEFT_TO_RIGHT:
-						temp.copyPixels(filledBar, filledBarRect, zeroOffset);
+					case FILL_TOP_TO_BOTTOM:
+						//	Already handled above
+						break;
+						
+					case FILL_BOTTOM_TO_TOP:
+						filledBarRect.y = barHeight - filledBarRect.height;
+						filledBarPoint.y = barHeight - filledBarRect.height;
 						break;
 						
 					case FILL_RIGHT_TO_LEFT:
-						filledBarRect.x = width - filledBarRect.width;
-						temp.copyPixels(filledBar, filledBarRect, new Point(width - filledBarRect.width, 0));
+						filledBarRect.x = barWidth - filledBarRect.width;
+						filledBarPoint.x = barWidth - filledBarRect.width;
 						break;
 						
-					case FILL_INSIDE_OUT:
-						filledBarRect.x = int((width / 2) - (filledBarRect.width / 2));
-						temp.copyPixels(filledBar, filledBarRect, new Point((width / 2) - (filledBarRect.width / 2), 0));
+					case FILL_HORIZONTAL_INSIDE_OUT:
+						filledBarRect.x = int((barWidth / 2) - (filledBarRect.width / 2));
+						filledBarPoint.x = int((barWidth / 2) - (filledBarRect.width / 2));
+						break;
+						
+					case FILL_HORIZONTAL_OUTSIDE_IN:
+						filledBarRect.width = int(100 - percent * pxPerPercent);
+						filledBarPoint.x = int((barWidth - filledBarRect.width) / 2);
+						break;
+						
+					case FILL_VERTICAL_INSIDE_OUT:
+						filledBarRect.y = int((barHeight / 2) - (filledBarRect.height / 2));
+						filledBarPoint.y = int((barHeight / 2) - (filledBarRect.height / 2));
+						break;
+						
+					case FILL_VERTICAL_OUTSIDE_IN:
+						filledBarRect.height = int(100 - percent * pxPerPercent);
+						filledBarPoint.y = int((barHeight- filledBarRect.height) / 2);
 						break;
 				}
+				
+				canvas.copyPixels(filledBar, filledBarRect, filledBarPoint);
+				
 			}
 			
-			pixels = temp;
-					
-			prevHealth = parent.health;
+			sprite.pixels = canvas;
 		}
 		
-		override public function update():void
+		public function get percent():uint
 		{
-			super.update();
-			
-			if (parent.exists)
+			return Math.floor(value / pct);
+		}
+		
+		public function set percent(newPct:uint):void
+		{
+			if (newPct >= 0 && newPct <= 100)
 			{
-				//	Is this health bar floating over / under the sprite?
-				if (fixedPosition == false)
+				value = newPct * pct;
+				
+				updateBar();
+			}
+		}
+		
+		public function update():void
+		{
+			if (parent)
+			{
+				if (parent[parentVariable] != value)
 				{
-					x = parent.x + positionOffset.x;
-					y = parent.y + positionOffset.y;
+					updateValue();
+					updateBar();
 				}
 				
-				//	Update?
-				if (parent.health != prevHealth)
+				if (fixedPosition == false)
 				{
-					updateBar();
+					sprite.x = parent.x + positionOffset.x;
+					sprite.y = parent.y + positionOffset.y;
 				}
 			}
 		}

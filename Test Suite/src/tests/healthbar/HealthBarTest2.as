@@ -13,9 +13,9 @@ package tests.healthbar
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var healthBar1:FlxHealthBar;
-		private var healthBar2:FlxHealthBar;
-		private var healthBar3:FlxHealthBar;
+		//private var healthBar1:FlxHealthBar;
+		//private var healthBar2:FlxHealthBar;
+		//private var healthBar3:FlxHealthBar;
 		
 		private var red:FlxSprite;
 		private var redDirection:int = 0;
@@ -32,7 +32,7 @@ package tests.healthbar
 			//	Test specific
 			
 			red = new FlxSprite;
-			
+			/*
 			healthBar1 = new FlxHealthBar(red, 100, 10, 0, 100);
 			healthBar1.createImageBar(null, AssetsRegistry.healthBarPNG, 0xaa000000);
 			healthBar1.setFillDirection(FlxHealthBar.FILL_LEFT_TO_RIGHT);
@@ -50,15 +50,15 @@ package tests.healthbar
 			healthBar3.setFillDirection(FlxHealthBar.FILL_INSIDE_OUT);
 			FlxDisplay.screenCenter(healthBar3, true);
 			healthBar3.y = 176;
-			
+			*/
 			red.health = FlxMath.rand(10, 90);
 			red.visible = false;
 			
 			add(red);
 			
-			add(healthBar1);
-			add(healthBar2);
-			add(healthBar3);
+			//add(healthBar1);
+			//add(healthBar2);
+			//add(healthBar3);
 			
 			//	Header overlay
 			add(header.overlay);

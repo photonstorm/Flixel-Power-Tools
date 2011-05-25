@@ -17,9 +17,9 @@ package tests.healthbar
 		private var green:FlxSprite;
 		private var blue:FlxSprite;
 		
-		private var redHealth:FlxHealthBar;
-		private var greenHealth:FlxHealthBar;
-		private var blueHealth:FlxHealthBar;
+		private var redHealth:FlxBar;
+		//private var greenHealth:FlxHealthBar;
+		//private var blueHealth:FlxHealthBar;
 		
 		public function HealthBarTest1() 
 		{
@@ -32,9 +32,37 @@ package tests.healthbar
 			
 			//	Test specific
 			
+			//	Activate the plugin
+			if (FlxG.getPlugin(FlxBarManager) == null)
+			{
+				FlxG.addPlugin(new FlxBarManager);
+			}
+			
 			red = new FlxSprite(64, 120, AssetsRegistry.redPNG);
 			green = new FlxSprite(64, 64, AssetsRegistry.greenPNG);
 			blue = new FlxSprite(64, 180, AssetsRegistry.bluePNG);
+			
+			red.health = FlxMath.rand(10, 90);
+			green.health = FlxMath.rand(10, 90);
+			blue.health = FlxMath.rand(10, 90);
+			
+			
+			
+			redHealth = FlxBarManager.create();
+			
+			//redHealth.create(16, 100, FlxBar.FILL_VERTICAL_OUTSIDE_IN);
+			redHealth.create(100, 8, FlxBar.FILL_LEFT_TO_RIGHT, 0, 100, red, "health");
+			redHealth.trackParent(0, -5);
+			
+			
+			//redHealth.create(50, 16, FlxBar.FILL_TOP_TO_BOTTOM, 0, 100);
+			//redHealth.create(16, 50, FlxBar.FILL_LEFT_TO_RIGHT, 0, 100);
+			//redHealth.percent = 32;
+			
+			redHealth.sprite.x = 32;
+			redHealth.sprite.y = 32;
+			
+			/*
 			
 			//	The default health bar
 			redHealth = new FlxHealthBar(red, 32, 4, 0, 100);
@@ -52,18 +80,17 @@ package tests.healthbar
 			//	The blue health bar is in a fixed position (it doesn't follow the blue sprite around)
 			blueHealth.x = 64;
 			blueHealth.y = 100;
+			*/
 			
-			red.health = FlxMath.rand(10, 90);
-			green.health = FlxMath.rand(10, 90);
-			blue.health = FlxMath.rand(10, 90);
+			
 			
 			add(red);
 			add(green);
 			add(blue);
 			
-			add(redHealth);
-			add(greenHealth);
-			add(blueHealth);
+			add(redHealth.sprite);
+			//add(greenHealth);
+			//add(blueHealth);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -71,12 +98,28 @@ package tests.healthbar
 		
 		override public function update():void
 		{
+			super.update();
+			
 			red.x = FlxG.mouse.screenX;
 			red.y = FlxG.mouse.screenY;
+		}
+		
+		override public function draw():void
+		{
+			super.draw();
+			
+			//red.x = FlxG.mouse.screenX;
+			//red.y = FlxG.mouse.screenY;
 			
 			if (FlxG.mouse.justReleased())
 			{
-				red.health = FlxMath.rand(0, 100);
+				var r:uint = FlxMath.rand(0, 100);
+				
+				//redHealth.percent = r;
+				
+				header.instructions.text = r.toString() + "%";
+				
+				red.health = r;
 				green.health = FlxMath.rand(0, 100);
 				blue.health = FlxMath.rand(0, 100);
 			}
@@ -84,7 +127,13 @@ package tests.healthbar
 			//	If you notice a slight lag/delay in the health bar following the sprite then
 			//	it's because you've called super.update() at the START of your update function.
 			//	Leave it until the end and it'll run smoothly.
-			super.update();
+		}
+		
+		override public function destroy():void
+		{
+			//	Important! Clear out the plugin otherwise it'll crash when changing state
+			
+			super.destroy();
 		}
 		
 	}
