@@ -2,22 +2,22 @@ package tests.specialfx
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import org.flixel.plugin.photonstorm.FX.DropDownFX;
+	import org.flixel.plugin.photonstorm.FX.FloodFillFX;
 	import tests.TestsHeader;
 
-	public class DropDownTest3 extends FlxState
+	public class FloodFillTest1 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "DropDown 1";
-		public static var description:String = "DropDown FX Plugin";
-		private var instructions:String = "Click to start the drop down effect";
+		public static var title:String = "FloodFill 1";
+		public static var description:String = "FloodFill FX Plugin";
+		private var instructions:String = "Click to start the flood fill effect";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var dropdown:DropDownFX;
+		private var flood:FloodFillFX;
 		private var soPretty:FlxSprite;
 		
-		public function DropDownTest3() 
+		public function DropDownTest1() 
 		{
 		}
 		
@@ -34,9 +34,9 @@ package tests.specialfx
 			
 			var pic:FlxSprite = new FlxSprite(0, 0, AssetsRegistry.noCooper1984PNG);
 			
-			dropdown = FlxSpecialFX.dropDown();
+			flood = FlxSpecialFX.floodFill();
 			
-			soPretty = dropdown.create(pic, 0, 32, pic.width, pic.height);
+			soPretty = flood.create(pic, 0, 32, pic.width, pic.height);
 			
 			add(soPretty);
 			
@@ -51,7 +51,7 @@ package tests.specialfx
 			if (FlxG.mouse.justReleased())
 			{
 				//	A speed of 2 makes it a little bit slower, so you can appreciate the effect :)
-				dropdown.start(2);
+				flood.start(2);
 			}
 		}
 		

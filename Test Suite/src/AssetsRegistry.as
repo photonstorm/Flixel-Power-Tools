@@ -57,6 +57,7 @@ package
 		[Embed(source = '../assets/mods/yo_africa.MOD', mimeType = 'application/octet-stream')] public static var yoAfricaMOD:Class;
 		[Embed(source = '../assets/mods/obnoxious_seq3_front6.MOD', mimeType = 'application/octet-stream')] public static var obnoxiousMOD:Class;
 		[Embed(source = '../assets/mods/alpine_cut.MOD', mimeType = 'application/octet-stream')] public static var alpineCutMOD:Class;
+		[Embed(source = '../assets/mods/anarchy.mod', mimeType = 'application/octet-stream')] public static var anarchyMOD:Class;
 		
 		//	Platformer Game
 		[Embed(source = '../assets/tiles/platformer_tiles.png')] public static var platformerTilesPNG:Class;

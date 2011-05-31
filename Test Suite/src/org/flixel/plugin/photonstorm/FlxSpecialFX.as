@@ -2,11 +2,12 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.3 Renamed DropDown to FloodFill
  * v1.2 Added GlitchFX and StarfieldFX
  * v1.1 Added SineWaveFX
  * v1.0 First release of the new FlxSpecialFX system
  * 
- * @version 1.2 - May 25th 2011
+ * @version 1.3 - May 31st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -15,7 +16,7 @@ package org.flixel.plugin.photonstorm
 {
 	import flash.utils.Dictionary;
 	import org.flixel.*;
-	import org.flixel.plugin.photonstorm.FX.DropDownFX;
+	import org.flixel.plugin.photonstorm.FX.FloodFillFX;
 	import org.flixel.plugin.photonstorm.FX.GlitchFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
 	import org.flixel.plugin.photonstorm.FX.RainbowLineFX;
@@ -64,13 +65,13 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Creates a Drop Down Effect
+		 * Creates a Flood Fill Effect
 		 * 
-		 * @return	DropDownFX
+		 * @return	FloodFillFX
 		 */
-		public static function dropDown():DropDownFX
+		public static function floodFill():FloodFillFX
 		{
-			var temp:DropDownFX = new DropDownFX;
+			var temp:FloodFillFX = new FloodFillFX;
 			
 			members[temp] = temp;
 			

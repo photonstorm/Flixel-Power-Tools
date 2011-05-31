@@ -120,8 +120,8 @@ package
 			
 			options.push( { state: RainbowLineTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: PlasmaTest1, color: [0xff2E2E2E, 0xff606060] } );
-			options.push( { state: DropDownTest1, color: [0xff2E2E2E, 0xff606060] } );
-			options.push( { state: DropDownTest2, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: FloodFillTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: FloodFillTest2, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: StarFieldTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: StarFieldTest2, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: GlitchTest1, color: [0xff2E2E2E, 0xff606060] } );
