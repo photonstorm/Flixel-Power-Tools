@@ -13,6 +13,11 @@
 
 package  
 {
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
+	import flash.utils.getQualifiedClassName;
+	import flash.utils.getQualifiedSuperclassName;
+	
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
 	import tests.*;
@@ -197,6 +202,17 @@ package
 			FlxG.camera.setBounds(0, 0, 640, 256, true);
 			
 			FlxG.mouse.show();
+			
+			var mainRef:Sprite = Sprite(FlxG.stage.getChildAt(0));
+			
+			for (var i:int = 0; i < mainRef.numChildren; i++)
+			{
+				var isMouse:String = (i == mainRef.numChildren - 1) ? "<-- This is the mouse, insert UI at index " + (i-1).toString() : "";
+				
+				trace("Index", i, "=", mainRef.getChildAt(i), isMouse);
+			}
+			
+			
 		}
 		
 		override public function update():void

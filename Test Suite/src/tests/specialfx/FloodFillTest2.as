@@ -8,9 +8,9 @@ package tests.specialfx
 	public class FloodFillTest2 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "DropDown 2";
-		public static var description:String = "DropDown FX - Stretched image";
-		private var instructions:String = "Click to start the drop down effect";
+		public static var title:String = "FloodFill 2";
+		public static var description:String = "FloodFill FX - Stretched image";
+		private var instructions:String = "Click to start the flood fill effect";
 		private var header:TestsHeader;
 		
 		//	Test specific variables

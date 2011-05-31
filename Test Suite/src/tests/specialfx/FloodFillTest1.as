@@ -17,7 +17,7 @@ package tests.specialfx
 		private var flood:FloodFillFX;
 		private var soPretty:FlxSprite;
 		
-		public function DropDownTest1() 
+		public function FloodFillTest1() 
 		{
 		}
 		
