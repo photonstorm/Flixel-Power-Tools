@@ -1,12 +1,13 @@
 /**
  * Flixel Power Tools Test Suite
  * 
+ * v1.7 - New FlxBar tests
  * v1.6 - FlxControl and new Special FX Plugins
  * v1.5 - Massive restructure to split the tests up and move to git
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
  * v1.3 - Updated for Flixel v2.53
  * 
- * @version 1.6 - May 18th 2011
+ * @version 1.7 - June 1st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -30,7 +31,7 @@ package
 	import tests.extendedsprite.*;
 	import tests.flod.*;
 	import tests.gradient.*;
-	import tests.healthbar.*;
+	import tests.flxbar.*;
 	import tests.screengrab.*;
 	import tests.scrollingtext.*;
 	import tests.scrollzone.*;
@@ -92,8 +93,8 @@ package
 			
 			options.push( { spacer: true } );
 			
-			options.push( { state: HealthBarTest1, color: [0xffFF8000, 0xffFF0080] } );
-			options.push( { state: HealthBarTest2, color: [0xffFF8000, 0xffFF0080] } );
+			options.push( { state: FlxBarTest1, color: [0xffFF8000, 0xffFF0080] } );
+			options.push( { state: FlxBarTest2, color: [0xffFF8000, 0xffFF0080] } );
 			
 			options.push( { spacer: true } );
 			
@@ -151,7 +152,7 @@ package
 		override public function create():void
 		{
 			version = "- Test Suite v" + FlxPowerTools.LIBRARY_MAJOR_VERSION + "." + FlxPowerTools.LIBRARY_MINOR_VERSION + " -";
-			
+
 			header = new TestsHeader(version, false);
 			add(header);
 			
@@ -202,17 +203,6 @@ package
 			FlxG.camera.setBounds(0, 0, 640, 256, true);
 			
 			FlxG.mouse.show();
-			
-			var mainRef:Sprite = Sprite(FlxG.stage.getChildAt(0));
-			
-			for (var i:int = 0; i < mainRef.numChildren; i++)
-			{
-				var isMouse:String = (i == mainRef.numChildren - 1) ? "<-- This is the mouse, insert UI at index " + (i-1).toString() : "";
-				
-				trace("Index", i, "=", mainRef.getChildAt(i), isMouse);
-			}
-			
-			
 		}
 		
 		override public function update():void

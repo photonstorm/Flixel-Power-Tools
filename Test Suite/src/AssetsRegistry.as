@@ -29,6 +29,7 @@ package
 		[Embed(source = '../assets/sprites/blue_ball.png')] public static var bluePNG:Class;
 		[Embed(source = '../assets/sprites/ilkke.png')] public static var ilkkePNG:Class;
 		[Embed(source = '../assets/sprites/healthbar.png')] public static var healthBarPNG:Class;
+		[Embed(source = '../assets/sprites/flectrum.png')] public static var flectrumPNG:Class;
 		[Embed(source = '../assets/sprites/balls.png')] public static var ballsPNG:Class;
 		[Embed(source = '../assets/sprites/chick.png')] public static var chickPNG:Class;
 		[Embed(source = '../assets/sprites/car.png')] public static var carPNG:Class;

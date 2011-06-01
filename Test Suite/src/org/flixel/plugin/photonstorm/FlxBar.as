@@ -2,11 +2,12 @@
  * FlxBar
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Added support for min/max callbacks and "kill on min"
  * v1.3 Renamed from FlxHealthBar and made less specific / far more flexible
  * v1.2 Fixed colour values for fill and gradient to include alpha
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 25th 2011
+ * @version 1.4 - June 1st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -23,29 +24,26 @@ package org.flixel.plugin.photonstorm
 	 * FlxBar is a quick and easy way to create a graphical bar which can
 	 * be used as part of your UI/HUD, or positioned next to a sprite. It could represent
 	 * a loader, progress or health bar.
-	 * 
-	 * TODO
-	 * 
-	 * Support vertical bars
-	 * Hook to any variable, not just health (HealthBar can then extend FlxBar)
-	 * Callbacks for full / empty (just trigger once)
 	 */
-	public class FlxBar
+	public class FlxBar extends FlxSprite
 	{
-		//	Used by the FlxBarManager plugin
-		public var enabled:Boolean = false;
-		
-		public var sprite:FlxSprite;
 		private var canvas:BitmapData;
 		
+		private var barType:uint;
 		private var barWidth:uint;
 		private var barHeight:uint;
 		
 		private var parent:*;
 		private var parentVariable:String;
 		
+		/**
+		 * fixedPosition controls if the FlxBar sprite is at a fixed location on screen, or tracking its parent
+		 */
 		public var fixedPosition:Boolean = true;
-		public var positionOverSprite:Boolean = false;
+		
+		/**
+		 * The positionOffset controls how far offset the FlxBar is from the parent sprite (if at all)
+		 */
 		public var positionOffset:FlxPoint;
 		
 		private var min:Number;
@@ -55,14 +53,13 @@ package org.flixel.plugin.photonstorm
 		private var pxPerPercent:Number;
 		
 		private var emptyCallback:Function;
-		private var emptyCallbackReset:Boolean;
 		private var emptyBar:BitmapData;
 		private var emptyBarRect:Rectangle;
 		private var emptyBarPoint:Point;
+		private var emptyKill:Boolean;
 		private var zeroOffset:Point = new Point;
 		
 		private var filledCallback:Function;
-		private var filledCallbackReset:Boolean;
 		private var filledBar:BitmapData;
 		private var filledBarRect:Rectangle;
 		private var filledBarPoint:Point;
@@ -79,54 +76,48 @@ package org.flixel.plugin.photonstorm
 		public static const FILL_VERTICAL_INSIDE_OUT:uint = 7;
 		public static const FILL_VERTICAL_OUTSIDE_IN:uint = 8;
 		
-		private var barType:uint;
-		
 		private static const BAR_FILLED:uint = 1;
 		private static const BAR_GRADIENT:uint = 2;
 		private static const BAR_IMAGE:uint = 3;
 		
-		public function FlxBar()
-		{
-		}
-		
 		/**
 		 * Create a new FlxBar Object
 		 * 
+		 * @param	x			The x coordinate location of the resulting bar (in world pixels)
+		 * @param	y			The y coordinate location of the resulting bar (in world pixels)
+		 * @param	direction 	One of the FlxBar.FILL_ constants (such as FILL_LEFT_TO_RIGHT, FILL_TOP_TO_BOTTOM etc)
 		 * @param	width		The width of the bar in pixels
 		 * @param	height		The height of the bar in pixels
-		 * @param	direction 	One of the FlxBar.FILL_ constants (such as FILL_LEFT_TO_RIGHT, FILL_TOP_TO_BOTTOM etc)
-		 * @param	min			The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
-		 * @param	max			The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
 		 * @param	parentRef	A reference to an object in your game that you wish the bar to track
 		 * @param	variable	The variable of the object that is used to determine the bar position. For example if the parent was an FlxSprite this could be "health" to track the health value
+		 * @param	min			The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
+		 * @param	max			The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
 		 * @param	border		Include a 1px border around the bar? (if true it adds +2 to width and height to accommodate it)
-		 * 
-		 * @return	FlxSprite	An FlxSprite containing the FlxBar to display in your State
 		 */
-		public function create(width:int, height:int, direction:uint = FILL_LEFT_TO_RIGHT, min:Number = 0, max:Number = 100, parentRef:* = null, variable:String = "", border:Boolean = false):FlxSprite
+		public function FlxBar(x:int, y:int, direction:uint = FILL_LEFT_TO_RIGHT, width:int = 100, height:int = 10, parentRef:* = null, variable:String = "", min:Number = 0, max:Number = 100, border:Boolean = false):void
 		{
+			super(x, y);
+			
 			barWidth = width;
 			barHeight = height;
 			
 			if (border)
 			{
-				sprite = new FlxSprite().makeGraphic(barWidth + 2, barHeight + 2, 0xffffffff, true);
+				makeGraphic(barWidth + 2, barHeight + 2, 0xffffffff, true);
 				filledBarPoint = new Point(1, 1);
 			}
 			else
 			{
-				sprite = new FlxSprite().makeGraphic(barWidth, barHeight, 0xffffffff, true);
+				makeGraphic(barWidth, barHeight, 0xffffffff, true);
 				filledBarPoint = new Point(0, 0);
 			}
 			
-			canvas = new BitmapData(sprite.width, sprite.height, true, 0x0);
+			canvas = new BitmapData(width, height, true, 0x0);
 			
 			if (parentRef)
 			{
 				parent = parentRef;
 				parentVariable = variable;
-				
-				trace(parent[parentVariable]);
 			}
 			
 			setFillDirection(direction);
@@ -135,9 +126,7 @@ package org.flixel.plugin.photonstorm
 			
 			createFilledBar(0xff005100, 0xff00F400, border);
 			
-			enabled = true;
-			
-			return sprite;
+			emptyKill = false;
 		}
 		
 		/**
@@ -157,9 +146,32 @@ package org.flixel.plugin.photonstorm
 			
 			if (parent.scrollFactor)
 			{
-				sprite.scrollFactor.x = parent.scrollFactor.x;
-				sprite.scrollFactor.y = parent.scrollFactor.y;
+				scrollFactor.x = parent.scrollFactor.x;
+				scrollFactor.y = parent.scrollFactor.y;
 			}
+		}
+		
+		/**
+		 * Sets a new parent for this FlxBar. Instantly replaces any previously set parent and refreshes the bar.
+		 * 
+		 * @param	parentRef	A reference to an object in your game that you wish the bar to track
+		 * @param	variable	The variable of the object that is used to determine the bar position. For example if the parent was an FlxSprite this could be "health" to track the health value
+		 * @param	track		If you wish the FlxBar to track the x/y coordinates of parent set to true (default false)
+		 * @param	offsetX		The offset on X in relation to the origin x/y of the parent
+		 * @param	offsetY		The offset on Y in relation to the origin x/y of the parent
+		 */
+		public function setNewParent(parentRef:*, variable:String, track:Boolean = false, offsetX:int = 0, offsetY:int = 0):void
+		{
+			parent = parentRef;
+			parentVariable = variable;
+			
+			if (track)
+			{
+				trackParent(offsetX, offsetY);
+			}
+			
+			updateValue();
+			updateBar();
 		}
 		
 		/**
@@ -172,26 +184,53 @@ package org.flixel.plugin.photonstorm
 		{
 			fixedPosition = true;
 			
-			sprite.x = posX;
-			sprite.y = posY;
+			x = posX;
+			y = posY;
+		}
+		
+		/**
+		 * Sets callbacks which will be triggered when the value of this FlxBar reaches min or max.<br>
+		 * Functions will only be called once and not again until the value changes.<br>
+		 * Optionally the FlxBar can be killed if it reaches min, but if will fire the empty callback first (if set)
+		 * 
+		 * @param	onEmpty			The function that is called if the value of this FlxBar reaches min
+		 * @param	onFilled		The function that is called if the value of this FlxBar reaches max
+		 * @param	killOnEmpty		If set it will call FlxBar.kill() if the value reaches min
+		 */
+		public function setCallbacks(onEmpty:Function, onFilled:Function, killOnEmpty:Boolean = false):void
+		{
+			if (onEmpty is Function)
+			{
+				emptyCallback = onEmpty;
+			}
+			
+			if (onFilled is Function)
+			{
+				filledCallback = onFilled;
+			}
+			
+			if (killOnEmpty)
+			{
+				emptyKill = true;
+			}
 		}
 		
 		/**
 		 * Set the minimum and maximum allowed values for the FlxBar
 		 * 
-		 * @param	Min			The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
-		 * @param	Max			The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
+		 * @param	min			The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
+		 * @param	max			The maximum value the bar can reach. I.e. for a progress bar this would typically be 100.
 		 */
-		public function setRange(Min:Number, Max:Number):void
+		public function setRange(min:Number, max:Number):void
 		{
-			if (Max <= Min)
+			if (max <= min)
 			{
 				throw Error("FlxBar: max cannot be less than or equal to min");
 				return;
 			}
 			
-			min = Min;
-			max = Max;
+			this.min = min;
+			this.max = max;
 			pct = 100 / (max - min);
 			
 			if (fillHorizontal)
@@ -287,29 +326,45 @@ package org.flixel.plugin.photonstorm
 				return;
 			}
 			
-			if (empty)
+			if (empty && fill == null)
 			{
+				//	If empty is set, but fill is not ...
+				trace("ci1");
 				emptyBar = Bitmap(new empty).bitmapData.clone();
-			}
-			else
-			{
-				emptyBar = new BitmapData(barWidth, barHeight, true, emptyBackground);
-			}
-			
-			if (fill)
-			{
-				filledBar = Bitmap(new fill).bitmapData.clone();
-			}
-			else
-			{
+				emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
+				
+				barWidth = emptyBarRect.width;
+				barHeight = emptyBarRect.height;
+				
 				filledBar = new BitmapData(barWidth, barHeight, true, fillBackground);
+				filledBarRect = new Rectangle(0, 0, barWidth, barHeight);
 			}
-			
-			emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
-			filledBarRect = new Rectangle(0, 0, filledBar.width, filledBar.height);
-			
-			if (emptyBarRect.width != barWidth || emptyBarRect.height != barHeight)
+			else if (empty == null && fill)
 			{
+				//	If fill is set, but empty is not ...
+		
+				filledBar = Bitmap(new fill).bitmapData.clone();
+				filledBarRect = new Rectangle(0, 0, filledBar.width, filledBar.height);
+				
+				barWidth = filledBarRect.width;
+				barHeight = filledBarRect.height;
+				
+				emptyBar = new BitmapData(barWidth, barHeight, true, emptyBackground);
+				emptyBarRect = new Rectangle(0, 0, barWidth, barHeight);
+				
+				trace("ci2", barWidth, barHeight);
+			}
+			else if (empty && fill)
+			{
+				//	If both are set
+				trace("ci3");
+		
+				emptyBar = Bitmap(new empty).bitmapData.clone();
+				emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
+				
+				filledBar = Bitmap(new fill).bitmapData.clone();
+				filledBarRect = new Rectangle(0, 0, filledBar.width, filledBar.height);
+				
 				barWidth = emptyBarRect.width;
 				barHeight = emptyBarRect.height;
 			}
@@ -357,6 +412,21 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			value = newValue;
+			
+			if (value == min && emptyCallback is Function)
+			{
+				emptyCallback.call();
+			}
+			
+			if (value == max && filledCallback is Function)
+			{
+				filledCallback.call();
+			}
+			
+			if (value == min && emptyKill)
+			{
+				kill();
+			}
 		}
 		
 		/**
@@ -420,7 +490,25 @@ package org.flixel.plugin.photonstorm
 				
 			}
 			
-			sprite.pixels = canvas;
+			pixels = canvas;
+		}
+		
+		override public function update():void
+		{
+			if (parent)
+			{
+				if (parent[parentVariable] != value)
+				{
+					updateValue();
+					updateBar();
+				}
+				
+				if (fixedPosition == false)
+				{
+					x = parent.x + positionOffset.x;
+					y = parent.y + positionOffset.y;
+				}
+			}
 		}
 		
 		public function get percent():uint
@@ -435,24 +523,6 @@ package org.flixel.plugin.photonstorm
 				value = newPct * pct;
 				
 				updateBar();
-			}
-		}
-		
-		public function update():void
-		{
-			if (parent)
-			{
-				if (parent[parentVariable] != value)
-				{
-					updateValue();
-					updateBar();
-				}
-				
-				if (fixedPosition == false)
-				{
-					sprite.x = parent.x + positionOffset.x;
-					sprite.y = parent.y + positionOffset.y;
-				}
 			}
 		}
 		
