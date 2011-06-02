@@ -13,6 +13,9 @@ package tests.extendedsprite
 		private var header:TestsHeader;
 		
 		//	Test specific variables
+		
+		private var balls:FlxGroup;
+		
 		private var red:FlxExtendedSprite;
 		private var green:FlxExtendedSprite;
 		private var blue:FlxExtendedSprite;
@@ -28,6 +31,8 @@ package tests.extendedsprite
 			
 			//	Test specific
 			
+			balls = new FlxGroup(3);
+			
 			//	You can drag the red ball from anywhere inside the bounding area (including the transparent edges)
 			//	This is the fastest method of dragging (in terms of CPU) so use it if you can!
 			red = new FlxExtendedSprite(32, 32, AssetsRegistry.redPNG);
@@ -41,9 +46,11 @@ package tests.extendedsprite
 			blue = new FlxExtendedSprite(128, 128, AssetsRegistry.bluePNG);
 			blue.setMouseDrag(false, true);
 						
-			add(blue);
-			add(red);
-			add(green);
+			balls.add(blue);
+			balls.add(red);
+			balls.add(green);
+			
+			add(balls);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -52,6 +59,8 @@ package tests.extendedsprite
 		override public function update():void
 		{
 			super.update();
+			
+			balls.sort();
 		}
 		
 	}

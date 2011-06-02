@@ -57,12 +57,12 @@ package org.flixel.plugin.photonstorm
 		
 		override public function update():void
 		{
-			super.update();
-			
-			if ((draggable && isDragged == false && FlxMath.pointInCoordinates(FlxG.mouse.x, FlxG.mouse.y, x, y, width, height)) || isDragged)
+			if (draggable)
 			{
 				checkDragState();
 			}
+			
+			super.update();
 		}
 		
 		/**
@@ -85,11 +85,14 @@ package org.flixel.plugin.photonstorm
 				else
 				{
 					isDragged = false;
+					
+					FlxMouseControl.isDragging = false;
+					FlxMouseControl.dragTarget = null;
 				}
 			}
 			else
 			{
-				if (FlxG.mouse.justPressed())
+				if (FlxG.mouse.justPressed() && mouseOver && FlxMouseControl.isDragging == false)
 				{
 					if ((dragPixelPerfect == true && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha)) || dragPixelPerfect == false)
 					{
@@ -106,6 +109,9 @@ package org.flixel.plugin.photonstorm
 							dragOffsetX = (frameWidth / 2);
 							dragOffsetY = (frameHeight / 2);
 						}
+						
+						FlxMouseControl.isDragging = true;
+						FlxMouseControl.dragTarget = this;
 					}
 				}
 			}

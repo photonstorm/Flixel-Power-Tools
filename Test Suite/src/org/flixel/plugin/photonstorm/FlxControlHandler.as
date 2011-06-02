@@ -1,5 +1,5 @@
 /**
- * FlxControls
+ * FlxControlHandler
  * -- Part of the Flixel Power Tools set
  * 
  * v1.3 Major refactoring and lots of new enhancements

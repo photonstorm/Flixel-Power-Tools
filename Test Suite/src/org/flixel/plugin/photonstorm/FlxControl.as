@@ -1,3 +1,14 @@
+/**
+ * FlxControls
+ * -- Part of the Flixel Power Tools set
+ * 
+ * v1.0 First release
+ * 
+ * @version 1.0 - May 18th 2011
+ * @link http://www.photonstorm.com
+ * @author Richard Davey / Photon Storm
+*/
+
 package org.flixel.plugin.photonstorm 
 {
 	import flash.utils.Dictionary;

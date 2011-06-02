@@ -216,6 +216,19 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * If this FlxBar should be killed when its value reaches empty, set to true
+		 */
+		public function set killOnEmpty(value:Boolean):void
+		{
+			emptyKill = value;
+		}
+		
+		public function get killOnEmpty():Boolean
+		{
+			return emptyKill;
+		}
+		
+		/**
 		 * Set the minimum and maximum allowed values for the FlxBar
 		 * 
 		 * @param	min			The minimum value. I.e. for a progress bar this would be zero (nothing loaded yet)
@@ -329,7 +342,7 @@ package org.flixel.plugin.photonstorm
 			if (empty && fill == null)
 			{
 				//	If empty is set, but fill is not ...
-				trace("ci1");
+
 				emptyBar = Bitmap(new empty).bitmapData.clone();
 				emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
 				
@@ -351,14 +364,11 @@ package org.flixel.plugin.photonstorm
 				
 				emptyBar = new BitmapData(barWidth, barHeight, true, emptyBackground);
 				emptyBarRect = new Rectangle(0, 0, barWidth, barHeight);
-				
-				trace("ci2", barWidth, barHeight);
 			}
 			else if (empty && fill)
 			{
 				//	If both are set
-				trace("ci3");
-		
+				
 				emptyBar = Bitmap(new empty).bitmapData.clone();
 				emptyBarRect = new Rectangle(0, 0, emptyBar.width, emptyBar.height);
 				
@@ -367,6 +377,17 @@ package org.flixel.plugin.photonstorm
 				
 				barWidth = emptyBarRect.width;
 				barHeight = emptyBarRect.height;
+			}
+			
+			canvas = new BitmapData(barWidth, barHeight, true, 0x0);
+			
+			if (fillHorizontal)
+			{
+				pxPerPercent = barWidth / 100;
+			}
+			else
+			{
+				pxPerPercent = barHeight / 100;
 			}
 		}
 		

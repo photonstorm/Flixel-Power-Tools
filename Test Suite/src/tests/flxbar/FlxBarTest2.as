@@ -21,6 +21,7 @@ package tests.flxbar
 		private var bar6:FlxBar;
 		private var bar7:FlxBar;
 		private var bar8:FlxBar;
+		private var bar9:FlxBar;
 		
 		private var v:int;
 		private var vDirection:int = 0;
@@ -38,31 +39,41 @@ package tests.flxbar
 			
 			v = 0;
 			
-			//	The barPNG is 100x10 in size, which matches the default values of FlxBar
-			bar1 = new FlxBar(16, 48+32, FlxBar.FILL_LEFT_TO_RIGHT);
+			bar1 = new FlxBar(0, 0, FlxBar.FILL_LEFT_TO_RIGHT);
 			bar1.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			bar2 = new FlxBar(16, 48+64, FlxBar.FILL_RIGHT_TO_LEFT);
+			bar2 = new FlxBar(0, 0, FlxBar.FILL_RIGHT_TO_LEFT);
 			bar2.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			bar3 = new FlxBar(16, 48+96, FlxBar.FILL_HORIZONTAL_INSIDE_OUT);
+			bar3 = new FlxBar(0, 0, FlxBar.FILL_HORIZONTAL_INSIDE_OUT);
 			bar3.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			bar4 = new FlxBar(16, 48+128, FlxBar.FILL_HORIZONTAL_OUTSIDE_IN);
+			bar4 = new FlxBar(0, 0, FlxBar.FILL_HORIZONTAL_OUTSIDE_IN);
 			bar4.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			//	Notice how we set the width/height here, because it doesn't match the default values
-			bar5 = new FlxBar(160, 80, FlxBar.FILL_TOP_TO_BOTTOM, 10, 100);
+			//	We use this to align all the bars together (easier than manually entering all the coordinates!)
+			FlxDisplay.space([bar1, bar2, bar3, bar4], 32, 48, 0, 32);
+			
+			bar5 = new FlxBar(0, 0, FlxBar.FILL_TOP_TO_BOTTOM, 10, 100);
 			bar5.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
 			
-			bar6 = new FlxBar(192, 80, FlxBar.FILL_BOTTOM_TO_TOP, 10, 100);
+			bar6 = new FlxBar(0, 0, FlxBar.FILL_BOTTOM_TO_TOP);
 			bar6.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
 			
-			bar7 = new FlxBar(224, 80, FlxBar.FILL_VERTICAL_INSIDE_OUT, 10, 100);
+			bar7 = new FlxBar(0, 0, FlxBar.FILL_VERTICAL_INSIDE_OUT);
 			bar7.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
 			
-			bar8 = new FlxBar(256, 80, FlxBar.FILL_VERTICAL_OUTSIDE_IN, 10, 100);
+			bar8 = new FlxBar(0, 0, FlxBar.FILL_VERTICAL_OUTSIDE_IN);
 			bar8.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
+			
+			//	We use this to align all the bars together (easier than manually entering all the coordinates!)
+			FlxDisplay.space([bar5, bar6, bar7, bar8], 180, 48, 32, 0);
+			
+			//	FlxBar is a normal FlxSprite, so you can do anything you normally do to sprites including alpha, rotate, collide, etc
+			bar9 = new FlxBar(160, 180, FlxBar.FILL_LEFT_TO_RIGHT);
+			bar9.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
+			bar9.alpha = 0.5;
+			bar9.angle = 200;
 			
 			add(bar1);
 			add(bar2);
@@ -72,6 +83,7 @@ package tests.flxbar
 			add(bar6);
 			add(bar7);
 			add(bar8);
+			add(bar9);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -110,6 +122,7 @@ package tests.flxbar
 			bar6.percent = v;
 			bar7.percent = v;
 			bar8.percent = v;
+			bar9.percent = v;
 		}
 		
 	}
