@@ -8,17 +8,19 @@ package tests.flxbar
 	{
 		//	Common variables
 		public static var title:String = "FlxBar 2";
-		public static var description:String = "Demonstrates the 6 ways to fill the bars";
+		public static var description:String = "Demonstrates the 8 ways to fill the bars";
 		private var instructions:String = "Each bar uses a different fill method";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var healthBar1:FlxBar;
-		private var healthBar2:FlxBar;
-		private var healthBar3:FlxBar;
-		private var healthBar4:FlxBar;
-		
-		private var healthBar5:FlxBar;
+		private var bar1:FlxBar;
+		private var bar2:FlxBar;
+		private var bar3:FlxBar;
+		private var bar4:FlxBar;
+		private var bar5:FlxBar;
+		private var bar6:FlxBar;
+		private var bar7:FlxBar;
+		private var bar8:FlxBar;
 		
 		private var v:int;
 		private var vDirection:int = 0;
@@ -36,28 +38,40 @@ package tests.flxbar
 			
 			v = 0;
 			
-			//	We don't need to set the width/height of the bar itself as the createImageBar will set it
+			//	The barPNG is 100x10 in size, which matches the default values of FlxBar
+			bar1 = new FlxBar(16, 48+32, FlxBar.FILL_LEFT_TO_RIGHT);
+			bar1.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			healthBar1 = new FlxBar(16, 32, FlxBar.FILL_LEFT_TO_RIGHT);
-			healthBar1.createImageBar(null, AssetsRegistry.healthBarPNG, 0xaa000000);
+			bar2 = new FlxBar(16, 48+64, FlxBar.FILL_RIGHT_TO_LEFT);
+			bar2.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			healthBar2 = new FlxBar(16, 48, FlxBar.FILL_RIGHT_TO_LEFT);
-			healthBar2.createImageBar(null, AssetsRegistry.healthBarPNG, 0xaa000000);
+			bar3 = new FlxBar(16, 48+96, FlxBar.FILL_HORIZONTAL_INSIDE_OUT);
+			bar3.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			healthBar3 = new FlxBar(16, 64, FlxBar.FILL_HORIZONTAL_INSIDE_OUT);
-			healthBar3.createImageBar(null, AssetsRegistry.healthBarPNG, 0xaa000000);
+			bar4 = new FlxBar(16, 48+128, FlxBar.FILL_HORIZONTAL_OUTSIDE_IN);
+			bar4.createImageBar(null, AssetsRegistry.healthBarPNG, 0x88000000);
 			
-			healthBar4 = new FlxBar(16, 80, FlxBar.FILL_HORIZONTAL_OUTSIDE_IN);
-			healthBar4.createImageBar(null, AssetsRegistry.healthBarPNG, 0xaa000000);
+			//	Notice how we set the width/height here, because it doesn't match the default values
+			bar5 = new FlxBar(160, 80, FlxBar.FILL_TOP_TO_BOTTOM, 10, 100);
+			bar5.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
 			
-			healthBar5 = new FlxBar(150, 80, FlxBar.FILL_TOP_TO_BOTTOM);
-			healthBar5.createImageBar(null, AssetsRegistry.flectrumPNG, 0xaa000000);
+			bar6 = new FlxBar(192, 80, FlxBar.FILL_BOTTOM_TO_TOP, 10, 100);
+			bar6.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
 			
-			add(healthBar1);
-			add(healthBar2);
-			add(healthBar3);
-			add(healthBar4);
-			add(healthBar5);
+			bar7 = new FlxBar(224, 80, FlxBar.FILL_VERTICAL_INSIDE_OUT, 10, 100);
+			bar7.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
+			
+			bar8 = new FlxBar(256, 80, FlxBar.FILL_VERTICAL_OUTSIDE_IN, 10, 100);
+			bar8.createImageBar(null, AssetsRegistry.flectrumPNG, 0x88000000);
+			
+			add(bar1);
+			add(bar2);
+			add(bar3);
+			add(bar4);
+			add(bar5);
+			add(bar6);
+			add(bar7);
+			add(bar8);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -88,11 +102,14 @@ package tests.flxbar
 			}
 			
 			//	If a FlxBar isn't tied to a sprite you can set the value of it directly via percentage
-			healthBar1.percent = v;
-			healthBar2.percent = v;
-			healthBar3.percent = v;
-			healthBar4.percent = v;
-			healthBar5.percent = v;
+			bar1.percent = v;
+			bar2.percent = v;
+			bar3.percent = v;
+			bar4.percent = v;
+			bar5.percent = v;
+			bar6.percent = v;
+			bar7.percent = v;
+			bar8.percent = v;
 		}
 		
 	}
