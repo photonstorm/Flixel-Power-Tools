@@ -152,7 +152,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Sets a new parent for this FlxBar. Instantly replaces any previously set parent and refreshes the bar.
+		 * Sets a parent for this FlxBar. Instantly replaces any previously set parent and refreshes the bar.
 		 * 
 		 * @param	parentRef	A reference to an object in your game that you wish the bar to track
 		 * @param	variable	The variable of the object that is used to determine the bar position. For example if the parent was an FlxSprite this could be "health" to track the health value
@@ -160,7 +160,7 @@ package org.flixel.plugin.photonstorm
 		 * @param	offsetX		The offset on X in relation to the origin x/y of the parent
 		 * @param	offsetY		The offset on Y in relation to the origin x/y of the parent
 		 */
-		public function setNewParent(parentRef:*, variable:String, track:Boolean = false, offsetX:int = 0, offsetY:int = 0):void
+		public function setParent(parentRef:*, variable:String, track:Boolean = false, offsetX:int = 0, offsetY:int = 0):void
 		{
 			parent = parentRef;
 			parentVariable = variable;
