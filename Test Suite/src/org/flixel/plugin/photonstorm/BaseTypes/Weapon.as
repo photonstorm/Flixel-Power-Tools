@@ -32,7 +32,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			
 			for (var b:int = 0; b < maxBulletsOnscreen; b++)
 			{
-				var tempBullet:Bullet = new(bulletType);
+				var tempBullet:Bullet = (new bullet);
 				
 				group.add(tempBullet.sprite);
 				

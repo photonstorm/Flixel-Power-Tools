@@ -11,6 +11,8 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	{
 		public var id:int;
 		public var sprite:FlxSprite;
+		public var active:Boolean;
+		public var exists:Boolean;
 		
 		private var type:int;
 		
@@ -61,6 +63,9 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			{
 				sprite = new FlxSprite(0, 0).makeGraphic(width, height, color);
 			}
+			
+			exists = true;
+			active = false;
 		}
 		
 		public function setLifeSpan():void
@@ -82,7 +87,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			parent = parentRef;
 			parentXVariable = xVariable;
 			parentYVariable = yVariable;
-			
+			fireFromParent = true;
 			positionOffset = new FlxPoint(offsetX, offsetY);
 		}
 		
@@ -92,13 +97,41 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		
 		public function fire():void
 		{
+			trace("bullet", id, "fired");
+			
+			if (active)
+			{
+				return;
+			}
+			
+			if (fireFromPosition)
+			{
+				// todo
+			}
+			else if (fireFromParent)
+			{
+				sprite.x = parent[parentXVariable] + positionOffset.x;
+				sprite.y = parent[parentYVariable] + positionOffset.y;
+				active = true;
+				sprite.velocity.y = -speed;
+				sprite.exists = true;
+			}
+		}
+		
+		public function kill():void
+		{
+			trace("bullet", id, "killed");
+			
+			exists = false;
+			active = false;
+			sprite.exists = false;
 		}
 		
 		public function inBounds(bounds:FlxRect):Boolean
 		{
-			_point = getScreenXY();
+			var point:FlxPoint = sprite.getScreenXY();
 			
-			return FlxMath.pointInFlxRect(_point.x, _point.y, bounds);
+			return FlxMath.pointInFlxRect(point.x, point.y, bounds);
 		}
 		
 		

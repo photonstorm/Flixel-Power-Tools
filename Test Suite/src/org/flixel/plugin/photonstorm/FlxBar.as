@@ -2,12 +2,13 @@
  * FlxBar
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Fixed bug in "get percent" function that allows it to work with any value range
  * v1.4 Added support for min/max callbacks and "kill on min"
  * v1.3 Renamed from FlxHealthBar and made less specific / far more flexible
  * v1.2 Fixed colour values for fill and gradient to include alpha
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - June 1st 2011
+ * @version 1.5 - June 6th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -534,7 +535,12 @@ package org.flixel.plugin.photonstorm
 		
 		public function get percent():uint
 		{
-			return Math.floor(value / pct);
+			if (value > max)
+			{
+				return 100;
+			}
+			
+			return Math.floor(value * pct);
 		}
 		
 		public function set percent(newPct:uint):void
