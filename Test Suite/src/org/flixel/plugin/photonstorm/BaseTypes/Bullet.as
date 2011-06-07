@@ -1,5 +1,6 @@
 package org.flixel.plugin.photonstorm.BaseTypes 
 {
+	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
 	import org.flixel.plugin.photonstorm.FlxMath;
 	import org.flixel.plugin.photonstorm.FlxVelocity;
@@ -38,6 +39,30 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			velocity.y = velY;
 			
 			exists = true;
+		}
+		
+		public function fireAtMouse(fromX:int, fromY:int):void
+		{
+			x = fromX;
+			y = fromY;
+			
+			FlxVelocity.moveTowardsMouse(this, 60);
+		}
+		
+		public function fireAtPosition(fromX:int, fromY:int, toX:int, toY:int):void
+		{
+			x = fromX;
+			y = fromY;
+			
+			FlxVelocity.moveTowardsPoint(this, new FlxPoint(toX, toY), 60);
+		}
+		
+		public function fireAtTarget(fromX:int, fromY:int, target:FlxSprite):void
+		{
+			x = fromX;
+			y = fromY;
+			
+			FlxVelocity.moveTowardsObject(this, target, 60);
 		}
 		
 		override public function update():void

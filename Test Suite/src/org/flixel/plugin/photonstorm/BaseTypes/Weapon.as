@@ -76,8 +76,6 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			positionOffset = new FlxPoint;
 		}
 		
-		
-		
 		public function makePixelBullets(quantity:uint, width:int = 2, height:int = 2, color:uint = 0xffffffff, offsetX:int = 0, offsetY:int = 0):void
 		{
 			group = new FlxGroup(quantity);
@@ -111,8 +109,6 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		public function makeAnimatedBullets(quantity:uint, image:Class, frames:Array, animationSpeed:uint, looped:Boolean, offsetX:int = 0, offsetY:int = 0):void
 		{
 		}
-		
-		
 		
 		public function set bulletBounds(bounds:FlxRect):void
 		{
@@ -151,8 +147,30 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			}
 		}
 		
-		public function update():void
+		public function fireAtMouse():void
 		{
+			var bullet:Bullet = getFreeBullet();
+			
+			if (bullet != null)
+			{
+				bullet.fireAtMouse(parent[parentXVariable], parent[parentYVariable]);
+			}
+		}
+		
+		public function fireAtPosition():void
+		{
+			var bullet:Bullet = getFreeBullet();
+			
+			if (bullet != null)
+			{
+				//bullet.fireAtPosition(parent[parentXVariable], parent[parentYVariable]);
+			}
+			
+		}
+		
+		public function fireAtTarget():void
+		{
+			
 		}
 		
 		private function getFreeBullet():Bullet
