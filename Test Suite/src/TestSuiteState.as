@@ -49,8 +49,8 @@ package
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		//private var shortcut:Class = BulletTest1;
-		private var shortcut:Class = FlxBarTest4;
+		private var shortcut:Class = BulletTest1;
+		//private var shortcut:Class = FlxBarTest4;
 		//private var shortcut:Class = ExtendedSpriteTest1;
 		//private var shortcut:Class = SineWaveTest4;
 		

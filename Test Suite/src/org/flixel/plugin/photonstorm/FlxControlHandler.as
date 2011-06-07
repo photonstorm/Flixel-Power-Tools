@@ -294,17 +294,32 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function speedUp(xFactor:Number, yFactor:Number):void
 		{
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function slowDown(xFactor:Number, yFactor:Number):void
 		{
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function resetSpeeds(resetX:Boolean = true, resetY:Boolean = true):void
 		{
 			if (resetX)
@@ -318,7 +333,12 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function addHotKey(key:String, callback:Function, mode:int):void
 		{
 			
@@ -329,7 +349,7 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @param	key				The key to use as the fire button (String from org.flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
 		 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
-		 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (250 would allow it to fire 4 times per second)
+		 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (0 means instant, 250 would allow it to fire approx. 4 times per second)
 		 * @param	callback		A user defined function to call when it fires
 		 * @param	altKey			Specify an alternative fire key that works AS WELL AS the primary fire key (TODO)
 		 */
@@ -534,10 +554,18 @@ package org.flixel.plugin.photonstorm
 			//	2 = Just Released
 			if ((fireKeyMode == 0 && FlxG.keys.pressed(fireKey)) || (fireKeyMode == 1 && FlxG.keys.justPressed(fireKey)) || (fireKeyMode == 2 && FlxG.keys.justReleased(fireKey)))
 			{
-				if (getTimer() > nextFireTime)
+				if (fireRate > 0 && getTimer() > nextFireTime)
 				{
 					lastFiredTime = getTimer();
 					nextFireTime = lastFiredTime + fireRate;
+					
+					fireCallback.call();
+					
+					fired = true;
+				}
+				else
+				{
+					lastFiredTime = getTimer();
 					
 					fireCallback.call();
 					

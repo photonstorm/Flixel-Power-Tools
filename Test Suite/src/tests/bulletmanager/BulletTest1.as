@@ -37,27 +37,20 @@ package tests.bulletmanager
 			{
 				FlxG.addPlugin(new FlxControl);
 			}
-			
-			if (FlxG.getPlugin(FlxBulletManager) == null)
-			{
-				FlxG.addPlugin(new FlxBulletManager);
-			}
 
 			//	Our players space ship
 			player = new FlxSprite(160, 200, AssetsRegistry.invaderPNG);
 			
-			//	Bullet
-			lazerBullet = new Bullet(Bullet.FIRE_VERTICALLY, 300, AssetsRegistry.bulletPNG);
-			lazerBullet.setParent(player, "x", "y", 5, 0);
-			
 			//	Weapon
-			lazer = new Weapon("lazer", lazerBullet, 1, new FlxRect(0, 0, FlxG.width, FlxG.height));
-
+			lazer = new Weapon("lazer", player, "x", "y");
+			lazer.makeImageBullets(50, AssetsRegistry.bulletPNG);
+			//lazer.makePixelBullets(50);
+			
 			//	Control the player
 			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 1, false, false);
 			FlxControl.player1.setMovementSpeed(200, 0, 200, 0);
 			FlxControl.player1.setCursorControl(false, false, true, true);
-			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 200, lazer.fire);
+			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 100, lazer.fire);
 			FlxControl.player1.setBounds(16, 200, 280, 16);
 			
 			add(lazer.group);
