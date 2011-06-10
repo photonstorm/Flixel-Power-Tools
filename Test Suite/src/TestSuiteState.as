@@ -49,7 +49,7 @@ package
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		private var shortcut:Class = WeaponTest3;
+		private var shortcut:Class = WeaponTest5;
 		//private var shortcut:Class = ExtendedSpriteTest1;
 		
 		public function TestSuiteState()
@@ -59,6 +59,7 @@ package
 			options.push( { state: VelocityTest1, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: VelocityTest2, color: [0xff008000, 0xff00FF00] } );
 			options.push( { state: VelocityTest3, color: [0xff008000, 0xff00FF00] } );
+			options.push( { state: VelocityTest4, color: [0xff008000, 0xff00FF00] } );
 			
 			options.push( { spacer: true } );
 			

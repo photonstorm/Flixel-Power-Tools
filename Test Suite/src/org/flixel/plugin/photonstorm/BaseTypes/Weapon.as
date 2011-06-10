@@ -24,8 +24,6 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	 * ----
 	 * 
 	 * Angled bullets
-	 * Bullet gravity
-	 * Bullet acceleration
 	 * Baked Rotation support for angled bullets
 	 * Bullet death styles (particle effects)
 	 * Bullet trails
@@ -126,6 +124,8 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			bounds = new FlxRect(0, 0, FlxG.width, FlxG.height);
 			
 			positionOffset = new FlxPoint;
+			
+			velocity = new FlxPoint;
 			
 			if (parentRef)
 			{
@@ -252,6 +252,10 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			{
 				return;
 			}
+
+			//	Clear any velocity that may have been previously set from the pool
+			bullet.velocity.x = 0;
+			bullet.velocity.y = 0;
 			
 			lastFired = getTimer();
 			nextFire = getTimer() + fireRate;
@@ -430,11 +434,13 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		 * Sets gravity on all currently created bullets<br>
 		 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
 		 * 
-		 * @param	x	A positive value applies gravity dragging the bullet to the right. A negative value drags the bullet to the left. Zero disables horizontal gravity.
-		 * @param	y	A positive value applies gravity dragging the bullet down. A negative value drags the bullet up. Zero disables vertical gravity.
+		 * @param	xForce	A positive value applies gravity dragging the bullet to the right. A negative value drags the bullet to the left. Zero disables horizontal gravity.
+		 * @param	yforce	A positive value applies gravity dragging the bullet down. A negative value drags the bullet up. Zero disables vertical gravity.
 		 */
-		public function setBulletGravity(x:int, y:int):void
+		public function setBulletGravity(xForce:int, yForce:int):void
 		{
+			group.setAll("xGravity", xForce);
+			group.setAll("yGravity", yForce);
 		}
 		
 		/**
@@ -442,17 +448,25 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		 * If you've previously set the acceleration then setting it to zero will cancel the effect.<br>
 		 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
 		 * 
-		 * @param	xAcceleration		Acceleration speed in pixels per second to apply to the sprites horizontal movement, set to zero to cancel
-		 * @param	yAcceleration		Acceleration speed in pixels per second to apply to the sprites vertical movement, set to zero to cancel
+		 * @param	xAcceleration		Acceleration speed in pixels per second to apply to the sprites horizontal movement, set to zero to cancel. Negative values move left, positive move right.
+		 * @param	yAcceleration		Acceleration speed in pixels per second to apply to the sprites vertical movement, set to zero to cancel. Negative values move up, positive move down.
 		 * @param	xSpeedMax			The maximum speed in pixels per second in which the sprite can move horizontally
 		 * @param	ySpeedMax			The maximum speed in pixels per second in which the sprite can move vertically
 		 */
-		public function setBulletAcceleration(xAcceleration:int = 0, yAcceleration:int = 0, xSpeedMax:int, ySpeedMax:int):void
+		public function setBulletAcceleration(xAcceleration:int, yAcceleration:int, xSpeedMax:int, ySpeedMax:int):void
 		{
-			group.setAll("acceleration.x", xAcceleration);
-			group.setAll("acceleration.y", yAcceleration);
-			group.setAll("maxVelocity.x", xSpeedMax);
-			group.setAll("maxVelocity.y", ySpeedMax);
+			if (xAcceleration == 0 && yAcceleration == 0)
+			{
+				group.setAll("accelerates", false);
+			}
+			else
+			{
+				group.setAll("accelerates", true);
+				group.setAll("xAcceleration", xAcceleration);
+				group.setAll("yAcceleration", yAcceleration);
+				group.setAll("maxVelocityX", xSpeedMax);
+				group.setAll("maxVelocityY", ySpeedMax);
+			}
 		}
 		
 		/**

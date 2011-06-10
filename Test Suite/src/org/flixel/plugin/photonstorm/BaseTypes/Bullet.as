@@ -8,9 +8,15 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	public class Bullet extends FlxSprite
 	{
 		public var id:uint;
-		
 		private var weapon:Weapon;
+		
 		private var bulletSpeed:int;
+		
+		//	Acceleration or Velocity?
+		public var accelerates:Boolean;
+		public var xAcceleration:int;
+		public var yAcceleration:int;
+		
 		private var animated:Boolean;
 		
 		public function Bullet(weapon:Weapon, id:uint)
@@ -19,6 +25,11 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			
 			this.weapon = weapon;
 			this.id = id;
+			
+			//	Safe defaults
+			accelerates = false;
+			animated = false;
+			bulletSpeed = 0;
 			
 			exists = false;
 		}
@@ -43,8 +54,16 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			x = fromX;
 			y = fromY;
 			
-			velocity.x = velX;
-			velocity.y = velY;
+			if (accelerates)
+			{
+				acceleration.x = xAcceleration;
+				acceleration.y = yAcceleration;
+			}
+			else
+			{
+				velocity.x = velX;
+				velocity.y = velY;
+			}
 			
 			if (animated)
 			{
@@ -59,7 +78,14 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			x = fromX;
 			y = fromY;
 			
-			FlxVelocity.moveTowardsMouse(this, speed);
+			if (accelerates)
+			{
+				FlxVelocity.accelerateTowardsMouse(this, speed, maxVelocity.x, maxVelocity.y);
+			}
+			else
+			{
+				FlxVelocity.moveTowardsMouse(this, speed);
+			}
 			
 			if (animated)
 			{
@@ -74,7 +100,14 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			x = fromX;
 			y = fromY;
 			
-			FlxVelocity.moveTowardsPoint(this, new FlxPoint(toX, toY), speed);
+			if (accelerates)
+			{
+				FlxVelocity.accelerateTowardsPoint(this, new FlxPoint(toX, toY), speed, maxVelocity.x, maxVelocity.y);
+			}
+			else
+			{
+				FlxVelocity.moveTowardsPoint(this, new FlxPoint(toX, toY), speed);
+			}
 			
 			if (animated)
 			{
@@ -89,7 +122,14 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			x = fromX;
 			y = fromY;
 			
-			FlxVelocity.moveTowardsObject(this, target, speed);
+			if (accelerates)
+			{
+				FlxVelocity.accelerateTowardsObject(this, target, speed, maxVelocity.x, maxVelocity.y);
+			}
+			else
+			{
+				FlxVelocity.moveTowardsObject(this, target, speed);
+			}
 			
 			if (animated)
 			{
@@ -97,6 +137,26 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			}
 			
 			exists = true;
+		}
+		
+		public function set xGravity(gx:int):void
+		{
+			acceleration.x = gx;
+		}
+		
+		public function set yGravity(gy:int):void
+		{
+			acceleration.y = gy;
+		}
+		
+		public function set maxVelocityX(mx:int):void
+		{
+			maxVelocity.x = mx;
+		}
+		
+		public function set maxVelocityY(my:int):void
+		{
+			maxVelocity.y = my;
 		}
 		
 		override public function update():void

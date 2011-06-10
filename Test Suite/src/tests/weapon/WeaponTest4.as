@@ -5,12 +5,12 @@ package tests.weapon
 	import org.flixel.plugin.photonstorm.BaseTypes.Weapon;
 	import tests.TestsHeader;
 
-	public class WeaponTest3 extends FlxState
+	public class WeaponTest4 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "Weapon 3";
-		public static var description:String = "Animted Bullets Example";
-		private var instructions:String = "Left and Right to Move. Space to Fire.";
+		public static var title:String = "Weapon 4";
+		public static var description:String = "Bullet Acceleration Example";
+		private var instructions:String = "LEFT / RIGHT to Move. Space to Fire.";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
@@ -18,7 +18,7 @@ package tests.weapon
 		private var player:FlxSprite;
 		private var lazer:Weapon;
 		
-		public function WeaponTest3() 
+		public function WeaponTest4() 
 		{
 		}
 		
@@ -32,19 +32,17 @@ package tests.weapon
 			header.showDarkBackground();
 			
 			//	Our players space ship
-			player = new FlxSprite(160, 200, AssetsRegistry.xenon2ShipPNG);
+			player = new FlxSprite(160, 200, AssetsRegistry.invaderPNG);
 			
 			//	Creates our weapon. We'll call it "lazer" and link it to the x/y coordinates of the player sprite
 			lazer = new Weapon("lazer", player, "x", "y");
 			
-			//	We're creating 20 animated bullets from the sprite sheet xenon2BombPNG. The frame width and height is 8x16.
-			//	The animation goes through frames 1,2,3,4 and then loops at 30fps.
-			//	The 12x6 at the end is the offset so the bullet appears from the middle of the ship, not the left-hand side.
+			//	Tell the weapon to create 50 bullets using the bulletPNG image.
+			//	The 5 value is the x offset, which makes the bullet fire from the tip of the players ship.
+			lazer.makeImageBullet(40, AssetsRegistry.bulletPNG, 5);
 			
-			lazer.makeAnimatedBullet(20, AssetsRegistry.xenon2BombPNG, 8, 16, [1, 2, 3, 4], 30, true, 12, 6);
-			
-			//	Sets the direction and speed the bullets will be fired in. Slowed down on purpose so you can see the animation.
-			lazer.setBulletDirection(Weapon.BULLET_UP, 180);
+			//	Sets the direction and speed the bullets will be fired in
+			lazer.setBulletAcceleration(0, -60, 200, 200);
 			
 			//	The following are controls for the player, note that the "setFireButton" controls the speed at which bullets are fired, not the Weapon class itself
 			
@@ -59,8 +57,8 @@ package tests.weapon
 			FlxControl.player1.setCursorControl(false, false, true, true);
 			FlxControl.player1.setBounds(16, 200, 280, 16);
 			
-			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 250 ms, hooked to the lazer.fire method
-			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 250, lazer.fire);
+			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 150 ms, hooked to the lazer.fire method
+			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 150, lazer.fire);
 			
 			//	The group which contains all of the bullets should be added so it is displayed
 			add(lazer.group);
@@ -79,6 +77,7 @@ package tests.weapon
 		override public function destroy():void
 		{
 			//	Important! Clear out the plugin otherwise resources will get messed right up after a while
+			
 			FlxControl.clear();
 			
 			super.destroy();
