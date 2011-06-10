@@ -2,10 +2,11 @@
  * FlxVelocity
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 New method: velocityFromAngle
  * v1.4 New methods: moveTowardsPoint, distanceToPoint, angleBetweenPoint
  * v1.3 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - June 7th 2011
+ * @version 1.5 - June 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  * @see Depends on FlxMath
@@ -122,8 +123,8 @@ package org.flixel.plugin.photonstorm
 		 */
 		public static function distanceToPoint(a:FlxSprite, target:FlxPoint):int
 		{
-			var dx:Number = (a.x + a.origin.x) - (b.x);
-			var dy:Number = (a.y + a.origin.y) - (b.y);
+			var dx:Number = (a.x + a.origin.x) - (target.x);
+			var dy:Number = (a.y + a.origin.y) - (target.y);
 			
 			return int(FlxMath.vectorLength(dx, dy));
 		}
@@ -191,6 +192,26 @@ package org.flixel.plugin.photonstorm
 				return Math.atan2(dy, dx);
 			}
         }
+		
+		/**
+		 * Given the angle and speed calculate the velocity and return it as an FlxPoint
+		 * 
+		 * @param	angle	The angle (in degrees) calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
+		 * @param	speed	The speed it will move, in pixels per second sq
+		 * 
+		 * @return	An FlxPoint where FlxPoint.x contains the velocity x value and FlxPoint.y contains the velocity y value
+		 */
+		public static function velocityFromAngle(angle:int, speed:int):FlxPoint
+		{
+			var a:Number = FlxMath.asRadians(angle);
+			
+			var result:FlxPoint = new FlxPoint;
+			
+			result.x = int(Math.cos(a) * speed);
+			result.y = int(Math.sin(a) * speed);
+			
+			return result;
+		}
 		
 		/**
 		 * Find the angle (in radians) between an FlxSprite and the mouse, taking their x/y and origin into account.

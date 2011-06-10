@@ -43,8 +43,9 @@ package tests.bulletmanager
 			
 			//	Weapon
 			lazer = new Weapon("lazer", player, "x", "y");
-			lazer.makeImageBullets(50, AssetsRegistry.bulletPNG);
-			//lazer.makePixelBullets(50);
+			lazer.makeImageBullet(50, AssetsRegistry.bulletPNG);
+			lazer.setBulletDirection(Weapon.BULLET_UP, 200);
+			
 			
 			//	Control the player
 			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 1, false, false);

@@ -7,12 +7,13 @@
  * @version 1.0 - June 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
- * @see Requires Bullet, FlxBulletManager
+ * @see Requires Bullet, FlxBulletManager, FlxVelocity
 */
 
 package org.flixel.plugin.photonstorm.BaseTypes 
 {
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.FlxVelocity;
 	
 	/**
 	 * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed)
@@ -25,6 +26,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	 * Animated bullets
 	 * Bullet death styles (particle effects)
 	 * Assigning sound effects
+	 * Homing Missiles
 	 */
 	
 	public class Weapon 
@@ -45,7 +47,8 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		public var group:FlxGroup;
 		
 		//	Bullet values
-		private var bounds:FlxRect;
+		public var bounds:FlxRect;
+		
 		private var bulletSprite:FlxSprite;
 		private var bulletSpeed:uint;
 		private var rotateToAngle:Boolean;
@@ -62,6 +65,8 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		private var parentYVariable:String;
 		private var positionOffset:FlxPoint;
 		
+		private var velocity:FlxPoint;
+		
 		//	Callbacks
 		public var onKillCallback:Function;
 		public var onFireCallback:Function;
@@ -71,15 +76,15 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		public var onKillSound:FlxSound;
 		public var onFireSound:FlxSound;
 		
-		//	Quick firing direction constants
-		public static const BULLET_UP:int = 0;
-		public static const BULLET_DOWN:int = 0;
-		public static const BULLET_LEFT:int = 1;
-		public static const BULLET_RIGHT:int = 1;
-		public static const BULLET_NORTH_EAST:int = 1;
-		public static const BULLET_NORTH_WEST:int = 1;
-		public static const BULLET_SOUTH_EAST:int = 1;
-		public static const BULLET_SOUTH_WEST:int = 1;
+		//	Quick firing direction angle constants
+		public static const BULLET_UP:int = -90;
+		public static const BULLET_DOWN:int = 90;
+		public static const BULLET_LEFT:int = 180;
+		public static const BULLET_RIGHT:int = 0;
+		public static const BULLET_NORTH_EAST:int = -45;
+		public static const BULLET_NORTH_WEST:int = -135;
+		public static const BULLET_SOUTH_EAST:int = 45;
+		public static const BULLET_SOUTH_WEST:int = 135;
 		
 		//	TODO :)
 		private var bulletsFired:uint;
@@ -110,13 +115,14 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		{
 			this.name = name;
 			
+			bounds = new FlxRect(0, 0, FlxG.width, FlxG.height);
+			
+			positionOffset = new FlxPoint;
+			
 			if (parentRef)
 			{
 				setParent(parentRef, xVariable, yVariable);
 			}
-			
-			bounds = new FlxRect(0, 0, FlxG.width, FlxG.height);
-			positionOffset = new FlxPoint;
 		}
 		
 		/**
@@ -206,7 +212,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			//	Faster (less CPU) to use this small if-else ladder than a switch statement
 			if (method == FIRE)
 			{
-				bullet.fire(launchX, launchY, 0, -200);
+				bullet.fire(launchX, launchY, velocity.x, velocity.y);
 			}
 			else if (method == FIRE_AT_MOUSE)
 			{
@@ -335,16 +341,17 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		}
 		
 		/**
-		 * Set the bullet direction it will be shot out at when fired.<br>
+		 * Set the direction the bullet will travel when fired.<br>
 		 * You can use one of the consts such as BULLET_UP, BULLET_DOWN or BULLET_NORTH_EAST to set the angle easily.<br>
 		 * Speed should be given in pixels/sec (sq) and is the speed at which the bullet travels when fired.
 		 * 
-		 * @param	angle		Angle of the bullet in degrees working clockwise from 0 where 0 is facing right, 90 = down, 180 = left, 240 = up
+		 * @param	angle		The angle of the bullet. In clockwise positive direction: Right = 0, Down = 90, Left = 180, Up = -90. You can use one of the consts such as BULLET_UP, etc
 		 * @param	speed		The speed it will move, in pixels per second (sq)
-		 * @param	autoRotate	When set to true the bullet sprite will automatically rotate to match the angle
+		 * @param	autoRotate	TODO When set to true the bullet sprite will automatically rotate to match the angle
 		 */
 		public function setBulletDirection(angle:int, speed:uint, autoRotate:Boolean = false):void
 		{
+			velocity = FlxVelocity.velocityFromAngle(angle, speed);
 		}
 			
 		/**
@@ -400,6 +407,12 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		public function createBulletPattern(pattern:Array):void
 		{
 			//	Launches this many bullets
+		}
+		
+		
+		public function update():void
+		{
+			// ???
 		}
 		
 	}
