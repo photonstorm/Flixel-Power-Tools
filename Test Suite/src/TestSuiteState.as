@@ -1,13 +1,13 @@
 /**
  * Flixel Power Tools Test Suite
  * 
- * v1.7 - New FlxBar tests
+ * v1.7 - New FlxBar and FlxBulletManager tests
  * v1.6 - FlxControl and new Special FX Plugins
  * v1.5 - Massive restructure to split the tests up and move to git
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
  * v1.3 - Updated for Flixel v2.53
  * 
- * @version 1.7 - June 1st 2011
+ * @version 1.7 - June 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -24,7 +24,6 @@ package
 	import tests.*;
 	import tests.bitmapfont.*;
 	import tests.buttonplus.*;
-	import tests.bulletmanager.*;
 	import tests.collision.*;
 	import tests.color.*;
 	import tests.controls.*;
@@ -38,6 +37,7 @@ package
 	import tests.scrollzone.*;
 	import tests.specialfx.*;
 	import tests.velocity.*;
+	import tests.weapon.*;
 	
 	public class TestSuiteState extends FlxState
 	{
@@ -49,7 +49,7 @@ package
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		private var shortcut:Class = BulletTest1;
+		private var shortcut:Class = WeaponTest2;
 		//private var shortcut:Class = FlxBarTest4;
 		//private var shortcut:Class = ExtendedSpriteTest1;
 		//private var shortcut:Class = SineWaveTest4;

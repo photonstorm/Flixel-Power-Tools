@@ -2,11 +2,12 @@
  * FlxControlHandler
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Fixed bug in runFire causing fireRate to be ignored
  * v1.3 Major refactoring and lots of new enhancements
  * v1.2 First real version deployed to dev
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 18th 2011
+ * @version 1.4 - June 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -554,14 +555,18 @@ package org.flixel.plugin.photonstorm
 			//	2 = Just Released
 			if ((fireKeyMode == 0 && FlxG.keys.pressed(fireKey)) || (fireKeyMode == 1 && FlxG.keys.justPressed(fireKey)) || (fireKeyMode == 2 && FlxG.keys.justReleased(fireKey)))
 			{
-				if (fireRate > 0 && getTimer() > nextFireTime)
+				if (fireRate > 0)
 				{
-					lastFiredTime = getTimer();
-					nextFireTime = lastFiredTime + fireRate;
-					
-					fireCallback.call();
-					
-					fired = true;
+					if (getTimer() > nextFireTime)
+					{
+						lastFiredTime = getTimer();
+						
+						fireCallback.call();
+						
+						fired = true;
+						
+						nextFireTime = lastFiredTime + fireRate;
+					}
 				}
 				else
 				{

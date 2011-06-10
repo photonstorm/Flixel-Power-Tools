@@ -13,6 +13,7 @@
 package org.flixel.plugin.photonstorm.BaseTypes 
 {
 	import org.flixel.*;
+	import flash.utils.getTimer;
 	import org.flixel.plugin.photonstorm.FlxVelocity;
 	
 	/**
@@ -57,6 +58,10 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		private var fireFromPosition:Boolean;
 		private var fireX:int;
 		private var fireY:int;
+		
+		private var lastFired:uint = 0;
+		private var nextFire:uint = 0;
+		private var fireRate:uint = 0;
 		
 		//	When firing from a parent sprites position (i.e. Space Invaders)
 		private var fireFromParent:Boolean;
@@ -188,6 +193,11 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		 */
 		private function runFire(method:uint, x:int = 0, y:int = 0, target:FlxSprite = null):void
 		{
+			if (fireRate > 0 && (getTimer() < nextFire))
+			{
+				return;
+			}
+			
 			var bullet:Bullet = getFreeBullet();
 			
 			if (bullet == null)
@@ -195,18 +205,21 @@ package org.flixel.plugin.photonstorm.BaseTypes
 				return;
 			}
 			
-			var launchX:int = 0;
-			var launchY:int = 0;
+			lastFired = getTimer();
+			nextFire = getTimer() + fireRate;
+			
+			var launchX:int = positionOffset.x;
+			var launchY:int = positionOffset.y;
 			
 			if (fireFromParent)
 			{
-				launchX = parent[parentXVariable];
-				launchY = parent[parentYVariable];
+				launchX += parent[parentXVariable];
+				launchY += parent[parentYVariable];
 			}
 			else if (fireFromPosition)
 			{
-				launchX = fireX;
-				launchY = fireY;
+				launchX += fireX;
+				launchY += fireY;
 			}
 			
 			//	Faster (less CPU) to use this small if-else ladder than a switch statement
@@ -216,20 +229,20 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			}
 			else if (method == FIRE_AT_MOUSE)
 			{
-				bullet.fireAtMouse(launchX, launchY);
+				bullet.fireAtMouse(launchX, launchY, bulletSpeed);
 			}
 			else if (method == FIRE_AT_POSITION)
 			{
-				bullet.fireAtPosition(launchX, launchY, x, y);
+				bullet.fireAtPosition(launchX, launchY, x, y, bulletSpeed);
 			}
 			else if (method == FIRE_AT_TARGET)
 			{
-				bullet.fireAtTarget(launchX, launchY, target);
+				bullet.fireAtTarget(launchX, launchY, target, bulletSpeed);
 			}
 		}
 		
 		/**
-		 * Fires a bullet (if one is available). The bullet will be given the velocity defined in setBulletDirection.
+		 * Fires a bullet (if one is available). The bullet will be given the velocity defined in setBulletDirection and fired at the rate set in setFireRate.
 		 */
 		public function fire():void
 		{
@@ -237,7 +250,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		}
 		
 		/**
-		 * Fires a bullet (if one is available) at the mouse coordinates, using the speed set in setBulletSpeed.
+		 * Fires a bullet (if one is available) at the mouse coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 		 */
 		public function fireAtMouse():void
 		{
@@ -245,7 +258,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		}
 		
 		/**
-		 * Fires a bullet (if one is available) at the given x/y coordinates, using the speed set in setBulletSpeed.
+		 * Fires a bullet (if one is available) at the given x/y coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 		 * 
 		 * @param	x	The x coordinate (in game world pixels) to fire at
 		 * @param	y	The y coordinate (in game world pixels) to fire at
@@ -256,7 +269,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		}
 		
 		/**
-		 * Fires a bullet (if one is available) at the given targets x/y coordinates, using the speed set in setBulletSpeed.
+		 * Fires a bullet (if one is available) at the given targets x/y coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 		 * 
 		 * @param	target	The FlxSprite you wish to fire the bullet at
 		 */
@@ -331,6 +344,17 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		}
 		
 		/**
+		 * Sets the firing rate of the Weapon. By default there is no rate, as it can be controlled by FlxControl.setFireButton.<br>
+		 * However if you are firing using the mouse you may wish to set a firing rate.
+		 * 
+		 * @param	rate	The delay in milliseconds (ms) between which each bullet is fired, set to zero to clear
+		 */
+		public function setFireRate(rate:uint):void
+		{
+			fireRate = rate;
+		}
+		
+		/**
 		 * When a bullet goes outside of this bounds it will be automatically killed, freeing it up for firing again.
 		 * 
 		 * @param	bounds	An FlxRect area. Inside this area the bullet should be considered alive, once outside it will be killed.
@@ -354,6 +378,20 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			velocity = FlxVelocity.velocityFromAngle(angle, speed);
 		}
 			
+		/**
+		 * When the bullet is fired from a parent (or fixed position) it will do so from their x/y coordinate.<br>
+		 * Often you need to align a bullet with the sprite, i.e. to make it look like it came out of the "nose" of a space ship.<br>
+		 * Use this offset x/y value to achieve that effect.
+		 * 
+		 * @param	offsetX		The x coordinate offset to add to the launch location (positive or negative)
+		 * @param	offsetY		The y coordinate offset to add to the launch location (positive or negative)
+		 */
+		public function setBulletOffset(offsetX:int, offsetY:int):void
+		{
+			positionOffset.x = offsetX;
+			positionOffset.y = offsetY;
+		}
+		
 		/**
 		 * To make the bullet apply a random factor to either its angle, speed, or both when fired, set these values. Can create a nice "scatter gun" effect.
 		 * 

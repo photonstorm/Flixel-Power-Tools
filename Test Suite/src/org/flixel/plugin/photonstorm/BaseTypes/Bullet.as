@@ -41,28 +41,34 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			exists = true;
 		}
 		
-		public function fireAtMouse(fromX:int, fromY:int):void
+		public function fireAtMouse(fromX:int, fromY:int, speed:int):void
 		{
 			x = fromX;
 			y = fromY;
 			
-			FlxVelocity.moveTowardsMouse(this, 60);
+			FlxVelocity.moveTowardsMouse(this, speed);
+			
+			exists = true;
 		}
 		
-		public function fireAtPosition(fromX:int, fromY:int, toX:int, toY:int):void
+		public function fireAtPosition(fromX:int, fromY:int, toX:int, toY:int, speed:int):void
 		{
 			x = fromX;
 			y = fromY;
 			
-			FlxVelocity.moveTowardsPoint(this, new FlxPoint(toX, toY), 60);
+			FlxVelocity.moveTowardsPoint(this, new FlxPoint(toX, toY), speed);
+			
+			exists = true;
 		}
 		
-		public function fireAtTarget(fromX:int, fromY:int, target:FlxSprite):void
+		public function fireAtTarget(fromX:int, fromY:int, target:FlxSprite, speed:int):void
 		{
 			x = fromX;
 			y = fromY;
 			
-			FlxVelocity.moveTowardsObject(this, target, 60);
+			FlxVelocity.moveTowardsObject(this, target, speed);
+			
+			exists = true;
 		}
 		
 		override public function update():void
