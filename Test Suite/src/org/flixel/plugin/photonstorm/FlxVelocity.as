@@ -14,6 +14,7 @@
 
 package org.flixel.plugin.photonstorm 
 {
+	import flash.accessibility.Accessibility;
 	import org.flixel.*;
 	
 	public class FlxVelocity 
@@ -72,7 +73,17 @@ package org.flixel.plugin.photonstorm
 			
 			source.velocity.x = Math.cos(a) * speed;
 			source.velocity.y = Math.sin(a) * speed;
+		}
+		
+		public static function accelerateTowardsMouse(source:FlxSprite, speed:int, xSpeedMax:uint, ySpeedMax:uint):void
+		{
+			var a:Number = angleBetweenMouse(source);
 			
+			source.acceleration.x = Math.cos(a) * speed;
+			source.acceleration.y = Math.sin(a) * speed;
+			
+			source.maxVelocity.x = xSpeedMax;
+			source.maxVelocity.y = ySpeedMax;
 		}
 		
 		/**

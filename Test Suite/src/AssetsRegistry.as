@@ -47,6 +47,8 @@ package
 		[Embed(source = '../assets/sprites/chunk.png')] public static var chunkPNG:Class;
 		[Embed(source = '../assets/sprites/metalslug_mummy37x45.png')] public static var mummyPNG:Class;
 		[Embed(source = '../assets/sprites/metalslug_monster39x40.png')] public static var monsterPNG:Class;
+		[Embed(source = '../assets/sprites/xenon2_ship.png')] public static var xenon2ShipPNG:Class;
+		[Embed(source = '../assets/sprites/xenon2_bomb.png')] public static var xenon2BombPNG:Class;
 		
 		//	Pictures
 		[Embed(source = '../assets/pics/1984-nocooper-space.png')] public static var noCooper1984PNG:Class;

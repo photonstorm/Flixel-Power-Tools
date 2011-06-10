@@ -17,17 +17,21 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	import org.flixel.plugin.photonstorm.FlxVelocity;
 	
 	/**
-	 * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed)
-	 * A Player could fire multiple Weapons at the same time however
+	 * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern
+	 * A Player could fire multiple Weapons at the same time however, if you need to layer them up
 	 * 
 	 * TODO
 	 * ----
 	 * 
+	 * Angled bullets
+	 * Bullet gravity
+	 * Bullet acceleration
 	 * Baked Rotation support for angled bullets
-	 * Animated bullets
 	 * Bullet death styles (particle effects)
+	 * Bullet trails
 	 * Assigning sound effects
 	 * Homing Missiles
+	 * Bullet uses random sprite from sprite sheet (for rainbow style bullets), or cycles through them in sequence?
 	 */
 	
 	public class Weapon 
@@ -50,7 +54,6 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		//	Bullet values
 		public var bounds:FlxRect;
 		
-		private var bulletSprite:FlxSprite;
 		private var bulletSpeed:uint;
 		private var rotateToAngle:Boolean;
 		
@@ -146,7 +149,9 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			
 			for (var b:uint = 0; b < quantity; b++)
 			{
-				var tempBullet:Bullet = new Bullet(this, b, null, width, height, color);
+				var tempBullet:Bullet = new Bullet(this, b);
+				
+				tempBullet.makeGraphic(width, height, color);
 				
 				group.add(tempBullet);
 			}
@@ -162,14 +167,30 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		 * @param	image			The image used to create the bullet from
 		 * @param	offsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 		 * @param	offsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
+		 * @param	autoRotate		When true the bullet sprite will rotate to match the angle it was fired at
+		 * @param	frame			If the image has a single row of square animation frames on it, you can specify which of the frames you want to use here. Default is -1, or "use whole graphic"
+		 * @param	rotations		The number of rotation frames the final sprite should have.  For small sprites this can be quite a large number (360 even) without any problems.
+		 * @param	antiAliasing	Whether to use high quality rotations when creating the graphic. Default is false.
+		 * @param	autoBuffer		Whether to automatically increase the image size to accomodate rotated corners. Default is false. Will create frames that are 150% larger on each axis than the original frame or graphic.
 		 */
-		public function makeImageBullet(quantity:uint, image:Class, offsetX:int = 0, offsetY:int = 0):void
+		public function makeImageBullet(quantity:uint, image:Class, offsetX:int = 0, offsetY:int = 0, autoRotate:Boolean = false, rotations:uint = 16, frame:int = -1, antiAliasing:Boolean = false, autoBuffer:Boolean = false):void
 		{
 			group = new FlxGroup(quantity);
 			
+			rotateToAngle = autoRotate;
+			
 			for (var b:uint = 0; b < quantity; b++)
 			{
-				var tempBullet:Bullet = new Bullet(this, b, image);
+				var tempBullet:Bullet = new Bullet(this, b);
+				
+				if (autoRotate)
+				{
+					tempBullet.loadRotatedGraphic(image, rotations, frame, antiAliasing, autoBuffer);
+				}
+				else
+				{
+					tempBullet.loadGraphic(image);
+				}
 				
 				group.add(tempBullet);
 			}
@@ -178,9 +199,36 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			positionOffset.y = offsetY;
 		}
 		
-		// TODO
-		public function makeAnimatedBullet(quantity:uint, imageSequence:Class, frames:Array, animationSpeed:uint, looped:Boolean, offsetX:int = 0, offsetY:int = 0):void
+		/**
+		 * Makes an animated bullet from the image and frame data given.
+		 * 
+		 * @param	quantity		How many bullets do you need to make? This value should be high enough to cover all bullets you need on-screen *at once* plus probably a few extra spare!
+		 * @param	imageSequence	The image used to created the animated bullet from
+		 * @param	frameWidth		The width of each frame in the animation
+		 * @param	frameHeight		The height of each frame in the animation
+		 * @param	frames			An array of numbers indicating what frames to play in what order (e.g. 1, 2, 3)
+		 * @param	frameRate		The speed in frames per second that the animation should play at (e.g. 40 fps)
+		 * @param	looped			Whether or not the animation is looped or just plays once
+		 * @param	offsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
+		 * @param	offsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
+		 */
+		public function makeAnimatedBullet(quantity:uint, imageSequence:Class, frameWidth:uint, frameHeight:uint, frames:Array, frameRate:uint, looped:Boolean, offsetX:int = 0, offsetY:int = 0):void
 		{
+			group = new FlxGroup(quantity);
+			
+			for (var b:uint = 0; b < quantity; b++)
+			{
+				var tempBullet:Bullet = new Bullet(this, b);
+				
+				tempBullet.loadGraphic(imageSequence, true, false, frameWidth, frameHeight);
+				
+				tempBullet.addAnimation("fire", frames, frameRate, looped);
+				
+				group.add(tempBullet);
+			}
+			
+			positionOffset.x = offsetX;
+			positionOffset.y = offsetY;
 		}
 		
 		/**
@@ -356,6 +404,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		
 		/**
 		 * When a bullet goes outside of this bounds it will be automatically killed, freeing it up for firing again.
+		 * TODO - Needs testing with a scrolling map (when not using single screen display)
 		 * 
 		 * @param	bounds	An FlxRect area. Inside this area the bullet should be considered alive, once outside it will be killed.
 		 */
@@ -371,13 +420,41 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		 * 
 		 * @param	angle		The angle of the bullet. In clockwise positive direction: Right = 0, Down = 90, Left = 180, Up = -90. You can use one of the consts such as BULLET_UP, etc
 		 * @param	speed		The speed it will move, in pixels per second (sq)
-		 * @param	autoRotate	TODO When set to true the bullet sprite will automatically rotate to match the angle
 		 */
-		public function setBulletDirection(angle:int, speed:uint, autoRotate:Boolean = false):void
+		public function setBulletDirection(angle:int, speed:uint):void
 		{
 			velocity = FlxVelocity.velocityFromAngle(angle, speed);
 		}
-			
+		
+		/**
+		 * Sets gravity on all currently created bullets<br>
+		 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
+		 * 
+		 * @param	x	A positive value applies gravity dragging the bullet to the right. A negative value drags the bullet to the left. Zero disables horizontal gravity.
+		 * @param	y	A positive value applies gravity dragging the bullet down. A negative value drags the bullet up. Zero disables vertical gravity.
+		 */
+		public function setBulletGravity(x:int, y:int):void
+		{
+		}
+		
+		/**
+		 * If you'd like your bullets to accelerate to their top speed rather than be launched already at it, then set the acceleration value here.<br>
+		 * If you've previously set the acceleration then setting it to zero will cancel the effect.<br>
+		 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
+		 * 
+		 * @param	xAcceleration		Acceleration speed in pixels per second to apply to the sprites horizontal movement, set to zero to cancel
+		 * @param	yAcceleration		Acceleration speed in pixels per second to apply to the sprites vertical movement, set to zero to cancel
+		 * @param	xSpeedMax			The maximum speed in pixels per second in which the sprite can move horizontally
+		 * @param	ySpeedMax			The maximum speed in pixels per second in which the sprite can move vertically
+		 */
+		public function setBulletAcceleration(xAcceleration:int = 0, yAcceleration:int = 0, xSpeedMax:int, ySpeedMax:int):void
+		{
+			group.setAll("acceleration.x", xAcceleration);
+			group.setAll("acceleration.y", yAcceleration);
+			group.setAll("maxVelocity.x", xSpeedMax);
+			group.setAll("maxVelocity.y", ySpeedMax);
+		}
+		
 		/**
 		 * When the bullet is fired from a parent (or fixed position) it will do so from their x/y coordinate.<br>
 		 * Often you need to align a bullet with the sprite, i.e. to make it look like it came out of the "nose" of a space ship.<br>
