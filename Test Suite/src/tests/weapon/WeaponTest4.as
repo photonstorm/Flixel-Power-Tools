@@ -2,7 +2,6 @@ package tests.weapon
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import org.flixel.plugin.photonstorm.BaseTypes.Weapon;
 	import tests.TestsHeader;
 
 	public class WeaponTest4 extends FlxState
@@ -16,7 +15,7 @@ package tests.weapon
 		//	Test specific variables
 		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
-		private var lazer:Weapon;
+		private var lazer:FlxWeapon;
 		
 		public function WeaponTest4() 
 		{
@@ -35,7 +34,7 @@ package tests.weapon
 			player = new FlxSprite(160, 200, AssetsRegistry.invaderPNG);
 			
 			//	Creates our weapon. We'll call it "lazer" and link it to the x/y coordinates of the player sprite
-			lazer = new Weapon("lazer", player, "x", "y");
+			lazer = new FlxWeapon("lazer", player, "x", "y");
 			
 			//	Tell the weapon to create 50 bullets using the bulletPNG image.
 			//	The 5 value is the x offset, which makes the bullet fire from the tip of the players ship.

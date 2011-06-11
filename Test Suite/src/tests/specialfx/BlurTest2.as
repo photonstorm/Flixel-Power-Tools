@@ -4,22 +4,25 @@ package tests.specialfx
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
 	import org.flixel.plugin.photonstorm.FX.SineWaveFX;
+	import org.flixel.plugin.photonstorm.FX.BlurFX;
 	import tests.TestsHeader;
 
-	public class SineWaveTest3 extends FlxState
+	public class BlurTest2 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "SineWave 3";
-		public static var description:String = "Applying 2 SineWaves at once";
-		private var instructions:String = "It can start getting pretty trippy!";
+		public static var title:String = "Blur 2";
+		public static var description:String = "Bluring a moving image";
+		private var instructions:String = "It can start getting pretty trippy Part 2!";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
+		private var blur:BlurFX;
+		private var blurEffect:FlxSprite;
 		private var sinewaveV:SineWaveFX;
 		private var sinewaveH:SineWaveFX;
 		private var output:FlxSprite;
 		
-		public function SineWaveTest3() 
+		public function BlurTest2() 
 		{
 		}
 		
@@ -50,6 +53,16 @@ package tests.specialfx
 			sinewaveV.start();
 			sinewaveH.start();
 			
+			//	The plugin
+			blur = FlxSpecialFX.blur();
+			
+			blurEffect = blur.create(320, 240, 4, 8, 4);
+			
+			blur.addSprite(output);
+			
+			blur.start();
+			
+			add(blurEffect);
 			add(output);
 			
 			//	Header overlay

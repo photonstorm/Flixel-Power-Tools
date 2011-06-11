@@ -2,8 +2,6 @@ package tests.weapon
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import org.flixel.plugin.photonstorm.BaseTypes.Bullet;
-	import org.flixel.plugin.photonstorm.BaseTypes.Weapon;
 	import tests.TestsHeader;
 
 	public class WeaponTest2 extends FlxState
@@ -16,7 +14,7 @@ package tests.weapon
 		
 		//	Test specific variables
 		private var ufo:FlxSprite;
-		private var lazer:Weapon;
+		private var lazer:FlxWeapon;
 		
 		public function WeaponTest2() 
 		{
@@ -30,18 +28,27 @@ package tests.weapon
 			//	Test specific
 			header.showDarkBackground();
 			
-			//	Weapon
-			lazer = new Weapon("lazer");
+			//	Creates our weapon. We'll call it "lazer"
+			lazer = new FlxWeapon("lazer");
+			
+			//	Tell the weapon to create 50 bullets using the chunkPNG image.
 			lazer.makeImageBullet(50, AssetsRegistry.chunkPNG);
+			
+			//	This weapon will fire from a fixed (stationary) position
 			lazer.setFiringPosition(160, 140, 12, 12);
+			
+			//	As we use the mouse to fire we need to limit how many bullets are shot at once (1 every 100ms)
 			lazer.setFireRate(100);
+			
+			//	Bullets will move at 300px/sec
 			lazer.setBulletSpeed(300);
 			
-			//	Just some eye-candy, to make it look like the ufo is shooting :)
+			//	Just some eye-candy, to make it look like a ufo is shooting :)
 			ufo = new FlxSprite(160, 140, AssetsRegistry.ufoPNG);
 			
 			//	The group which contains all of the bullets
 			add(lazer.group);
+			
 			add(ufo);
 			
 			//	Header overlay
@@ -56,14 +63,6 @@ package tests.weapon
 			{
 				lazer.fireAtMouse();
 			}
-		}
-		
-		override public function destroy():void
-		{
-			//	Important! Clear out the plugin otherwise resources will get messed right up after a while
-			FlxControl.clear();
-			
-			super.destroy();
 		}
 		
 	}

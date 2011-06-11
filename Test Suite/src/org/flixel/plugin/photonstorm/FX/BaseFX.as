@@ -1,3 +1,15 @@
+/**
+ * BaseFX - Special FX Plugin
+ * -- Part of the Flixel Power Tools set
+ * 
+ * v1.1 Fixed some documentation
+ * v1.0 First release
+ * 
+ * @version 1.1 - June 10th 2011
+ * @link http://www.photonstorm.com
+ * @author Richard Davey / Photon Storm
+*/
+
 package org.flixel.plugin.photonstorm.FX 
 {
 	import flash.geom.Point;
@@ -42,7 +54,6 @@ package org.flixel.plugin.photonstorm.FX
 		internal var copyRect:Rectangle;
 		internal var copyPoint:Point;
 		
-		
 		public function BaseFX() 
 		{
 			active = false;
@@ -51,7 +62,7 @@ package org.flixel.plugin.photonstorm.FX
 		/**
 		 * Starts the effect runnning
 		 * 
-		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 drops per second. A value of 1 means it will do 15 drops per second, etc.
+		 * @param	delay	How many "game updates" should pass between each update? If your game runs at 30fps a value of 0 means it will do 30 updates per second. A value of 1 means it will do 15 updates per second, etc.
 		 */
 		public function start(delay:uint = 0):void
 		{
@@ -61,8 +72,8 @@ package org.flixel.plugin.photonstorm.FX
 		}
 		
 		/**
-		 * Pauses the effect from running. The draw function is still called each loop, but the sine wave and pixel data is stopped from updating.<br>
-		 * To disable the SpecialFX Plugin from calling SineWaveFX set the "active" parameter to false.
+		 * Pauses the effect from running. The draw function is still called each loop, but the pixel data is stopped from updating.<br>
+		 * To disable the SpecialFX Plugin from calling the FX at all set the "active" parameter to false.
 		 */
 		public function stop():void
 		{

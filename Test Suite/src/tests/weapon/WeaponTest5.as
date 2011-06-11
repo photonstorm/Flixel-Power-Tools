@@ -2,7 +2,6 @@ package tests.weapon
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import org.flixel.plugin.photonstorm.BaseTypes.Weapon;
 	import tests.TestsHeader;
 
 	public class WeaponTest5 extends FlxState
@@ -17,7 +16,7 @@ package tests.weapon
 		private var controls:FlxControlHandler;
 		private var tank:FlxSprite;
 		private var land:FlxSprite;
-		private var canon:Weapon;
+		private var canon:FlxWeapon;
 		
 		public function WeaponTest5() 
 		{
@@ -34,7 +33,7 @@ package tests.weapon
 			tank = new FlxSprite(60, 200, AssetsRegistry.advWarsTankPNG);
 			
 			//	Creates our weapon. We'll call it "canon" and link it to the x/y coordinates of the tank sprite
-			canon = new Weapon("canon", tank, "x", "y");
+			canon = new FlxWeapon("canon", tank, "x", "y");
 			
 			//	Tell the weapon to create 100 bullets using a 2x2 white pixel bullet
 			canon.makePixelBullet(100, 2, 2, 0xffffffff, 13, 2);

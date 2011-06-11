@@ -1,7 +1,7 @@
 /**
  * Flixel Power Tools Test Suite
  * 
- * v1.7 - New FlxBar and FlxBulletManager tests
+ * v1.7 - New FlxBar and FlxWeapon tests
  * v1.6 - FlxControl and new Special FX Plugins
  * v1.5 - Massive restructure to split the tests up and move to git
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
@@ -49,7 +49,7 @@ package
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		private var shortcut:Class = WeaponTest5;
+		private var shortcut:Class = BlurTest2;
 		//private var shortcut:Class = ExtendedSpriteTest1;
 		
 		public function TestSuiteState()
@@ -132,6 +132,8 @@ package
 			options.push( { state: StarFieldTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: StarFieldTest2, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: GlitchTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: BlurTest1, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: BlurTest2, color: [0xff2E2E2E, 0xff606060] } );
 			
 			options.push( { newColumn: true } );
 			
@@ -147,6 +149,16 @@ package
 			options.push( { state: ControlTest3, color: [0xff8000FF, 0xffBE7DFF] } );
 			options.push( { state: ControlTest4, color: [0xff8000FF, 0xffBE7DFF] } );
 			options.push( { state: ControlTest5, color: [0xff8000FF, 0xffBE7DFF] } );
+			
+			options.push( { newColumn: true } );
+			
+			//	SCREEN 4
+			
+			options.push( { state: WeaponTest1, color: [0xffC0C0C0, 0xff808080] } );
+			options.push( { state: WeaponTest2, color: [0xffC0C0C0, 0xff808080] } );
+			options.push( { state: WeaponTest3, color: [0xffC0C0C0, 0xff808080] } );
+			options.push( { state: WeaponTest4, color: [0xffC0C0C0, 0xff808080] } );
+			options.push( { state: WeaponTest5, color: [0xffC0C0C0, 0xff808080] } );
 			
 		}
 		
@@ -201,7 +213,7 @@ package
 			add(header.overlay);
 			
 			FlxG.camera.follow(dolly);
-			FlxG.camera.setBounds(0, 0, 640, 256, true);
+			FlxG.camera.setBounds(0, 0, 640+320, 256, true);
 			
 			FlxG.mouse.show();
 		}
@@ -223,9 +235,9 @@ package
 			{
 				dolly.x += 3;
 				
-				if (dolly.x > 480)
+				if (dolly.x > 640)
 				{
-					dolly.x = 480;
+					dolly.x = 640;
 				}
 			}
 			

@@ -2,12 +2,13 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Added BlurFX
  * v1.3 Renamed DropDown to FloodFill
  * v1.2 Added GlitchFX and StarfieldFX
  * v1.1 Added SineWaveFX
  * v1.0 First release of the new FlxSpecialFX system
  * 
- * @version 1.3 - May 31st 2011
+ * @version 1.4 - June 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -16,6 +17,7 @@ package org.flixel.plugin.photonstorm
 {
 	import flash.utils.Dictionary;
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.FX.BlurFX;
 	import org.flixel.plugin.photonstorm.FX.FloodFillFX;
 	import org.flixel.plugin.photonstorm.FX.GlitchFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
@@ -119,6 +121,26 @@ package org.flixel.plugin.photonstorm
 			
 			return members[temp];
 		}
+		
+		/**
+		 * Creates a Blur Effect
+		 * 
+		 * @return	BlurFX
+		 */
+		public static function blur():BlurFX
+		{
+			var temp:BlurFX = new BlurFX;
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
+		
+		
+		
+		
+		
+		
 		
 		//	GLOBAL FUNCTIONS
 		

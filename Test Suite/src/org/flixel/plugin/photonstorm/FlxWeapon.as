@@ -1,5 +1,5 @@
 /**
- * Weapon - Base Class for the FlxBulletManager
+ * FlxWeapon
  * -- Part of the Flixel Power Tools set
  * 
  * v1.0 First release
@@ -7,13 +7,13 @@
  * @version 1.0 - June 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
- * @see Requires Bullet, FlxBulletManager, FlxVelocity
 */
 
-package org.flixel.plugin.photonstorm.BaseTypes 
+package org.flixel.plugin.photonstorm 
 {
 	import org.flixel.*;
 	import flash.utils.getTimer;
+	import org.flixel.plugin.photonstorm.BaseTypes.Bullet;
 	import org.flixel.plugin.photonstorm.FlxVelocity;
 	
 	/**
@@ -24,15 +24,17 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	 * ----
 	 * 
 	 * Angled bullets
+	 * RND factor
 	 * Baked Rotation support for angled bullets
 	 * Bullet death styles (particle effects)
-	 * Bullet trails
+	 * Bullet trails - blur FX style and Missile Command "draw lines" style? (could be another FX plugin)
 	 * Assigning sound effects
 	 * Homing Missiles
 	 * Bullet uses random sprite from sprite sheet (for rainbow style bullets), or cycles through them in sequence?
+	 * Some Weapon base classes like shotgun, lazer, etc
 	 */
 	
-	public class Weapon 
+	public class FlxWeapon 
 	{
 		/**
 		 * If active this Weapon will be processed by the FlxBulletManager
@@ -108,7 +110,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		private static const FIRE_AT_TARGET:uint = 3;
 		
 		/**
-		 * Creates the Weapon class which will fire your bullets.<br>
+		 * Creates the FlxWeapon class which will fire your bullets.<br>
 		 * You should call one of the makeBullet functions to visually create the bullets.<br>
 		 * Then either use setDirection with fire() or one of the fireAt functions to launch them.
 		 * 
@@ -117,7 +119,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		 * @param	xVariable	The x axis variable of the parent to use when firing. Typically "x", but could be "screenX" or any public getter that exposes the x coordinate.
 		 * @param	yVariable	The y axis variable of the parent to use when firing. Typically "y", but could be "screenY" or any public getter that exposes the y coordinate.
 		 */
-		public function Weapon(name:String, parentRef:* = null, xVariable:String = "x", yVariable:String = "y")
+		public function FlxWeapon(name:String, parentRef:* = null, xVariable:String = "x", yVariable:String = "y")
 		{
 			this.name = name;
 			

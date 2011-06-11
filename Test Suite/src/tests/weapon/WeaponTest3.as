@@ -2,7 +2,6 @@ package tests.weapon
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import org.flixel.plugin.photonstorm.BaseTypes.Weapon;
 	import tests.TestsHeader;
 
 	public class WeaponTest3 extends FlxState
@@ -16,7 +15,7 @@ package tests.weapon
 		//	Test specific variables
 		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
-		private var lazer:Weapon;
+		private var lazer:FlxWeapon;
 		
 		public function WeaponTest3() 
 		{
@@ -35,7 +34,7 @@ package tests.weapon
 			player = new FlxSprite(160, 200, AssetsRegistry.xenon2ShipPNG);
 			
 			//	Creates our weapon. We'll call it "lazer" and link it to the x/y coordinates of the player sprite
-			lazer = new Weapon("lazer", player, "x", "y");
+			lazer = new FlxWeapon("lazer", player, "x", "y");
 			
 			//	We're creating 20 animated bullets from the sprite sheet xenon2BombPNG. The frame width and height is 8x16.
 			//	The animation goes through frames 1,2,3,4 and then loops at 30fps.
@@ -44,7 +43,7 @@ package tests.weapon
 			lazer.makeAnimatedBullet(20, AssetsRegistry.xenon2BombPNG, 8, 16, [1, 2, 3, 4], 30, true, 12, 6);
 			
 			//	Sets the direction and speed the bullets will be fired in. Slowed down on purpose so you can see the animation.
-			lazer.setBulletDirection(Weapon.BULLET_UP, 180);
+			lazer.setBulletDirection(FlxWeapon.BULLET_UP, 180);
 			
 			//	The following are controls for the player, note that the "setFireButton" controls the speed at which bullets are fired, not the Weapon class itself
 			

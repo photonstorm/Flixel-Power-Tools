@@ -2,7 +2,6 @@ package tests.weapon
 {
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
-	import org.flixel.plugin.photonstorm.BaseTypes.Weapon;
 	import tests.TestsHeader;
 
 	public class WeaponTest1 extends FlxState
@@ -16,7 +15,7 @@ package tests.weapon
 		//	Test specific variables
 		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
-		private var lazer:Weapon;
+		private var lazer:FlxWeapon;
 		
 		public function WeaponTest1() 
 		{
@@ -33,14 +32,14 @@ package tests.weapon
 			player = new FlxSprite(160, 200, AssetsRegistry.invaderPNG);
 			
 			//	Creates our weapon. We'll call it "lazer" and link it to the x/y coordinates of the player sprite
-			lazer = new Weapon("lazer", player, "x", "y");
+			lazer = new FlxWeapon("lazer", player, "x", "y");
 			
 			//	Tell the weapon to create 50 bullets using the bulletPNG image.
 			//	The 5 value is the x offset, which makes the bullet fire from the tip of the players ship.
 			lazer.makeImageBullet(50, AssetsRegistry.bulletPNG, 5);
 			
 			//	Sets the direction and speed the bullets will be fired in
-			lazer.setBulletDirection(Weapon.BULLET_UP, 200);
+			lazer.setBulletDirection(FlxWeapon.BULLET_UP, 200);
 			
 			
 			//	The following are controls for the player, note that the "setFireButton" controls the speed at which bullets are fired, not the Weapon class itself

@@ -36,10 +36,6 @@ package org.flixel.plugin.photonstorm.FX
 		{
 		}
 		
-		//public function createFromClass(source:Class, x:int, y:int, backgroundColor:uint = 0x0):FlxSprite
-		//{
-		//}
-		
 		public function createFromFlxSprite(source:FlxSprite, maxGlitch:uint, maxSkip:uint, autoUpdate:Boolean = false, backgroundColor:uint = 0x0):FlxSprite
 		{
 			sprite = new FlxSprite(source.x, source.y).makeGraphic(source.width + maxGlitch, source.height, backgroundColor);

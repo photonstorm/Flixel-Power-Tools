@@ -4,11 +4,12 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	import org.flixel.FlxSprite;
 	import org.flixel.plugin.photonstorm.FlxMath;
 	import org.flixel.plugin.photonstorm.FlxVelocity;
+	import org.flixel.plugin.photonstorm.FlxWeapon;
 
 	public class Bullet extends FlxSprite
 	{
 		public var id:uint;
-		private var weapon:Weapon;
+		private var weapon:FlxWeapon;
 		
 		private var bulletSpeed:int;
 		
@@ -19,7 +20,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		
 		private var animated:Boolean;
 		
-		public function Bullet(weapon:Weapon, id:uint)
+		public function Bullet(weapon:FlxWeapon, id:uint)
 		{
 			super(0, 0);
 			
