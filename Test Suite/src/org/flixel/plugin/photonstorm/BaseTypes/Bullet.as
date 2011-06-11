@@ -140,6 +140,34 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			exists = true;
 		}
 		
+		public function fireFromAngle(fromX:int, fromY:int, fireAngle:int, speed:int):void
+		{
+			x = fromX;
+			y = fromY;
+			
+			var newVelocity:FlxPoint = FlxVelocity.velocityFromAngle(fireAngle, speed);
+			
+			if (accelerates)
+			{
+				
+			}
+			else
+			{
+			}
+			
+			if (animated)
+			{
+				play("fire");
+			}
+			
+			exists = true;
+		}
+		
+		public function fireFromParentAngle(fromX:int, fromY:int, parentAngle:int):void
+		{
+			
+		}
+		
 		public function set xGravity(gx:int):void
 		{
 			acceleration.x = gx;

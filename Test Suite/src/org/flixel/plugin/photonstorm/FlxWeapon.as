@@ -108,6 +108,8 @@ package org.flixel.plugin.photonstorm
 		private static const FIRE_AT_MOUSE:uint = 1;
 		private static const FIRE_AT_POSITION:uint = 2;
 		private static const FIRE_AT_TARGET:uint = 3;
+		private static const FIRE_FROM_ANGLE:uint = 4;
+		private static const FIRE_FROM_PARENT_ANGLE:uint = 5;
 		
 		/**
 		 * Creates the FlxWeapon class which will fire your bullets.<br>
@@ -169,7 +171,7 @@ package org.flixel.plugin.photonstorm
 		 * @param	image			The image used to create the bullet from
 		 * @param	offsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
 		 * @param	offsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
-		 * @param	autoRotate		When true the bullet sprite will rotate to match the angle it was fired at
+		 * @param	autoRotate		When true the bullet sprite will rotate to match the angle of the parent sprite. Call fireFromParentAngle or fromFromAngle to fire it using an angle as the velocity.
 		 * @param	frame			If the image has a single row of square animation frames on it, you can specify which of the frames you want to use here. Default is -1, or "use whole graphic"
 		 * @param	rotations		The number of rotation frames the final sprite should have.  For small sprites this can be quite a large number (360 even) without any problems.
 		 * @param	antiAliasing	Whether to use high quality rotations when creating the graphic. Default is false.
@@ -241,7 +243,7 @@ package org.flixel.plugin.photonstorm
 		 * @param	y
 		 * @param	target
 		 */
-		private function runFire(method:uint, x:int = 0, y:int = 0, target:FlxSprite = null):void
+		private function runFire(method:uint, x:int = 0, y:int = 0, target:FlxSprite = null, angle:int = 0):void
 		{
 			if (fireRate > 0 && (getTimer() < nextFire))
 			{
@@ -293,6 +295,14 @@ package org.flixel.plugin.photonstorm
 			{
 				bullet.fireAtTarget(launchX, launchY, target, bulletSpeed);
 			}
+			else if (method == FIRE_FROM_ANGLE)
+			{
+				bullet.fireFromAngle(launchX, launchY, angle, bulletSpeed);
+			}
+			else if (method == FIRE_FROM_PARENT_ANGLE)
+			{
+				bullet.fireFromParentAngle(launchX, launchY, parent.angle, bulletSpeed);
+			}
 		}
 		
 		/**
@@ -330,6 +340,16 @@ package org.flixel.plugin.photonstorm
 		public function fireAtTarget(target:FlxSprite):void
 		{
 			runFire(FIRE_AT_TARGET, 0, 0, target);
+		}
+		
+		public function fireFromAngle(angle:int):void
+		{
+			runFire(FIRE_FROM_ANGLE, 0, 0, null, angle);
+		}
+		
+		public function fireFromParentAngle():void
+		{
+			runFire(FIRE_FROM_PARENT_ANGLE);
 		}
 		
 		/**

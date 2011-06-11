@@ -29,7 +29,7 @@ package org.flixel.plugin.photonstorm
 	 * Support for angles! Thrust like spaceship movement
 	 * Specify animation frames to play based on velocity
 	 * Hotkeys (bind a key to a user function - like for weapon select)
-	 * Variable gravity (based on height)
+	 * Variable gravity (based on height, the higher the stronger the effect)
 	 */
 	public class FlxControlHandler
 	{
@@ -50,11 +50,19 @@ package org.flixel.plugin.photonstorm
 		private var altJump:Boolean;
 		private var xFacing:Boolean;
 		private var yFacing:Boolean;
+		private var rotateAnticlockwise:Boolean;
+		private var rotateClockwise:Boolean;
 		
 		private var upMoveSpeed:int;
 		private var downMoveSpeed:int;
 		private var leftMoveSpeed:int;
 		private var rightMoveSpeed:int;
+		
+		//	Rotation
+		private var isRotating:Boolean;
+		private var antiClockwiseRotationSpeed:Number;
+		private var clockwiseRotationSpeed:Number;
+		private var capAngularVelocity:Boolean;
 		
 		private var xSpeedAdjust:Number = 0;
 		private var ySpeedAdjust:Number = 0;
@@ -80,6 +88,8 @@ package org.flixel.plugin.photonstorm
 		
 		private var movement:int;
 		private var stopping:int;
+		private var rotation:int;
+		private var rotation_stopping:int;
 		private var capVelocity:Boolean;
 		
 		private var hotkeys:Array;			// TODO
@@ -92,6 +102,8 @@ package org.flixel.plugin.photonstorm
 		private var altFireKey:String;		// TODO
 		private var jumpKey:String;
 		private var altJumpKey:String;		// TODO
+		private var antiClockwiseKey:String;
+		private var clockwiseKey:String;
 		
 		/**
 		 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
@@ -113,6 +125,27 @@ package org.flixel.plugin.photonstorm
 		 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
 		 */
 		public static const STOPPING_NEVER:int = 2;
+		
+		/**
+		 * The "Instant" Movement Type means the sprite will rotate at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
+		 */
+		public static const ROTATION_INSTANT:int = 0;
+		/**
+		 * The "Accelerates" Rotaton Type means the sprite will accelerate until it reaches maximum rotation speed.
+		 */
+		public static const ROTATION_ACCELERATES:int = 1;
+		/**
+		 * The "Instant" Stopping Type means the sprite will stop rotating immediately when no rotation keys are being pressed, there will be no deceleration.
+		 */
+		public static const ROTATION_STOPPING_INSTANT:int = 0;
+		/**
+		 * The "Decelerates" Stopping Type means the sprite will start decelerating when no rotation keys are being pressed. Deceleration continues until rotation speed reaches zero.
+		 */
+		public static const ROTATION_STOPPING_DECELERATES:int = 1;
+		/**
+		 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
+		 */
+		public static const ROTATION_STOPPING_NEVER:int = 2;
 		
 		/**
 		 * This keymode fires for as long as the key is held down
@@ -155,6 +188,10 @@ package org.flixel.plugin.photonstorm
 			{
 				setCursorControl();
 			}
+			
+			isRotating = false;
+			rotation = ROTATION_INSTANT;
+			rotation_stopping = ROTATION_STOPPING_INSTANT;
 			
 			enabled = true;
 		}
@@ -230,13 +267,111 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * Set the speed at which the sprite will rotate when a direction key is pressed.<br>
+		 * Use this in combination with setMovementSpeed to create a Thrust like movement system.<br>
+		 * All values are given in pixels per second. So an xSpeed of 100 would rotate the sprite 100 pixels in 1 second (1000ms)<br>
+		 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.<br>
+		 */
+		public function setRotationSpeed(antiClockwiseSpeed:Number, clockwiseSpeed:Number, speedMax:Number, deceleration:Number = 0):void
+		{
+			antiClockwiseRotationSpeed = -antiClockwiseSpeed;
+			clockwiseRotationSpeed = clockwiseSpeed;
+			
+			setRotationKeys();
+			setMaximumRotationSpeed(speedMax);
+			setRotationDeceleration(deceleration);
+		}
+		
+		public function setRotationType(rotation_type:int, stopping_type:int):void
+		{
+			rotation = rotation_type;
+			rotation_stopping = stopping_type;
+		}
+		
+		/**
+		 * Sets the maximum speed (in pixels per second) that the FlxSprite can rotate.<br>
+		 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.<br>
+		 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
+		 * 
+		 * @param	speed			The maximum speed in pixels per second in which the sprite can rotate
+		 * @param	limitVelocity	If true the angular velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
+		 */
+		public function setMaximumRotationSpeed(speed:Number, limitVelocity:Boolean = true):void
+		{
+			entity.maxAngular = speed;
+			
+			capAngularVelocity = limitVelocity;
+		}
+		
+		/**
+		 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no rotation is taking place.<br>
+		 * The velocity of the sprite will be reduced until it reaches zero.
+		 * 
+		 * @param	speed		The speed in pixels per second at which the sprite will have its angular rotation speed decreased
+		 */
+		public function setRotationDeceleration(speed:Number):void
+		{
+			entity.angularDrag = speed;
+		}
+		
+		// TODO
+		public function setRotationLimits(minimumAngle:int, maximumAngle:int):void
+		{
+		}
+		
+		/**
+		 * Set which keys will rotate the sprite. The speed of rotation is set in setRotationSpeed.
+		 * 
+		 * @param	leftRight				Use the LEFT and RIGHT arrow keys for anti-clockwise and clockwise rotation respectively.
+		 * @param	upDown					Use the UP and DOWN arrow keys for anti-clockwise and clockwise rotation respectively.
+		 * @param	customAntiClockwise		The String value of your own key to use for anti-clockwise rotation (as taken from org.flixel.system.input.Keyboard)
+		 * @param	customClockwise			The String value of your own key to use for clockwise rotation (as taken from org.flixel.system.input.Keyboard)
+		 */
+		public function setRotationKeys(leftRight:Boolean = true, upDown:Boolean = false, customAntiClockwise:String = "", customClockwise:String = ""):void
+		{
+			isRotating = true;
+			rotateAnticlockwise = true;
+			rotateClockwise = true;
+			antiClockwiseKey = "LEFT";
+			clockwiseKey = "RIGHT";
+
+			if (upDown == true)
+			{
+				antiClockwiseKey = "UP";
+				clockwiseKey = "DOWN";
+			}
+			
+			if (customAntiClockwise != "" && customClockwise != "")
+			{
+				antiClockwiseKey = customAntiClockwise;
+				clockwiseKey = customClockwise;
+			}
+		}
+		
+		/**
+		 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.<br>
+		 * This is usually used in conjunction with Rotation and it will over-ride anything already defined in setMovementSpeed.
+		 * 
+		 * @param	thrust			The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
+		 * @param	reverse			The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
+		 * @param	maxThrust
+		 * @param	maxReverse
+		 * @param	thrustKey		Defaults to the UP arrow key. Or specify your own key String (as taken from org.flixel.system.input.Keyboard)
+		 * @param	reverseKey		Defaults to the DOWN arrow key. Or specify your own key String (as taken from org.flixel.system.input.Keyboard)
+		 */
+		public function setThrust(thrust:Number, reverse:Number, maxThrust:Number, maxReverse:Number, thrustKey:String = "UP", reverseKey:String = "DOWN"):void
+		{
+			
+		}
+		
+		/**
 		 * Sets the maximum speed (in pixels per second) that the FlxSprite can move. You can set the horizontal and vertical speeds independantly.<br>
 		 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.<br>
 		 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
 		 * 
 		 * @param	xSpeed			The maximum speed in pixels per second in which the sprite can move horizontally
 		 * @param	ySpeed			The maximum speed in pixels per second in which the sprite can move vertically
-		 * @param	limitVelocity	If true the velocity of the FlxSprite will be checked and kept within the limit (true). If false it can be set to anything.
+		 * @param	limitVelocity	If true the velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
 		 */
 		public function setMaximumSpeed(xSpeed:uint, ySpeed:uint, limitVelocity:Boolean = true):void
 		{
@@ -546,6 +681,52 @@ package org.flixel.plugin.photonstorm
 			return move;
 		}
 		
+		private function moveAntiClockwise():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(antiClockwiseKey))
+			{
+				move = true;
+				
+				if (rotation == ROTATION_INSTANT)
+				{
+					entity.angularVelocity = antiClockwiseRotationSpeed;
+				}
+				else if (rotation == ROTATION_ACCELERATES)
+				{
+					entity.angularAcceleration = antiClockwiseRotationSpeed;
+				}
+				
+				// TODO angle limit checks
+			}
+			
+			return move;
+		}
+		
+		private function moveClockwise():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(clockwiseKey))
+			{
+				move = true;
+				
+				if (rotation == ROTATION_INSTANT)
+				{
+					entity.angularVelocity = clockwiseRotationSpeed;
+				}
+				else if (rotation == ROTATION_ACCELERATES)
+				{
+					entity.angularAcceleration = clockwiseRotationSpeed;
+				}
+				
+				// TODO angle limit checks
+			}
+			
+			return move;
+		}
+		
 		private function runFire():Boolean
 		{
 			var fired:Boolean = false;
@@ -692,6 +873,29 @@ package org.flixel.plugin.photonstorm
 						entity.acceleration.y = 0;
 					}
 				}
+			}
+			
+			//	Rotation
+			
+			if (isRotating)
+			{
+				if (rotation_stopping == ROTATION_STOPPING_INSTANT)
+				{
+					entity.angularVelocity = 0;
+				}
+			}
+			
+			var hasRotatedAnticlockwise:Boolean = false;
+			var hasRotatedClockwise:Boolean = false;
+			
+			if (rotateAnticlockwise)
+			{
+				hasRotatedAnticlockwise = moveAntiClockwise();
+			}
+			
+			if (rotateClockwise && hasRotatedAnticlockwise == false)
+			{
+				hasRotatedClockwise = moveClockwise();
 			}
 			
 			var movedX:Boolean = false;

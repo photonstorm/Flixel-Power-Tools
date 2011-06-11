@@ -49,7 +49,8 @@ package
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		private var shortcut:Class = BlurTest2;
+		private var shortcut:Class = WeaponTest6;
+		//private var shortcut:Class = BlurTest2;
 		//private var shortcut:Class = ExtendedSpriteTest1;
 		
 		public function TestSuiteState()
