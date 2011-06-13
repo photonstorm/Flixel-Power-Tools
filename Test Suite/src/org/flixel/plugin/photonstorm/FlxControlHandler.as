@@ -51,15 +51,18 @@ package org.flixel.plugin.photonstorm
 		private var altJump:Boolean;
 		private var xFacing:Boolean;
 		private var yFacing:Boolean;
-		private var rotateAnticlockwise:Boolean;
+		private var rotateAntiClockwise:Boolean;
 		private var rotateClockwise:Boolean;
 		
 		private var upMoveSpeed:int;
 		private var downMoveSpeed:int;
 		private var leftMoveSpeed:int;
 		private var rightMoveSpeed:int;
+		private var thrustSpeed:int;
+		private var reverseSpeed:int;
 		
 		//	Rotation
+		private var thrustEnabled:Boolean;
 		private var isRotating:Boolean;
 		private var antiClockwiseRotationSpeed:Number;
 		private var clockwiseRotationSpeed:Number;
@@ -93,7 +96,7 @@ package org.flixel.plugin.photonstorm
 		private var movement:int;
 		private var stopping:int;
 		private var rotation:int;
-		private var rotation_stopping:int;
+		private var rotationStopping:int;
 		private var capVelocity:Boolean;
 		
 		private var hotkeys:Array;			// TODO
@@ -108,6 +111,8 @@ package org.flixel.plugin.photonstorm
 		private var altJumpKey:String;		// TODO
 		private var antiClockwiseKey:String;
 		private var clockwiseKey:String;
+		private var thrustKey:String;
+		private var reverseKey:String;
 		
 		/**
 		 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
@@ -188,15 +193,21 @@ package org.flixel.plugin.photonstorm
 			xFacing = updateFacing;
 			yFacing = updateFacing;
 			
+			up = false;
+			down = false;
+			left = false;
+			right = false;
+			
+			thrustEnabled = false;
+			isRotating = false;
+			enforceAngleLimits = false;
+			rotation = ROTATION_INSTANT;
+			rotationStopping = ROTATION_STOPPING_INSTANT;
+			
 			if (enableArrowKeys)
 			{
 				setCursorControl();
 			}
-			
-			isRotating = false;
-			enforceAngleLimits = false;
-			rotation = ROTATION_INSTANT;
-			rotation_stopping = ROTATION_STOPPING_INSTANT;
 			
 			enabled = true;
 		}
@@ -290,7 +301,7 @@ package org.flixel.plugin.photonstorm
 		public function setRotationType(rotationType:int, stoppingType:int):void
 		{
 			rotation = rotationType;
-			rotation_stopping = stoppingType;
+			rotationStopping = stoppingType;
 		}
 		
 		/**
@@ -360,7 +371,7 @@ package org.flixel.plugin.photonstorm
 		public function setRotationKeys(leftRight:Boolean = true, upDown:Boolean = false, customAntiClockwise:String = "", customClockwise:String = ""):void
 		{
 			isRotating = true;
-			rotateAnticlockwise = true;
+			rotateAntiClockwise = true;
 			rotateClockwise = true;
 			antiClockwiseKey = "LEFT";
 			clockwiseKey = "RIGHT";
@@ -384,14 +395,16 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @param	thrust			The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
 		 * @param	reverse			The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
-		 * @param	maxThrust
-		 * @param	maxReverse
 		 * @param	thrustKey		Defaults to the UP arrow key. Or specify your own key String (as taken from org.flixel.system.input.Keyboard)
 		 * @param	reverseKey		Defaults to the DOWN arrow key. Or specify your own key String (as taken from org.flixel.system.input.Keyboard)
 		 */
-		public function setThrust(thrust:Number, reverse:Number, maxThrust:Number, maxReverse:Number, thrustKey:String = "UP", reverseKey:String = "DOWN"):void
+		public function setThrust(thrust:Number, reverse:Number, thrustKey:String = "UP", reverseKey:String = "DOWN"):void
 		{
-			
+			thrustSpeed = thrust;
+			reverseSpeed = reverse;
+			this.thrustKey = thrustKey;
+			this.reverseKey = reverseKey;
+			thrustEnabled = true;
 		}
 		
 		/**
@@ -732,7 +745,7 @@ package org.flixel.plugin.photonstorm
 				
 				if (enforceAngleLimits)
 				{
-					entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+					//entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
 				}
 			}
 			
@@ -760,7 +773,67 @@ package org.flixel.plugin.photonstorm
 				
 				if (enforceAngleLimits)
 				{
-					entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+					//entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+				}
+			}
+			
+			return move;
+		}
+		
+		private function moveThrust():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(thrustKey))
+			{
+				move = true;
+				
+				var motion:FlxPoint = FlxVelocity.velocityFromAngle(entity.angle, thrustSpeed);
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = motion.x;
+					entity.velocity.y = motion.y;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = motion.x;
+					entity.acceleration.y = motion.y;
+				}
+				
+				if (bounds && entity.x < bounds.x)
+				{
+					entity.x = bounds.x;
+				}
+			}
+			
+			return move;
+		}
+		
+		private function moveReverse():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(thrustKey))
+			{
+				move = true;
+				
+				var motion:FlxPoint = FlxVelocity.velocityFromAngle(entity.angle, reverseSpeed);
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = -motion.x;
+					entity.velocity.y = -motion.y;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = -motion.x;
+					entity.acceleration.y = -motion.y;
+				}
+				
+				if (bounds && entity.x < bounds.x)
+				{
+					entity.x = bounds.x;
 				}
 			}
 			
@@ -916,49 +989,59 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			//	Rotation
-			
 			if (isRotating)
 			{
-				if (rotation_stopping == ROTATION_STOPPING_INSTANT)
+				if (rotationStopping == ROTATION_STOPPING_INSTANT)
 				{
 					entity.angularVelocity = 0;
 				}
+				
+				var hasRotatedAntiClockwise:Boolean = false;
+				var hasRotatedClockwise:Boolean = false;
+				
+				hasRotatedAntiClockwise = moveAntiClockwise();
+				
+				if (hasRotatedAntiClockwise == false)
+				{
+					hasRotatedClockwise = moveClockwise();
+				}
 			}
 			
-			var hasRotatedAnticlockwise:Boolean = false;
-			var hasRotatedClockwise:Boolean = false;
-			
-			if (rotateAnticlockwise)
+			if (thrustEnabled)
 			{
-				hasRotatedAnticlockwise = moveAntiClockwise();
+				var moved:Boolean = false;
+				
+				moved = moveThrust();
+				
+				if (moved == false)
+				{
+					moveReverse();
+				}
 			}
-			
-			if (rotateClockwise && hasRotatedAnticlockwise == false)
+			else
 			{
-				hasRotatedClockwise = moveClockwise();
-			}
-			
-			var movedX:Boolean = false;
-			var movedY:Boolean = false;
-			
-			if (up)
-			{
-				movedY = moveUp();
-			}
-			
-			if (down && movedY == false)
-			{
-				moveDown();
-			}
-			
-			if (left)
-			{
-				movedX = moveLeft();
-			}
-			
-			if (right && movedX == false)
-			{
-				moveRight();
+				var movedX:Boolean = false;
+				var movedY:Boolean = false;
+				
+				if (up)
+				{
+					movedY = moveUp();
+				}
+				
+				if (down && movedY == false)
+				{
+					moveDown();
+				}
+				
+				if (left)
+				{
+					movedX = moveLeft();
+				}
+				
+				if (right && movedX == false)
+				{
+					moveRight();
+				}
 			}
 			
 			if (fire)
@@ -983,7 +1066,6 @@ package org.flixel.plugin.photonstorm
 					entity.velocity.y = entity.maxVelocity.y;
 				}
 			}
-			
 		}
 		
 		/**

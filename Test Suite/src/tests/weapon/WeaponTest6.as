@@ -55,11 +55,7 @@ package tests.weapon
 			//FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
 			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_INSTANT);
 			FlxControl.player1.setRotationKeys();
-			FlxControl.player1.setRotationLimits( -45, 45);
-			
-			//FlxControl.player1.setMovementSpeed(200, 200, 200, 200);
-			//FlxControl.player1.setCursorControl(true, true, false, false);
-			//FlxControl.player1.setBounds(16, 200, 280, 16);
+			FlxControl.player1.setThrust(100, 100, "UP", "DOWN");
 			
 			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 150 ms, hooked to the lazer.fire method
 			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 150, lazer.fireFromParentAngle);

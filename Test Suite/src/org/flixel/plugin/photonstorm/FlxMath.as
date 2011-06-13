@@ -512,17 +512,17 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @return	The new angle value, returns the same as the input angle if it was within bounds
 		 */
-		public static function wrapAngle(angle:int):int
+		public static function wrapAngle(angle:Number):int
 		{
-			var result:int = angle;
+			var result:int = int(angle);
 			
 			if (angle > 180)
 			{
-				result = -180 + (angle - 180);
+				result = -180;
 			}
 			else if (angle < -180)
 			{
-				result = 180 - (angle - 180);
+				result = 180;
 			}
 			
 			return result;
