@@ -2,9 +2,10 @@
  * GlitchFX - Special FX Plugin
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.1 Added changeGlitchValues support
  * v1.0 First release
  * 
- * @version 1.0 - May 21st 2011
+ * @version 1.1 - June 13th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -58,6 +59,12 @@ package org.flixel.plugin.photonstorm.FX
 			active = true;
 			
 			return sprite;
+		}
+		
+		public function changeGlitchValues(maxGlitch:uint, maxSkip:uint):void
+		{
+			glitchSize = maxGlitch;
+			glitchSkip = maxSkip;
 		}
 		
 		public function draw():void

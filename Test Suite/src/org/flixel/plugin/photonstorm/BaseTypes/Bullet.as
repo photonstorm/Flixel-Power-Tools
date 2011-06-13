@@ -149,10 +149,13 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			
 			if (accelerates)
 			{
-				
+				acceleration.x = newVelocity.x;
+				acceleration.y = newVelocity.y;
 			}
 			else
 			{
+				velocity.x = newVelocity.x;
+				velocity.y = newVelocity.y;
 			}
 			
 			if (animated)
@@ -161,11 +164,6 @@ package org.flixel.plugin.photonstorm.BaseTypes
 			}
 			
 			exists = true;
-		}
-		
-		public function fireFromParentAngle(fromX:int, fromY:int, parentAngle:int):void
-		{
-			
 		}
 		
 		public function set xGravity(gx:int):void

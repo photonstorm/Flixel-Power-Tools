@@ -31,16 +31,11 @@ package org.flixel.plugin.photonstorm
 	 * Assigning sound effects
 	 * Homing Missiles
 	 * Bullet uses random sprite from sprite sheet (for rainbow style bullets), or cycles through them in sequence?
-	 * Some Weapon base classes like shotgun, lazer, etc
+	 * Some Weapon base classes like shotgun, lazer, etc?
 	 */
 	
 	public class FlxWeapon 
 	{
-		/**
-		 * If active this Weapon will be processed by the FlxBulletManager
-		 */
-		public var active:Boolean = false;
-		
 		/**
 		 * Internal name for this weapon (i.e. "pulse rifle")
 		 */
@@ -301,7 +296,7 @@ package org.flixel.plugin.photonstorm
 			}
 			else if (method == FIRE_FROM_PARENT_ANGLE)
 			{
-				bullet.fireFromParentAngle(launchX, launchY, parent.angle, bulletSpeed);
+				bullet.fireFromAngle(launchX, launchY, parent.angle, bulletSpeed);
 			}
 		}
 		

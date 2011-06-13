@@ -2,12 +2,13 @@
  * FlxControlHandler
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Full support for rotation with min/max angle limits
  * v1.4 Fixed bug in runFire causing fireRate to be ignored
  * v1.3 Major refactoring and lots of new enhancements
  * v1.2 First real version deployed to dev
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - June 10th 2011
+ * @version 1.5 - June 12th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -26,7 +27,7 @@ package org.flixel.plugin.photonstorm
 	 * TODO
 	 * ----
 	 * If moving diagonally compensate speed parameter (times x,y velocities by 0.707 or cos/sin(45))
-	 * Support for angles! Thrust like spaceship movement
+	 * Thrust like spaceship movement
 	 * Specify animation frames to play based on velocity
 	 * Hotkeys (bind a key to a user function - like for weapon select)
 	 * Variable gravity (based on height, the higher the stronger the effect)
@@ -62,6 +63,9 @@ package org.flixel.plugin.photonstorm
 		private var isRotating:Boolean;
 		private var antiClockwiseRotationSpeed:Number;
 		private var clockwiseRotationSpeed:Number;
+		private var enforceAngleLimits:Boolean;
+		private var minAngle:int;
+		private var maxAngle:int;
 		private var capAngularVelocity:Boolean;
 		
 		private var xSpeedAdjust:Number = 0;
@@ -190,6 +194,7 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			isRotating = false;
+			enforceAngleLimits = false;
 			rotation = ROTATION_INSTANT;
 			rotation_stopping = ROTATION_STOPPING_INSTANT;
 			
@@ -282,10 +287,10 @@ package org.flixel.plugin.photonstorm
 			setRotationDeceleration(deceleration);
 		}
 		
-		public function setRotationType(rotation_type:int, stopping_type:int):void
+		public function setRotationType(rotationType:int, stoppingType:int):void
 		{
-			rotation = rotation_type;
-			rotation_stopping = stopping_type;
+			rotation = rotationType;
+			rotation_stopping = stoppingType;
 		}
 		
 		/**
@@ -314,9 +319,34 @@ package org.flixel.plugin.photonstorm
 			entity.angularDrag = speed;
 		}
 		
-		// TODO
+		
+		/**
+		 * Set minimum and maximum angle limits that the Sprite won't be able to rotate beyond.<br>
+		 * Values must be between -180 and +180. 0 is pointing right, 90 down, 180 left, -90 up.
+		 * 
+		 * @param	minimumAngle	Minimum angle below which the sprite cannot rotate (must be -180 or above)
+		 * @param	maximumAngle	Maximum angle above which the sprite cannot rotate (must be 180 or below)
+		 */
 		public function setRotationLimits(minimumAngle:int, maximumAngle:int):void
 		{
+			if (minimumAngle > maximumAngle || minimumAngle < -180 || maximumAngle > 180)
+			{
+				throw new Error("FlxControlHandler setRotationLimits: Invalid Minimum / Maximum angle");
+			}
+			else
+			{
+				enforceAngleLimits = true;
+				minAngle = minimumAngle;
+				maxAngle = maximumAngle;
+			}
+		}
+		
+		/**
+		 * Disables rotation limits set in place by setRotationLimits()
+		 */
+		public function disableRotationLimits():void
+		{
+			enforceAngleLimits = false;
 		}
 		
 		/**
@@ -698,7 +728,12 @@ package org.flixel.plugin.photonstorm
 					entity.angularAcceleration = antiClockwiseRotationSpeed;
 				}
 				
-				// TODO angle limit checks
+				entity.angle = FlxMath.wrapAngle(entity.angle);
+				
+				if (enforceAngleLimits)
+				{
+					entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+				}
 			}
 			
 			return move;
@@ -721,7 +756,12 @@ package org.flixel.plugin.photonstorm
 					entity.angularAcceleration = clockwiseRotationSpeed;
 				}
 				
-				// TODO angle limit checks
+				entity.angle = FlxMath.wrapAngle(entity.angle);
+				
+				if (enforceAngleLimits)
+				{
+					entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+				}
 			}
 			
 			return move;

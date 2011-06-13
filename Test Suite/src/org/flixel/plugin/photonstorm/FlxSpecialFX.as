@@ -2,13 +2,13 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
- * v1.4 Added BlurFX
+ * v1.4 Added BlurFX and CenterSlideFX
  * v1.3 Renamed DropDown to FloodFill
  * v1.2 Added GlitchFX and StarfieldFX
  * v1.1 Added SineWaveFX
  * v1.0 First release of the new FlxSpecialFX system
  * 
- * @version 1.4 - June 10th 2011
+ * @version 1.4 - June 12th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -18,6 +18,7 @@ package org.flixel.plugin.photonstorm
 	import flash.utils.Dictionary;
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.FX.BlurFX;
+	import org.flixel.plugin.photonstorm.FX.CenterSlideFX;
 	import org.flixel.plugin.photonstorm.FX.FloodFillFX;
 	import org.flixel.plugin.photonstorm.FX.GlitchFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
@@ -136,6 +137,19 @@ package org.flixel.plugin.photonstorm
 			return members[temp];
 		}
 		
+		/**
+		 * Creates a Center Slide Effect
+		 * 
+		 * @return	CenterSlideFX
+		 */
+		public static function centerSlide():CenterSlideFX
+		{
+			var temp:CenterSlideFX = new CenterSlideFX
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
 		
 		
 		

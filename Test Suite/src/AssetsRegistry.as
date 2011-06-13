@@ -51,6 +51,7 @@ package
 		[Embed(source = '../assets/sprites/xenon2_bomb.png')] public static var xenon2BombPNG:Class;
 		[Embed(source = '../assets/sprites/advanced_wars_tank.png')] public static var advWarsTankPNG:Class;
 		[Embed(source = '../assets/sprites/advanced_wars_land.png')] public static var advWarsLandPNG:Class;
+		[Embed(source = '../assets/sprites/asteroids_ship.png')] public static var asteroidsShipPNG:Class;
 		
 		//	Pictures
 		[Embed(source = '../assets/pics/1984-nocooper-space.png')] public static var noCooper1984PNG:Class;
@@ -62,6 +63,8 @@ package
 		[Embed(source = '../assets/pics/alpha-test.png')] public static var alphaPNG:Class;
 		[Embed(source = '../assets/pics/agent-t-buggin-acf_logo.png')] public static var acfPNG:Class;
 		[Embed(source = '../assets/pics/auto_scroll_landscape.png')] public static var tcbPNG:Class;
+		[Embed(source = '../assets/pics/questar.png')] public static var questarPNG:Class;
+		[Embed(source = '../assets/pics/shocktroopers_angel2.png')] public static var shocktAngle2PNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/mods/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;

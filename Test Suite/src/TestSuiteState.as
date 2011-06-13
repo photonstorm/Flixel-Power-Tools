@@ -50,7 +50,6 @@ package
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
 		private var shortcut:Class = WeaponTest6;
-		//private var shortcut:Class = BlurTest2;
 		//private var shortcut:Class = ExtendedSpriteTest1;
 		
 		public function TestSuiteState()
@@ -135,6 +134,7 @@ package
 			options.push( { state: GlitchTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: BlurTest1, color: [0xff2E2E2E, 0xff606060] } );
 			options.push( { state: BlurTest2, color: [0xff2E2E2E, 0xff606060] } );
+			options.push( { state: CenterSlideTest1, color: [0xff2E2E2E, 0xff606060] } );
 			
 			options.push( { newColumn: true } );
 			
@@ -160,7 +160,7 @@ package
 			options.push( { state: WeaponTest3, color: [0xffC0C0C0, 0xff808080] } );
 			options.push( { state: WeaponTest4, color: [0xffC0C0C0, 0xff808080] } );
 			options.push( { state: WeaponTest5, color: [0xffC0C0C0, 0xff808080] } );
-			
+			options.push( { state: WeaponTest6, color: [0xffC0C0C0, 0xff808080] } );
 		}
 		
 		override public function create():void

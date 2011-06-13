@@ -2,9 +2,10 @@
  * FlxDelay
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.2 Added callback support
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.1 - April 23rd 2011
+ * @version 1.2 - June 13th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -28,6 +29,11 @@ package org.flixel.plugin.photonstorm
 	public class FlxDelay extends Sprite
 	{
 		public var isRunning:Boolean;
+		
+		/**
+		 * If you wish to call a function once the timer completes, set it here
+		 */
+		public var callback:Function;
 		
 		private var started:int;
 		public var duration:int;
@@ -118,6 +124,12 @@ package org.flixel.plugin.photonstorm
 			
 			isRunning = false;
 			complete = true;
+			
+			if (callback is Function)
+			{
+				callback.call();
+			}
+			
 		}
 		
 	}

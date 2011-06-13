@@ -9,7 +9,7 @@ package tests.weapon
 		//	Common variables
 		public static var title:String = "Weapon 5";
 		public static var description:String = "Advanced Wars Bullet Gravity Example";
-		private var instructions:String = "Mouse to aim and click to fire";
+		private var instructions:String = "Left/Right to move + mouse to aim and fire";
 		private var header:TestsHeader;
 		
 		//	Test specific variables

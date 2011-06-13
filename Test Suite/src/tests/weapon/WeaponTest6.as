@@ -16,6 +16,7 @@ package tests.weapon
 		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
 		private var lazer:FlxWeapon;
+		private var debug:FlxText;
 		
 		public function WeaponTest6() 
 		{
@@ -32,15 +33,14 @@ package tests.weapon
 			
 			//	Our players space ship
 			player = new FlxSprite(160, 140);
-			player.loadRotatedGraphic(AssetsRegistry.xenon2ShipPNG, 128, -1, true, true);
+			player.loadRotatedGraphic(AssetsRegistry.asteroidsShipPNG, 180, -1, true, true);
 			
 			//	Creates our weapon. We'll call it "lazer" and link it to the x/y coordinates of the player sprite
 			lazer = new FlxWeapon("lazer", player, "x", "y");
 			
-			lazer.makeImageBullet(20, AssetsRegistry.xenon2BombPNG, 12, 6, true, 64, 1, true, true);
+			lazer.makePixelBullet(40, 2, 2, 0xff00e700, 5, 6);
 			
-			//	Sets the direction and speed the bullets will be fired in. Slowed down on purpose so you can see the animation.
-			lazer.setBulletDirection(FlxWeapon.BULLET_UP, 180);
+			lazer.setBulletSpeed(200);
 			
 			//	The following are controls for the player, note that the "setFireButton" controls the speed at which bullets are fired, not the Weapon class itself
 			
@@ -51,21 +51,26 @@ package tests.weapon
 			}
 			
 			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 1, false, false);
-			FlxControl.player1.setRotationSpeed(200, 200, 200, 150);
-			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
+			FlxControl.player1.setRotationSpeed(100, 100, 100, 400);
+			//FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
+			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_INSTANT);
 			FlxControl.player1.setRotationKeys();
+			FlxControl.player1.setRotationLimits( -45, 45);
 			
 			//FlxControl.player1.setMovementSpeed(200, 200, 200, 200);
 			//FlxControl.player1.setCursorControl(true, true, false, false);
 			//FlxControl.player1.setBounds(16, 200, 280, 16);
 			
-			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 250 ms, hooked to the lazer.fire method
-			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 250, lazer.fire);
+			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 150 ms, hooked to the lazer.fire method
+			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 150, lazer.fireFromParentAngle);
+			
+			debug = new FlxText(16, 32, 200, "");
+			debug.text = "Angle: " + player.angle;
 			
 			//	The group which contains all of the bullets should be added so it is displayed
 			add(lazer.group);
-			
 			add(player);
+			add(debug);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -74,6 +79,8 @@ package tests.weapon
 		override public function update():void
 		{
 			super.update();
+			
+			debug.text = "Angle: " + player.angle;
 		}
 		
 		override public function destroy():void

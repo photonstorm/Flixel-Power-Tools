@@ -10,12 +10,12 @@ package tests.specialfx
 		//	Common variables
 		public static var title:String = "GlitchFX 1";
 		public static var description:String = "Glitch FX Plugin";
-		private var instructions:String = "Click to start the drop down effect";
+		private var instructions:String = "Glitch distortion effect. Click to randomise.";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
 		private var glitch:GlitchFX;
-		private var soPretty:FlxSprite;
+		private var scratch:FlxSprite;
 		
 		public function GlitchTest1() 
 		{
@@ -32,15 +32,17 @@ package tests.specialfx
 				FlxG.addPlugin(new FlxSpecialFX);
 			}
 			
-			var pic:FlxSprite = new FlxSprite(32, 48, AssetsRegistry.overdoseEyePNG);
+			header.showDarkBackground();
+			
+			var pic:FlxSprite = new FlxSprite(96, 40, AssetsRegistry.shocktAngle2PNG);
 			
 			glitch = FlxSpecialFX.glitch();
 			
-			soPretty = glitch.createFromFlxSprite(pic, 4, 4);
+			scratch = glitch.createFromFlxSprite(pic, 2, 2);
 			
 			glitch.start(4);
 			
-			add(soPretty);
+			add(scratch);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -49,6 +51,16 @@ package tests.specialfx
 		override public function update():void
 		{
 			super.update();
+			
+			if (FlxG.mouse.justPressed())
+			{
+				var rndGlitch:uint = FlxMath.rand(2, 8);
+				var rndSkip:uint = FlxMath.rand(1, 8);
+				
+				header.instructions.text = "Glitch Max " + rndGlitch + "    Skip Max " + rndSkip;
+				
+				glitch.changeGlitchValues(rndGlitch, rndSkip);
+			}
 		}
 		
 		override public function destroy():void

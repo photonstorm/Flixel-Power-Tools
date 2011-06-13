@@ -33,6 +33,17 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * Takes the bitmapData from the given source FlxSprite and rotates it 90 degrees clockwise.<br>
+		 * Can be useful if you need to control a sprite under rotation but it isn't drawn facing right.<br>
+		 * This change overwrites FlxSprite.pixels, but will not work with animated sprites.
+		 * 
+		 * @param	source		The FlxSprite who's image data you wish to rotate clockwise
+		 */
+		public static function rotateClockwise(source:FlxSprite):void
+		{
+		}
+		
+		/**
 		 * Aligns a set of FlxSprites so there is equal spacing between them
 		 * 
 		 * @param	sprites				An Array of FlxSprites

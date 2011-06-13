@@ -2,10 +2,11 @@
  * FlxMath
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.6 Added wrapAngle, angleLimit and more documentation
  * v1.5 Added pointInCoordinates, pointInFlxRect and pointInRectangle
  * v1.4 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.5 - May 19th 2011
+ * @version 1.6 - June 12th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -440,18 +441,38 @@ package org.flixel.plugin.photonstorm
             return Math.sqrt(dx * dx + dy * dy);
         }
 		
-        // Finds the dot product value of two vectors
+		/**
+		 * Finds the dot product value of two vectors
+		 * 
+		 * @param	ax		Vector X
+		 * @param	ay		Vector Y
+		 * @param	bx		Vector X
+		 * @param	by		Vector Y
+		 * 
+		 * @return	Dot product
+		 */
         public static function dotProduct(ax:Number, ay:Number, bx:Number, by:Number):Number
         {
             return ax * bx + ay * by;
         }
         
-		// Returns 1 or -1 at random
+		/**
+		 * Randomly returns either a 1 or -1
+		 * 
+		 * @return	1 or -1
+		 */
         public static function randomSign():Number
         {
             return (Math.random() > 0.5) ? 1 : -1;
         }
 		
+		/**
+		 * Returns true if the number given is odd.
+		 * 
+		 * @param	n	The number to check
+		 * 
+		 * @return	True if the given number is odd. False if the given number is even.
+		 */
 		public static function isOdd(n:Number):Boolean
 		{
 			if (n & 1)
@@ -464,6 +485,13 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		/**
+		 * Returns true if the number given is even.
+		 * 
+		 * @param	n	The number to check
+		 * 
+		 * @return	True if the given number is even. False if the given number is odd.
+		 */
 		public static function isEven(n:Number):Boolean
 		{
 			if (n & 1)
@@ -474,6 +502,55 @@ package org.flixel.plugin.photonstorm
 			{
 				return true;
 			}
+		}
+		
+		/**
+		 * Keeps an angle value between -180 and +180<br>
+		 * Should be called whenever the angle is updated on the FlxSprite to stop it from going insane.
+		 * 
+		 * @param	angle	The angle value to check
+		 * 
+		 * @return	The new angle value, returns the same as the input angle if it was within bounds
+		 */
+		public static function wrapAngle(angle:int):int
+		{
+			var result:int = angle;
+			
+			if (angle > 180)
+			{
+				result = -180 + (angle - 180);
+			}
+			else if (angle < -180)
+			{
+				result = 180 - (angle - 180);
+			}
+			
+			return result;
+		}
+		
+		/**
+		 * Keeps an angle value between the given min and max values
+		 * 
+		 * @param	angle	The angle value to check. Must be between -180 and +180
+		 * @param	min		The minimum angle that is allowed (must be -180 or greater)
+		 * @param	max		The maximum angle that is allowed (must be 180 or less)
+		 * 
+		 * @return	The new angle value, returns the same as the input angle if it was within bounds
+		 */
+		public static function angleLimit(angle:int, min:int, max:int):int
+		{
+			var result:int = angle;
+			
+			if (angle > max)
+			{
+				result = max;
+			}
+			else if (angle < min)
+			{
+				result = min;
+			}
+			
+			return result;
 		}
 		
 		/**
