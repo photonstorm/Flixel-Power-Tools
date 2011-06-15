@@ -9,7 +9,7 @@ package tests.weapon
 		//	Common variables
 		public static var title:String = "Weapon 6";
 		public static var description:String = "Bullets shot at an angle";
-		private var instructions:String = "Left and Right to Rotate. Space to Fire.";
+		private var instructions:String = "Left and Right to Rotate. Control to Fire.";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
@@ -50,15 +50,23 @@ package tests.weapon
 				FlxG.addPlugin(new FlxControl);
 			}
 			
-			FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 1, false, false);
-			FlxControl.player1.setRotationSpeed(100, 100, 100, 400);
-			//FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
-			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_INSTANT);
+			//	Works
+			//FlxControl.create(player, FlxControlHandler.MOVEMENT_INSTANT, FlxControlHandler.STOPPING_INSTANT, 1, false, false);
+			
+			//	Asteroids style movement
+			FlxControl.create(player, FlxControlHandler.MOVEMENT_ACCELERATES, FlxControlHandler.STOPPING_DECELERATES, 1, false, false);
+			//FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_INSTANT);
+			FlxControl.player1.setDeceleration(100, 100);
+			
+			
+			//	If you have ROTATION_STOPPING_DECELERATES then you need to give a Deceleration value equal to the rotation speed
+			FlxControl.player1.setRotationSpeed(400, 400, 200, 400);
+			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_ACCELERATES, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
 			FlxControl.player1.setRotationKeys();
 			FlxControl.player1.setThrust(100, 100, "UP", "DOWN");
 			
-			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 150 ms, hooked to the lazer.fire method
-			FlxControl.player1.setFireButton("SPACE", FlxControlHandler.KEYMODE_PRESSED, 150, lazer.fireFromParentAngle);
+			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 50 ms, hooked to the lazer.fire method
+			FlxControl.player1.setFireButton("CONTROL", FlxControlHandler.KEYMODE_PRESSED, 50, lazer.fireFromParentAngle);
 			
 			debug = new FlxText(16, 32, 200, "");
 			debug.text = "Angle: " + player.angle;
@@ -75,6 +83,8 @@ package tests.weapon
 		override public function update():void
 		{
 			super.update();
+			
+			FlxDisplay.screenWrap(player);
 			
 			debug.text = "Angle: " + player.angle;
 		}

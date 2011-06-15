@@ -2,10 +2,11 @@
  * FlxDisplay
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.3 Added "screenWrap" method
  * v1.2 Added "space" method
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.2 - June 2nd 2011
+ * @version 1.3 - June 15th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -30,6 +31,32 @@ package org.flixel.plugin.photonstorm
 		{
 			//	mirror / reverse?
 			//	Flip image data horizontally / vertically without changing the angle
+		}
+		
+		/**
+		 * Checks the x/y coordinates of the source FlxSprite and keeps them within the area of 0, 0, FlxG.width, FlxG.height (i.e. wraps it around the screen)
+		 * 
+		 * @param	source	The FlxSprite to keep within the screen
+		 */
+		public static function screenWrap(source:FlxSprite):void
+		{
+			if (source.x < 0)
+			{
+				source.x = FlxG.width;
+			}
+			else if (source.x > FlxG.width)
+			{
+				source.x = 0;
+			}
+			
+			if (source.y < 0)
+			{
+				source.y = FlxG.height;
+			}
+			else if (source.y > FlxG.height)
+			{
+				source.y = 0;
+			}
 		}
 		
 		/**

@@ -2,9 +2,10 @@
  * CenterSlideFX - Special FX Plugin
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.1 Refactored main loop a little and added reverse function
  * v1.0 First release
  * 
- * @version 1.0 - June 12th 2011
+ * @version 1.1 - June 13th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -161,6 +162,20 @@ package org.flixel.plugin.photonstorm.FX
 			return sprite;
 		}
 		
+		public function reverse():void
+		{
+			if (direction == REVEAL_VERTICAL)
+			{
+				direction = HIDE_VERTICAL;
+				complete = false;
+			}
+			else if (direction == REVEAL_HORIZONTAL)
+			{
+				direction = HIDE_HORIZONTAL;
+				complete = false;
+			}
+		}
+		
 		public function draw():void
 		{
 			if (ready && complete == false)
@@ -172,11 +187,13 @@ package org.flixel.plugin.photonstorm.FX
 					return;
 				}
 				
+				canvas.fillRect(clsRect, clsColor);
+				canvas.copyPixels(image, sideA, pointA, null, null, true);
+				canvas.copyPixels(image, sideB, pointB, null, null, true);
+				
 				switch (direction)
 				{
 					case REVEAL_VERTICAL:
-						canvas.copyPixels(image, sideA, pointA, null, null, true);
-						canvas.copyPixels(image, sideB, pointB, null, null, true);
 						sideA.height += pixels;
 						pointA.y -= pixels;
 						sideB.height += pixels;
@@ -184,8 +201,6 @@ package org.flixel.plugin.photonstorm.FX
 						break;
 						
 					case REVEAL_HORIZONTAL:
-						canvas.copyPixels(image, sideA, pointA, null, null, true);
-						canvas.copyPixels(image, sideB, pointB, null, null, true);
 						sideA.width += pixels;
 						pointA.x -= pixels;
 						sideB.width += pixels;
@@ -193,9 +208,6 @@ package org.flixel.plugin.photonstorm.FX
 						break;
 						
 					case HIDE_VERTICAL:
-						canvas.fillRect(clsRect, clsColor);
-						canvas.copyPixels(image, sideA, pointA, null, null, true);
-						canvas.copyPixels(image, sideB, pointB, null, null, true);
 						sideA.height -= pixels;
 						pointA.y += pixels;
 						sideB.height -= pixels;
@@ -203,9 +215,6 @@ package org.flixel.plugin.photonstorm.FX
 						break;
 						
 					case HIDE_HORIZONTAL:
-						canvas.fillRect(clsRect, clsColor);
-						canvas.copyPixels(image, sideA, pointA, null, null, true);
-						canvas.copyPixels(image, sideB, pointB, null, null, true);
 						sideA.width -= pixels;
 						pointA.x += pixels;
 						sideB.width -= pixels;
