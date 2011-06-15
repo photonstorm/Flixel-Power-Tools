@@ -72,6 +72,12 @@ package tests
 			darkBackground.visible = true;
 		}
 		
+		public function showBlackBackground():void
+		{
+			background.visible = false;
+			darkBackground.visible = false;
+		}
+		
 		override public function update():void
 		{
 			super.update();

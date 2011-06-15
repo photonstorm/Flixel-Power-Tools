@@ -41,7 +41,7 @@ package
 	import tests.weapon.*;
 	import tests.wip.*;
 	
-	public class TestSuiteState extends FlxState
+	public class TestSuite2State extends FlxState
 	{
 		[Embed(source = '../assets/suite/menu_burd.png')] private var menuBurdPNG:Class;
 		[Embed(source = '../assets/suite/amigamouse.png')] public static var mouseCursorPNG:Class;
@@ -51,13 +51,9 @@ package
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
 		private var burd:FlxSprite;
-		//private var shortcut:Class = WIPRGBSplit;
-		//private var shortcut:Class = AlphaMaskTest2;
 		private var shortcut:Class = ControlTest7;
-		//private var shortcut:Class = WeaponTest6;
-		//private var shortcut:Class = ExtendedSpriteTest1;
 		
-		public function TestSuiteState()
+		public function TestSuite2State()
 		{
 			options = new Array;
 			
@@ -177,49 +173,8 @@ package
 			
 			FlxG.mouse.load(mouseCursorPNG, 2);
 			
-			//	Our camera tracks this invisible sprite
-			dolly = new FlxSprite(Registry.menuOffsetX, 0);
-			dolly.makeGraphic(1, 1, 0x00ffffff);
-			add(dolly);
-			
-			burd = new FlxSprite(230, 171, menuBurdPNG);
-			add(burd);
-			
-			var xOffset:int = 16;
-			var yOffset:int = 32;
-			var currentY:int = yOffset;
-			var padding:int = 2;
-			
-			for (var i:int = 0; i < options.length; i++)
-			{
-				var option:Object = options[i];
-				
-				if (option.newColumn)
-				{
-					xOffset += (80 + 16 + 8);
-					currentY = yOffset;
-				}
-				else if (option.spacer)
-				{
-					currentY += 10;
-				}
-				else
-				{
-					var tempButton:FlxButtonPlus = new FlxButtonPlus(xOffset, currentY, startTest, [option.state], option.state.title, 80, 18);
-					tempButton.updateInactiveButtonColors(option.color);
-					tempButton.setMouseOverCallback(buttonOver, [option.state.description]);
-					tempButton.setMouseOutCallback(buttonOut);
-					
-					add(tempButton);
-					
-					currentY += tempButton.height + padding;
-				}
-			}
 
 			add(header.overlay);
-			
-			FlxG.camera.follow(dolly);
-			FlxG.camera.setBounds(0, 0, 640+320, 256, true);
 			
 			FlxG.mouse.show();
 		}

@@ -54,6 +54,8 @@ package
 		[Embed(source = '../assets/sprites/asteroids_ship.png')] public static var asteroidsShipPNG:Class;
 		
 		//	Pictures
+		[Embed(source = '../assets/pics/mask-test.png')] public static var alphaMaskPNG:Class;
+		[Embed(source = '../assets/pics/mask-test2.png')] public static var alphaMask2PNG:Class;
 		[Embed(source = '../assets/pics/1984-nocooper-space.png')] public static var noCooper1984PNG:Class;
 		[Embed(source = '../assets/pics/spaz-bitch-beatnick.png')] public static var spazPNG:Class;
 		[Embed(source = '../assets/pics/game14_angel_dawn.png')] public static var angelDawnPNG:Class;
@@ -65,6 +67,8 @@ package
 		[Embed(source = '../assets/pics/auto_scroll_landscape.png')] public static var tcbPNG:Class;
 		[Embed(source = '../assets/pics/questar.png')] public static var questarPNG:Class;
 		[Embed(source = '../assets/pics/shocktroopers_angel2.png')] public static var shocktAngle2PNG:Class;
+		[Embed(source = '../assets/pics/acryl_bladerunner.png')] public static var acrylBladeRunnerPNG:Class;
+		[Embed(source = '../assets/pics/acryl_bobablast.png')] public static var acrylBobaFettPNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/mods/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;

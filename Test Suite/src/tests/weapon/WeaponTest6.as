@@ -16,7 +16,6 @@ package tests.weapon
 		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
 		private var lazer:FlxWeapon;
-		private var debug:FlxText;
 		
 		public function WeaponTest6() 
 		{
@@ -63,18 +62,14 @@ package tests.weapon
 			FlxControl.player1.setRotationSpeed(400, 400, 200, 400);
 			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_ACCELERATES, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
 			FlxControl.player1.setRotationKeys();
-			FlxControl.player1.setThrust(100, 100, "UP", "DOWN");
+			FlxControl.player1.setThrust("UP", 100, "DOWN", 50);
 			
 			//	This is what fires the actual bullets (pressing SPACE) at a rate of 1 bullet per 50 ms, hooked to the lazer.fire method
 			FlxControl.player1.setFireButton("CONTROL", FlxControlHandler.KEYMODE_PRESSED, 50, lazer.fireFromParentAngle);
 			
-			debug = new FlxText(16, 32, 200, "");
-			debug.text = "Angle: " + player.angle;
-			
 			//	The group which contains all of the bullets should be added so it is displayed
 			add(lazer.group);
 			add(player);
-			add(debug);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -85,8 +80,6 @@ package tests.weapon
 			super.update();
 			
 			FlxDisplay.screenWrap(player);
-			
-			debug.text = "Angle: " + player.angle;
 		}
 		
 		override public function destroy():void

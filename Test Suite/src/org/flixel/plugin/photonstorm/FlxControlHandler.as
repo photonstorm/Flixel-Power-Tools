@@ -64,6 +64,7 @@ package org.flixel.plugin.photonstorm
 		
 		//	Rotation
 		private var thrustEnabled:Boolean;
+		private var reverseEnabled:Boolean;
 		private var isRotating:Boolean;
 		private var antiClockwiseRotationSpeed:Number;
 		private var clockwiseRotationSpeed:Number;
@@ -405,18 +406,29 @@ package org.flixel.plugin.photonstorm
 		 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.<br>
 		 * This is usually used in conjunction with Rotation and it will over-ride anything already defined in setMovementSpeed.
 		 * 
-		 * @param	thrust			The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
-		 * @param	reverse			The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
-		 * @param	thrustKey		Defaults to the UP arrow key. Or specify your own key String (as taken from org.flixel.system.input.Keyboard)
-		 * @param	reverseKey		Defaults to the DOWN arrow key. Or specify your own key String (as taken from org.flixel.system.input.Keyboard)
+		 * @param	thrustKey		Specify the key String (as taken from org.flixel.system.input.Keyboard) to use for the Thrust action
+		 * @param	thrustSpeed		The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
+		 * @param	reverseKey		If you want to be able to reverse, set the key string as taken from org.flixel.system.input.Keyboard (defaults to null).
+		 * @param	reverseSpeed	The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
 		 */
-		public function setThrust(thrust:Number, reverse:Number, thrustKey:String = "UP", reverseKey:String = "DOWN"):void
+		public function setThrust(thrustKey:String, thrustSpeed:Number, reverseKey:String = null, reverseSpeed:Number = 0):void
 		{
-			thrustSpeed = thrust;
-			reverseSpeed = reverse;
-			this.thrustKey = thrustKey;
-			this.reverseKey = reverseKey;
-			thrustEnabled = true;
+			thrustEnabled = false;
+			reverseEnabled = false;
+			
+			if (thrustKey)
+			{
+				this.thrustKey = thrustKey;
+				this.thrustSpeed = thrustSpeed;
+				thrustEnabled = true;
+			}
+			
+			if (reverseKey)
+			{
+				this.reverseKey = reverseKey;
+				this.reverseSpeed = reverseSpeed;
+				reverseEnabled = true;
+			}
 		}
 		
 		/**
@@ -544,7 +556,7 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function removeHotKey(key:String):Boolean
 		{
-			
+			return true;
 		}
 		
 		/**
@@ -1105,15 +1117,18 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			//	Thrust
-			if (thrustEnabled)
+			if (thrustEnabled || reverseEnabled)
 			{
 				var moved:Boolean = false;
 				
-				moved = moveThrust();
-				
-				if (moved == false)
+				if (thrustEnabled)
 				{
-					moveReverse();
+					moved = moveThrust();
+				}
+				
+				if (moved == false && reverseEnabled)
+				{
+					moved = moveReverse();
 				}
 			}
 			else
