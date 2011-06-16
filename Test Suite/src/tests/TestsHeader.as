@@ -67,6 +67,18 @@ package tests
 			FlxScreenGrab.defineHotKey("F1", true, true);
 		}
 		
+		public function hideHeader():void
+		{
+			overlay.remove(hud);
+			overlay.remove(instructions);
+			
+			backButton.x += 19;
+			backButton.y += 1;
+			
+			remove(background);
+			remove(darkBackground);
+		}
+		
 		public function showDarkBackground():void
 		{
 			background.visible = false;

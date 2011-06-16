@@ -1,11 +1,11 @@
 Flixel Power Tools Test Suite
 -----------------------------
 
-Updated 11th May 2011
+Updated 16th June 2011
 
 http://www.photonstorm.com
 
-This FlashDevelop project contains a suite of tests and example code for the Flixel Power Tools.
+This FlashDevelop project contains a suite of demos and example code for the Flixel Power Tools.
 
 Load the project into FlashDevelop and run it, or run the SWF in the bin folder.
 

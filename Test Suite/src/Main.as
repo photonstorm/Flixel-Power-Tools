@@ -12,13 +12,12 @@ package
 	
 	import org.flixel.*;
 	
+	[Frame(factoryClass="Preloader")]
 	public class Main extends FlxGame
 	{
 		public function Main():void 
 		{
 			super(320, 256, DemoSuiteState, 2, 60, 60);
-			
-			FlxG.stage.quality = StageQuality.LOW;
 			
 			forceDebugger = true;
 		}

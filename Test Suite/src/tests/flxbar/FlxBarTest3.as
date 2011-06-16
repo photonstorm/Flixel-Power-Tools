@@ -13,9 +13,9 @@ package tests.flxbar
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var bullets:FlxGroup;
 		private var baddies:FlxGroup;
 		private var baddieHealth:FlxGroup;
+		private var lazer:FlxWeapon;
 		
 		public function FlxBarTest3() 
 		{
@@ -27,29 +27,27 @@ package tests.flxbar
 			add(header);
 			
 			//	Test specific
-			
-			//	Let's make some bullets
-			
-			bullets = new FlxGroup(40);
-			
-			for (var b:int = 0; b < bullets.maxSize; b++)
-			{
-				bullets.add(new FlxSprite(0, 0, AssetsRegistry.chunkPNG));
-			}
-			
-			//	Hide 'em all to start with
-			bullets.setAll("alive", false);
+			header.showDarkBackground();
 			
 			//	Let's make some baddies
 			
 			baddies = new FlxGroup(20);
 			baddieHealth = new FlxGroup(20);
 			
-			for (b = 0; b < 20; b++)
+			for (var b:int = 0; b < 20; b++)
 			{
-				var baddie:FlxSprite = new FlxSprite(FlxMath.rand(24, FlxG.width - 24), FlxMath.rand(24, FlxG.height - 100), AssetsRegistry.ufoPNG);
+				var baddie:FlxSprite = new FlxSprite(FlxMath.rand(24, FlxG.width - 24), FlxMath.rand(32, FlxG.height - 60), AssetsRegistry.ufoPNG);
 				baddie.health = 100;
 				baddie.immovable = true;
+				
+				if (FlxMath.chanceRoll())
+				{
+					baddie.velocity.x = FlxMath.rand( -30, -60);
+				}
+				else
+				{
+					baddie.velocity.x = FlxMath.rand( 30, 60);
+				}
 				
 				var badHealth:FlxBar = new FlxBar(0, 0, FlxBar.FILL_LEFT_TO_RIGHT, 32, 4, baddie, "health");
 				badHealth.trackParent(0, -6);
@@ -59,12 +57,24 @@ package tests.flxbar
 				baddieHealth.add(badHealth);
 			}
 			
-			//	Hide 'em all to start with
-			bullets.setAll("alive", false);
+			//	Creates our weapon. We'll call it "lazer"
+			lazer = new FlxWeapon("lazer");
+			
+			//	Tell the weapon to create 50 bullets using the chunkPNG image.
+			lazer.makeImageBullet(50, AssetsRegistry.chunkPNG);
+			
+			//	This weapon will fire from a fixed (stationary) position
+			lazer.setFiringPosition(160, 250);
+			
+			//	As we use the mouse to fire we need to limit how many bullets are shot at once (1 every 100ms)
+			lazer.setFireRate(100);
+			
+			//	Bullets will move at 300px/sec
+			lazer.setBulletSpeed(300);
 			
 			add(baddieHealth);
 			add(baddies);
-			add(bullets);
+			add(lazer.group);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -74,30 +84,20 @@ package tests.flxbar
 		{
 			super.update();
 			
-			FlxG.collide(bullets, baddies, blasted);
-			
-			for (var b:int = 0; b < bullets.length; b++)
-			{
-				if (FlxSprite(bullets.members[b]).alive)
-				{
-					if (FlxSprite(bullets.members[b]).x < 0 || FlxSprite(bullets.members[b]).x > 320 || FlxSprite(bullets.members[b]).y < 0)
-					{
-						FlxSprite(bullets.members[b]).alive = false;
-					}
-				}
-			}
+			FlxG.collide(lazer.group, baddies, blasted);
 			
 			if (FlxG.mouse.pressed())
 			{
-				if (bullets.countDead() > 0)
+				lazer.fireAtMouse();
+			}
+			
+			//	Keep the ships on-screen :)
+			
+			for each (var baddie:FlxSprite in baddies.members)
+			{
+				if (baddie.exists)
 				{
-					var bullet:FlxSprite = bullets.getFirstDead() as FlxSprite;
-					
-					bullet.x = 160;
-					bullet.y = 240;
-					bullet.alive = true;
-					
-					FlxVelocity.moveTowardsMouse(bullet, 320);
+					FlxDisplay.screenWrap(baddie);
 				}
 			}
 		}

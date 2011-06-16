@@ -427,7 +427,7 @@ package org.flixel
 		 * 
 		 * @param	FlashEvent	Flash event.
 		 */
-		protected function onEnterFrame(FlashEvent:Event=null):void
+		protected function ORIGINALonEnterFrame(FlashEvent:Event=null):void
 		{			
 			var mark:uint = getTimer();
 			var elapsedMS:uint = mark-_total;
@@ -456,6 +456,55 @@ package org.flixel
 				}
 				
 				FlxBasic._VISIBLECOUNT = 0;
+				draw();
+				
+				if(_debuggerUp)
+				{
+					_debugger.perf.flash(elapsedMS);
+					_debugger.perf.visibleObjects(FlxBasic._VISIBLECOUNT);
+					_debugger.perf.update();
+					_debugger.watch.update();
+				}
+			}
+		}
+		
+		/**
+		 * Handles the onEnterFrame call and figures out how many updates and draw calls to do.
+		 * Modified by Richard Davey to remove the deterministic timing, and instead rely on the event loop.
+		 * 
+		 * @param	FlashEvent	Flash event.
+		 */
+		protected function onEnterFrame(FlashEvent:Event=null):void
+		{			
+			var mark:uint = getTimer();
+			var elapsedMS:uint = mark-_total;
+			_total = mark;
+			updateSoundTray(elapsedMS);
+			if(!_lostFocus)
+			{
+				if((_debugger != null) && _debugger.vcr.paused)
+				{
+					if(_debugger.vcr.stepRequested)
+					{
+						_debugger.vcr.stepRequested = false;
+						step();
+					}
+				}
+				else
+				{
+					_accumulator += elapsedMS;
+					
+					if (_accumulator > _maxAccumulation)
+					{
+						_accumulator = _maxAccumulation;
+					}
+					
+					step();
+					_accumulator = _accumulator - _step; 
+				}
+				
+				FlxBasic._VISIBLECOUNT = 0;
+				
 				draw();
 				
 				if(_debuggerUp)

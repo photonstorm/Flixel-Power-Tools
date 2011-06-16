@@ -1,9 +1,9 @@
 Flixel Power Tools
 ==================
 
-Version 1.6
+Version 1.7
 
-May 18th 2011
+June 16th 2011
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
@@ -49,13 +49,13 @@ provide context-sensitive help for all classes and functions in the Flixel Power
 Finally check out the home page at http://www.photonstorm.com/flixel-power-tools for updates.
 
 
-Test Suite
+Demo Suite
 ----------
 
-The Flixel Power Tools come with a comprehensive Test Suite. Use it to visually see the 
+The Flixel Power Tools come with a comprehensive Demo Suite. Use it to visually see the 
 tools in action, and then learn from the source code and comments within.
 
-To run the Test Suite launch the following SWF:
+To run the Demo Suite launch the following SWF:
 
     Test Suite/bin/FlixelPowerTools.swf
 
@@ -67,6 +67,7 @@ Classes
 
 The following classes are currently in the Flixel Power Tools:
 
+* FlxBar
 * FlxBitmapFont
 * FlxButtonPlus
 * FlxCollision
@@ -78,16 +79,26 @@ The following classes are currently in the Flixel Power Tools:
 * FlxFlod
 * FlxGradient
 * FlxGridOverlay
-* FlxHealthBar
 * FlxLinkedGroup
 * FlxMath
+* FlxMouseControl
 * FlxScreenGrab
 * FlxScrollingText
 * FlxScrollZone
 * FlxSpecialFX
-* FlxStarField
 * FlxVelocity
+* FlxWeapon
 
+Special FX Includes
+
+* BlurFX
+* CenterSlideFX
+* FloodFillFX
+* GlitchFX
+* PlasmaFX
+* RainbowLineFX
+* SineWaveFX
+* StarfieldFX
 
 Contributing
 ------------

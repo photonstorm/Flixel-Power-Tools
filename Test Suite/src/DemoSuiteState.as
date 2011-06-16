@@ -63,6 +63,7 @@ package
 		//	Misc
 		private var header:TestsHeader;
 		private var dolly:FlxSprite;
+		private var credits:FlxButton;
 		private var menuVisible:Boolean = true;
 		
 		public function DemoSuiteState()
@@ -78,7 +79,7 @@ package
 			sections.push( { title: "Display", 			isNew: false,	pic: AssetsRegistry.nonohaBluePNG } );
 			sections.push( { title: "Flod", 			isNew: false,	pic: AssetsRegistry.cactuarPNG } );
 			sections.push( { title: "FlxBar", 			isNew: true,	pic: AssetsRegistry.spyroPNG } );
-			sections.push( { title: "Gradient", 		isNew: false,	pic: AssetsRegistry.touhouTengPNG } );
+			sections.push( { title: "Gradient", 		isNew: false,	pic: AssetsRegistry.goldenGirlMackPNG } );
 			sections.push( { title: "Screen Grab", 		isNew: false,	pic: AssetsRegistry.ayaTouhouTengPNG } );
 			sections.push( { title: "Scrolling Text", 	isNew: false,	pic: AssetsRegistry.shockLuluPNG } );
 			sections.push( { title: "Scrolling Zones", 	isNew: false,	pic: AssetsRegistry.profilSadPlushPNG } );
@@ -96,7 +97,7 @@ package
 			options["Delay"] = [DelayTest1];
 			options["Display"] = [AlphaMaskTest1, AlphaMaskTest2, AlphaMaskTest3];
 			options["Flod"] = [FlodTest1];
-			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3, FlxBarTest4];
+			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3];
 			options["Gradient"] = [GradientTest1, GradientTest2, GradientTest3];
 			options["Screen Grab"] = [ScreenGrabTest1, ScreenGrabTest2];
 			options["Scrolling Text"] = [ScrollingTextTest1, ScrollingTextTest2, ScrollingTextTest3];
@@ -116,8 +117,6 @@ package
 			FlxG.mouse.load(mouseCursorPNG, 2);
 			
 			//	Section Menu List
-			
-			dino = new FlxSprite(0, 33, dinoPNG);
 			
 			listBackground = new FlxSprite(200, 33).makeGraphic(120, 11, 0xff669911);
 			listBackground.visible = false;
@@ -175,6 +174,10 @@ package
 			
 			//	Misc stuff
 			
+			dino = new FlxSprite(0, 24, dinoPNG);
+			
+			credits = new FlxButton(16, 214, "Credits", runCredits);
+			
 			FlxG.camera.follow(dolly);
 			FlxG.camera.setBounds(0, 0, 640, 256, true);
 			FlxG.mouse.show();
@@ -187,6 +190,7 @@ package
 			add(demoList);
 			add(sectionBG);
 			add(sectionTitle);
+			add(credits);
 			add(header.overlay);
 		}
 		
@@ -305,6 +309,11 @@ package
 		private function startTest(state:Class):void
 		{
 			FlxG.switchState(new state);
+		}
+		
+		private function runCredits():void
+		{
+			FlxG.switchState(new CreditsState);
 		}
 		
 	}

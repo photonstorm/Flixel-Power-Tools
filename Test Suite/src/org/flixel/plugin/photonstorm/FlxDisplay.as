@@ -88,7 +88,7 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * Checks the x/y coordinates of the source FlxSprite and keeps them within the area of 0, 0, FlxG.width, FlxG.height (i.e. wraps it around the screen)
 		 * 
-		 * @param	source	The FlxSprite to keep within the screen
+		 * @param	source				The FlxSprite to keep within the screen
 		 */
 		public static function screenWrap(source:FlxSprite):void
 		{

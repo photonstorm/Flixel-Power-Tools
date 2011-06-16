@@ -26,6 +26,7 @@ package
 		[Embed(source = '../assets/fonts/tsk_font.png')] public static var tskFontPNG:Class;
 		[Embed(source = '../assets/fonts/070.png')] public static var godsPNG:Class;
 		[Embed(source = '../assets/fonts/072.png')] public static var tinyPNG:Class;
+		[Embed(source = '../assets/fonts/032.png')] public static var smallPurpleFontPNG:Class;
 		
 		//	Sprites
 		[Embed(source = '../assets/sprites/red_ball.png')] public static var redPNG:Class;
@@ -84,6 +85,7 @@ package
 		[Embed(source = '../assets/pics/aya_touhou_teng_soldier.png')] public static var ayaTouhouTengPNG:Class;
 		[Embed(source = '../assets/pics/profil-sad_plush.png')] public static var profilSadPlushPNG:Class;
 		[Embed(source = '../assets/pics/nslide_snot.png')] public static var nslideSnotPNG:Class;
+		[Embed(source = '../assets/pics/mack_golden_girl.png')] public static var goldenGirlMackPNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/mods/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;
@@ -91,6 +93,7 @@ package
 		[Embed(source = '../assets/mods/obnoxious_seq3_front6.MOD', mimeType = 'application/octet-stream')] public static var obnoxiousMOD:Class;
 		[Embed(source = '../assets/mods/alpine_cut.MOD', mimeType = 'application/octet-stream')] public static var alpineCutMOD:Class;
 		[Embed(source = '../assets/mods/anarchy.mod', mimeType = 'application/octet-stream')] public static var anarchyMOD:Class;
+		[Embed(source = '../assets/mods/harlequin_barry_leitch.MOD', mimeType = 'application/octet-stream')] public static var harlequinMOD:Class;
 		
 		//	Platformer Game
 		[Embed(source = '../assets/tiles/platformer_tiles.png')] public static var platformerTilesPNG:Class;
@@ -101,6 +104,14 @@ package
 		[Embed(source = '../assets/sprites/humstar.png')] public static var humstarPNG:Class;
 		[Embed(source = '../assets/tiles/sci-fi-tiles.png')] public static var scifiTilesPNG:Class;
 		[Embed(source = '../assets/maps/mapCSV_SciFi_Map1.csv', mimeType = 'application/octet-stream')] public static var scifiMap1CSV:Class;
+		
+		//	Suite specific
+		[Embed(source = '../assets/suite/credits_crab.png')] public static var creditsBackgroundPNG:Class;
+		[Embed(source = '../assets/suite/credits_flixel.png')] public static var creditsFlixelPNG:Class;
+		[Embed(source = '../assets/suite/credits_power.png')] public static var creditsPowerPNG:Class;
+		[Embed(source = '../assets/suite/credits_tools.png')] public static var creditsToolsPNG:Class;
+		[Embed(source = '../assets/suite/credits_photonstorm.png')] public static var creditsPhotonStormPNG:Class;
+		[Embed(source = '../assets/suite/credits_ilkke.png')] public static var creditsIlkkePNG:Class;
 		
 		public function AssetsRegistry() 
 		{
