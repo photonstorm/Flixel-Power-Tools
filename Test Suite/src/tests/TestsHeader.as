@@ -15,6 +15,7 @@ package tests
 		private var hud:FlxSprite;
 		private var backButton:FlxButtonPlus;
 		public var instructions:FlxText;
+		public var mainMenu:Boolean = false;
 		
 		public function TestsHeader(text:String, showButton:Boolean = true) 
 		{
@@ -82,7 +83,12 @@ package tests
 		{
 			super.update();
 			
-			if (FlxG.keys.justReleased("ESCAPE"))
+			if (Registry.info != instructions.text && mainMenu)
+			{
+				instructions.text = Registry.info;
+			}
+			
+			if (FlxG.keys.justReleased("ESCAPE") && mainMenu == false)
 			{
 				backToMenu();
 			}
@@ -95,7 +101,7 @@ package tests
 				FlxFlod.stopMod();
 			}
 			
-			FlxG.switchState(new TestSuiteState);
+			FlxG.switchState(new DemoSuiteState);
 		}
 		
 	}

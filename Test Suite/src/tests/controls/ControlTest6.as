@@ -43,7 +43,7 @@ package tests.controls
 			FlxControl.player1.setRotationSpeed(200, 200, 200, 300);
 			FlxControl.player1.setRotationType(FlxControlHandler.ROTATION_INSTANT, FlxControlHandler.ROTATION_STOPPING_DECELERATES);
 			FlxControl.player1.setRotationKeys();
-			FlxControl.player1.setThrust(100, 100, "UP", "DOWN");
+			FlxControl.player1.setThrust("UP", 100, "DOWN", 100);
 			FlxControl.player1.setMovementSpeed(0, 0, 200, 200, 100, 100);
 			
 			//	A basic scene for our ship to fly around

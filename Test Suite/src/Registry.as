@@ -4,7 +4,9 @@ package
 	
 	public class Registry 
 	{
-		public static var menuOffsetX:int = 160;
+		public static var info:String = "";
+		public static var currentSection:String = "";
+		public static var currentSectionID:int = 0;
 		
 		public function Registry() 
 		{

@@ -34,7 +34,7 @@ package tests.specialfx
 			
 			header.showDarkBackground();
 			
-			var pic:FlxSprite = new FlxSprite(96, 40, AssetsRegistry.shocktAngle2PNG);
+			var pic:FlxSprite = new FlxSprite(96, 40, AssetsRegistry.shockAngel2PNG);
 			
 			glitch = FlxSpecialFX.glitch();
 			

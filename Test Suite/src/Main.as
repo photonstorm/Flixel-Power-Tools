@@ -16,7 +16,7 @@ package
 	{
 		public function Main():void 
 		{
-			super(320, 256, TestSuiteState, 2, 60, 60);
+			super(320, 256, DemoSuiteState, 2, 60, 60);
 			
 			FlxG.stage.quality = StageQuality.LOW;
 			

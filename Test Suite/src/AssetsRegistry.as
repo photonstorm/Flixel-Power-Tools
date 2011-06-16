@@ -66,9 +66,24 @@ package
 		[Embed(source = '../assets/pics/agent-t-buggin-acf_logo.png')] public static var acfPNG:Class;
 		[Embed(source = '../assets/pics/auto_scroll_landscape.png')] public static var tcbPNG:Class;
 		[Embed(source = '../assets/pics/questar.png')] public static var questarPNG:Class;
-		[Embed(source = '../assets/pics/shocktroopers_angel2.png')] public static var shocktAngle2PNG:Class;
+		[Embed(source = '../assets/pics/shocktroopers_angel.png')] public static var shockAngel1PNG:Class;
+		[Embed(source = '../assets/pics/shocktroopers_angel2.png')] public static var shockAngel2PNG:Class;
+		[Embed(source = '../assets/pics/shocktroopers_lulu.png')] public static var shockLuluPNG:Class;
+		[Embed(source = '../assets/pics/shocktroopers_lulu2.png')] public static var shockLulu2PNG:Class;
+		[Embed(source = '../assets/pics/shocktroopers_leon2.png')] public static var shockLeon2PNG:Class;
 		[Embed(source = '../assets/pics/acryl_bladerunner.png')] public static var acrylBladeRunnerPNG:Class;
 		[Embed(source = '../assets/pics/acryl_bobablast.png')] public static var acrylBobaFettPNG:Class;
+		[Embed(source = '../assets/pics/nanoha_taiken_pink.png')] public static var nonohaPinkPNG:Class;
+		[Embed(source = '../assets/pics/nanoha_taiken_purple.png')] public static var nonohaPurplePNG:Class;
+		[Embed(source = '../assets/pics/nanoha_taiken_blue.png')] public static var nonohaBluePNG:Class;
+		[Embed(source = '../assets/pics/vulkaiser_red.png')] public static var vulkaiserRedPNG:Class;
+		[Embed(source = '../assets/pics/pigchampagne.png')] public static var pigChampagnePNG:Class;
+		[Embed(source = '../assets/pics/cactuar.png')] public static var cactuarPNG:Class;
+		[Embed(source = '../assets/pics/spyro.png')] public static var spyroPNG:Class;
+		[Embed(source = '../assets/pics/touhou_teng_soldier.png')] public static var touhouTengPNG:Class;
+		[Embed(source = '../assets/pics/aya_touhou_teng_soldier.png')] public static var ayaTouhouTengPNG:Class;
+		[Embed(source = '../assets/pics/profil-sad_plush.png')] public static var profilSadPlushPNG:Class;
+		[Embed(source = '../assets/pics/nslide_snot.png')] public static var nslideSnotPNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/mods/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;
