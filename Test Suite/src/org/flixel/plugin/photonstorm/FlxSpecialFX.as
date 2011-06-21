@@ -2,6 +2,7 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Added RevealFX
  * v1.4 Added BlurFX and CenterSlideFX
  * v1.3 Renamed DropDown to FloodFill
  * v1.2 Added GlitchFX and StarfieldFX
@@ -23,6 +24,7 @@ package org.flixel.plugin.photonstorm
 	import org.flixel.plugin.photonstorm.FX.GlitchFX;
 	import org.flixel.plugin.photonstorm.FX.PlasmaFX;
 	import org.flixel.plugin.photonstorm.FX.RainbowLineFX;
+	import org.flixel.plugin.photonstorm.FX.RevealFX;
 	import org.flixel.plugin.photonstorm.FX.SineWaveFX;
 	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
 	
@@ -145,6 +147,20 @@ package org.flixel.plugin.photonstorm
 		public static function centerSlide():CenterSlideFX
 		{
 			var temp:CenterSlideFX = new CenterSlideFX
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
+		
+		/**
+		 * Creates a Reveal Effect
+		 * 
+		 * @return	RevealFX
+		 */
+		public static function reveal():RevealFX
+		{
+			var temp:RevealFX = new RevealFX
 			
 			members[temp] = temp;
 			

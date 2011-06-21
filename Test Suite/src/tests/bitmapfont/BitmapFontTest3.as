@@ -11,12 +11,13 @@ package tests.bitmapfont
 		//	Common variables
 		private var header:TestsHeader;
 		public static var title:String = "Bitmap Font 3";
-		public static var description:String = "Using Bitmap Fonts in your games";
-		private var instructions:String = "Using Bitmap Fonts in your games";
+		public static var description:String = "Using a fixed width and alignment";
+		private var instructions:String = "Using a fixed width and alignment";
 		
 		//	Test specific variables
 		private var canvas:FlxSprite;
-		private var font:FlxBitmapFont;
+		private var font1:FlxBitmapFont;
+		private var font2:FlxBitmapFont;
 		
 		public function BitmapFontTest3() 
 		{
@@ -29,21 +30,25 @@ package tests.bitmapfont
 
 			//	Test specific
 			
-			canvas = new FlxSprite(14, 32).makeGraphic(256+36, 176, 0xff000000, true);
+			canvas = new FlxSprite(14, 32).makeGraphic(292, 176, 0xff000000, true);
 			canvas.drawLine(0, 0, canvas.width, 0, 0xffffffff);
 			canvas.drawLine(0, canvas.height - 1, canvas.width, canvas.height - 1, 0xffffffff);
 			
-			//font = new FlxBitmapFont(AssetsRegistry.shinyBlueFontPNG, 16, 16, FlxBitmapFont.TEXT_SET10 + ")!(", 20, 0, 0);
-			//font = new FlxBitmapFont(AssetsRegistry.tskFontPNG, 32, 24, FlxBitmapFont.TEXT_SET10 + "!?().:-,'0123456789", 10, 0, 1);
-			font = new FlxBitmapFont(AssetsRegistry.metalFontPNG, 46, 48, FlxBitmapFont.TEXT_SET10 + "0123456789?!().,", 6, 2, 2);
-			//font = new FlxBitmapFont(knightHawksFontPNG, 31, 25, FlxBitmapFont.TEXT_SET6, 10, 1, 1);
+			//	This font has a fixed width of 290px, and the text is aligned to the RIGHT of it
+			font1 = new FlxBitmapFont(AssetsRegistry.knightHawksPurpleFontPNG, 31, 25, FlxBitmapFont.TEXT_SET6, 10, 1, 1);
+			font1.setFixedWidth(290, FlxBitmapFont.ALIGN_RIGHT);
+			font1.x = 16;
+			font1.y = 48;
 			
-			font.setText("flixel\npower\ntools", true, 1, 4, FlxBitmapFont.ALIGN_CENTER);
-			FlxDisplay.screenCenter(font);
-			font.y = 48;
+			//	This font has a fixed width of 290px, and the text is aligned in the CENTER of it
+			font2 = new FlxBitmapFont(AssetsRegistry.knightHawksPurpleFontPNG, 31, 25, FlxBitmapFont.TEXT_SET6, 10, 1, 1);
+			font2.setFixedWidth(290, FlxBitmapFont.ALIGN_CENTER);
+			font2.x = 16;
+			font2.y = 112;
 			
 			add(canvas);
-			add(font);
+			add(font1);
+			add(font2);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -52,6 +57,9 @@ package tests.bitmapfont
 		override public function update():void
 		{
 			super.update();
+			
+			font1.text = "X " + FlxG.mouse.screenX;
+			font2.text = "X " + FlxG.mouse.screenX;
 		}
 		
 	}

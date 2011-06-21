@@ -2,10 +2,11 @@
  * FlxBitmapFont
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Changed width/height to characterWidth/Height to avoid confusion and added setFixedWidth
  * v1.3 Exposed character width / height values
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 5th 2011
+ * @version 1.4 - June 21st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  * @see Requires FlxMath
@@ -22,7 +23,7 @@ package org.flixel.plugin.photonstorm
 	public class FlxBitmapFont extends FlxSprite
 	{
 		/**
-		 * Alignment of the text when multiLine = true. Set to FlxBitmapFont.ALIGN_LEFT (default), FlxBitmapFont.ALIGN_RIGHT or FlxBitmapFont.ALIGN_CENTER.
+		 * Alignment of the text when multiLine = true or a fixedWidth is set. Set to FlxBitmapFont.ALIGN_LEFT (default), FlxBitmapFont.ALIGN_RIGHT or FlxBitmapFont.ALIGN_CENTER.
 		 */
 		public var align:String = "left";
 		
@@ -130,27 +131,28 @@ package org.flixel.plugin.photonstorm
 		private var characterSpacingY:uint;
 		private var characterPerRow:uint;
 		private var grabData:Array
+		private var fixedWidth:uint = 0;
 		
 		/**
 		 * Loads 'font' and prepares it for use by future calls to .text
 		 * 
-		 * @param	font		The font set graphic class (as defined by your embed)
-		 * @param	width		The width of each character in the font set.
-		 * @param	height		The height of each character in the font set.
-		 * @param	chars		The characters used in the font set, in display order. You can use the TEXT_SET consts for common font set arrangements.
-		 * @param	charsPerRow	The number of characters per row in the font set.
-		 * @param	xSpacing	If the characters in the font set have horizontal spacing between them set the required amount here.
-		 * @param	ySpacing	If the characters in the font set have vertical spacing between them set the required amount here
-		 * @param	xOffset		If the font set doesn't start at the top left of the given image, specify the X coordinate offset here.
-		 * @param	yOffset		If the font set doesn't start at the top left of the given image, specify the Y coordinate offset here.
+		 * @param	font			The font set graphic class (as defined by your embed)
+		 * @param	characterWidth	The width of each character in the font set.
+		 * @param	characterHeight	The height of each character in the font set.
+		 * @param	chars			The characters used in the font set, in display order. You can use the TEXT_SET consts for common font set arrangements.
+		 * @param	charsPerRow		The number of characters per row in the font set.
+		 * @param	xSpacing		If the characters in the font set have horizontal spacing between them set the required amount here.
+		 * @param	ySpacing		If the characters in the font set have vertical spacing between them set the required amount here
+		 * @param	xOffset			If the font set doesn't start at the top left of the given image, specify the X coordinate offset here.
+		 * @param	yOffset			If the font set doesn't start at the top left of the given image, specify the Y coordinate offset here.
 		 */
-        public function FlxBitmapFont(font:Class, width:uint, height:uint, chars:String, charsPerRow:uint, xSpacing:uint = 0, ySpacing:uint = 0, xOffset:uint = 0, yOffset:uint = 0):void
+        public function FlxBitmapFont(font:Class, characterWidth:uint, characterHeight:uint, chars:String, charsPerRow:uint, xSpacing:uint = 0, ySpacing:uint = 0, xOffset:uint = 0, yOffset:uint = 0):void
         {
 			//	Take a copy of the font for internal use
 			fontSet = (new font).bitmapData;
 			
-			characterWidth = width;
-			characterHeight = height;
+			this.characterWidth = characterWidth;
+			this.characterHeight = characterHeight;
 			characterSpacingX = xSpacing;
 			characterSpacingY = ySpacing;
 			characterPerRow = charsPerRow;
@@ -213,6 +215,19 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		/**
+		 * If you need this FlxSprite to have a fixed width and custom alignment you can set the width here.<br>
+		 * If text is wider than the width specified it will be cropped off.
+		 * 
+		 * @param	width			Width in pixels of this FlxBitmapFont. Set to zero to disable and re-enable automatic resizing.
+		 * @param	lineAlignment	Align the text within this width. Set to FlxBitmapFont.ALIGN_LEFT (default), FlxBitmapFont.ALIGN_RIGHT or FlxBitmapFont.ALIGN_CENTER.
+		 */
+		public function setFixedWidth(width:int, lineAlignment:String = "left"):void
+		{
+			fixedWidth = width;
+			align = lineAlignment;
+		}
+		
 		public function get text():String
 		{
 			return _text;
@@ -258,15 +273,21 @@ package org.flixel.plugin.photonstorm
 		private function buildBitmapFontText():void
 		{
 			var temp:BitmapData;
+			var cx:int = 0;
+			var cy:int = 0;
 			
 			if (multiLine)
 			{
 				var lines:Array = _text.split("\n");
-				
-				var cx:int = 0;
-				var cy:int = 0;
 			
-				temp = new BitmapData(getLongestLine() * (characterWidth + customSpacingX), (lines.length * (characterHeight + customSpacingY)) - customSpacingY, true, 0xf);
+				if (fixedWidth > 0)
+				{
+					temp = new BitmapData(fixedWidth, (lines.length * (characterHeight + customSpacingY)) - customSpacingY, true, 0xf);
+				}
+				else
+				{
+					temp = new BitmapData(getLongestLine() * (characterWidth + customSpacingX), (lines.length * (characterHeight + customSpacingY)) - customSpacingY, true, 0xf);
+				}
 				
 				//	Loop through each line of text
 				for (var i:uint = 0; i < lines.length; i++)
@@ -288,6 +309,12 @@ package org.flixel.plugin.photonstorm
 							break;
 					}
 					
+					//	Sanity checks
+					if (cx < 0)
+					{
+						cx = 0;
+					}
+					
 					pasteLine(temp, lines[i], cx, cy, customSpacingX);
 					
 					cy += characterHeight + customSpacingY;
@@ -295,9 +322,32 @@ package org.flixel.plugin.photonstorm
 			}
 			else
 			{
-				temp = new BitmapData(_text.length * (characterWidth + customSpacingX), characterHeight, true, 0xf);
+				if (fixedWidth > 0)
+				{
+					temp = new BitmapData(fixedWidth, characterHeight, true, 0xf);
+				}
+				else
+				{
+					temp = new BitmapData(_text.length * (characterWidth + customSpacingX), characterHeight, true, 0xf);
+				}
+				
+				switch (align)
+				{
+					case ALIGN_LEFT:
+						cx = 0;
+						break;
+						
+					case ALIGN_RIGHT:
+						cx = temp.width - (_text.length * (characterWidth + customSpacingX));
+						break;
+						
+					case ALIGN_CENTER:
+						cx = (temp.width / 2) - ((_text.length * (characterWidth + customSpacingX)) / 2);
+						cx += customSpacingX / 2;
+						break;
+				}
 			
-				pasteLine(temp, _text, 0, 0, customSpacingX);
+				pasteLine(temp, _text, cx, 0, customSpacingX);
 			}
 			
 			pixels = temp;
@@ -371,7 +421,13 @@ package org.flixel.plugin.photonstorm
 					if (grabData[line.charCodeAt(c)] is Rectangle)
 					{
 						output.copyPixels(fontSet, grabData[line.charCodeAt(c)], new Point(x, y));
+						
 						x += characterWidth + customSpacingX;
+						
+						if (x > output.width)
+						{
+							break;
+						}
 					}
 				}
 			}
