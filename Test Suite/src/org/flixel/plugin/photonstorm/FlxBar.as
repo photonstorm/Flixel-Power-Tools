@@ -51,7 +51,7 @@ package org.flixel.plugin.photonstorm
 		private var max:Number;
 		private var pct:Number;
 		private var value:Number;
-		private var pxPerPercent:Number;
+		public var pxPerPercent:Number;
 		
 		private var emptyCallback:Function;
 		private var emptyBar:BitmapData;
@@ -249,12 +249,14 @@ package org.flixel.plugin.photonstorm
 			
 			if (fillHorizontal)
 			{
-				pxPerPercent = barWidth / 100;
+				pxPerPercent = barWidth / (max - min);
 			}
 			else
 			{
-				pxPerPercent = barHeight / 100;
+				pxPerPercent = barHeight / (max - min);
 			}
+			
+			trace("setRange pct:", pct, "pxPerPercent", pxPerPercent);
 		}
 		
 		/**
@@ -547,7 +549,10 @@ package org.flixel.plugin.photonstorm
 		{
 			if (newPct >= 0 && newPct <= 100)
 			{
-				value = newPct * pct;
+				//value = newPct * pct;
+				value = newPct / 100;
+				
+				trace("value", value);
 				
 				updateBar();
 			}

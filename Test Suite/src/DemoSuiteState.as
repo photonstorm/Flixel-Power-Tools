@@ -43,7 +43,7 @@ package
 		[Embed(source = '../assets/fonts/171.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = WIPReveal;
+		private var shortcut:Class = FlxBarTest5;
 		
 		private var version:String;
 		private var options:Array;

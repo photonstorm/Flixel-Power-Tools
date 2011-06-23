@@ -1,0 +1,5 @@
+21st June 2011
+
+Added support for fixed widths in FlxBitmapFont, and the ability to align the text left/right/center within that width.
+Updated BitmapFontTest3 to demonstrate this.
+
