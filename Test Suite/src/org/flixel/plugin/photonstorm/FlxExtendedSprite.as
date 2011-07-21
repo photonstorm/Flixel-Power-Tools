@@ -2,10 +2,11 @@
  * FlxExtendedSprite
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.2 Now works fully with FlxMouseControl to be completely draggable!
  * v1.1 Added "setMouseDrag" and "mouse over" states
  * v1.0 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.1 - May 18th 2011
+ * @version 1.2 - July 21st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -76,48 +77,9 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		private function checkBoundsRect():void
-		{
-			if (x < boundsRect.left)
-			{
-				x = boundsRect.x;
-			}
-			else if (x > boundsRect.right)
-			{
-				x = boundsRect.right;
-			}
-			
-			if (y < boundsRect.top)
-			{
-				y = boundsRect.top;
-			}
-			else if (y > boundsRect.bottom)
-			{
-				y = boundsRect.bottom;
-			}
-		}
-		
-		private function checkBoundsSprite():void
-		{
-			if (x < boundsSprite.x)
-			{
-				x = boundsSprite.x;
-			}
-			else if (x > (boundsSprite.x + boundsSprite.width))
-			{
-				x = boundsSprite.x + boundsSprite.width;
-			}
-			
-			if (y < boundsSprite.y)
-			{
-				y = boundsSprite.y;
-			}
-			else if (y > (boundsSprite.y + boundsSprite.height))
-			{
-				y = boundsSprite.y + boundsSprite.height;
-			}
-		}
-		
+		/**
+		 * Stops this sprite from being able to be dragged. If it is currently the target of an active drag it will be stopped immediately.
+		 */
 		public function disableMouseDrag():void
 		{
 			if (isDragged)
@@ -146,7 +108,7 @@ package org.flixel.plugin.photonstorm
 		{
 			return FlxMath.pointInCoordinates(FlxG.mouse.x, FlxG.mouse.y, x, y, width, height);
 		}
-		
+
 		private function checkForDrag():void
 		{
 			if (FlxG.mouse.justPressed() && mouseOver && FlxMouseControl.isDragging == false)
@@ -160,6 +122,9 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		/**
+		 * Starts Mouse Drag on this Sprite. Usually you never call this directly, it should be called by FlxMouseControl
+		 */
 		public function startDrag():void
 		{
 			isDragged = true;
@@ -180,6 +145,9 @@ package org.flixel.plugin.photonstorm
 			FlxMouseControl.dragTarget = this;
 		}
 		
+		/**
+		 * Updates the Mouse Drag on this Sprite. Usually you never call this directly, it should be called by FlxMouseControl
+		 */
 		public function updateDrag():void
 		{
 			x = int(FlxG.mouse.x) - dragOffsetX;
@@ -196,6 +164,51 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		private function checkBoundsRect():void
+		{
+			if (x < boundsRect.left)
+			{
+				x = boundsRect.x;
+			}
+			else if ((x + width) > boundsRect.right)
+			{
+				x = boundsRect.right - width;
+			}
+			
+			if (y < boundsRect.top)
+			{
+				y = boundsRect.top;
+			}
+			else if ((y + height) > boundsRect.bottom)
+			{
+				y = boundsRect.bottom - height;
+			}
+		}
+		
+		private function checkBoundsSprite():void
+		{
+			if (x < boundsSprite.x)
+			{
+				x = boundsSprite.x;
+			}
+			else if ((x + width) > (boundsSprite.x + boundsSprite.width))
+			{
+				x = (boundsSprite.x + boundsSprite.width) - width;
+			}
+			
+			if (y < boundsSprite.y)
+			{
+				y = boundsSprite.y;
+			}
+			else if ((y + height) > (boundsSprite.y + boundsSprite.height))
+			{
+				y = (boundsSprite.y + boundsSprite.height) - height;
+			}
+		}
+		
+		/**
+		 * Stops Mouse Drag on this Sprite. Usually you never call this directly, it should be called by FlxMouseControl
+		 */
 		public function stopDrag():void
 		{
 			isDragged = false;

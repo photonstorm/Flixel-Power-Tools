@@ -128,6 +128,11 @@ package org.flixel.plugin.photonstorm
 		 */
 		override public function destroy():void
 		{
+			clear();
+		}
+		
+		public static function clear():void
+		{
 			isDragging = false;
 			
 			if (dragTarget)

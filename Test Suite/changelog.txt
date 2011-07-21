@@ -1,3 +1,7 @@
+21st July 2011
+
+FlxMouseControl and FlxExtendedSprite given a serious overhaul and now provide for totally draggable sprites!
+
 21st June 2011
 
 Added support for fixed widths in FlxBitmapFont, and the ability to align the text left/right/center within that width.

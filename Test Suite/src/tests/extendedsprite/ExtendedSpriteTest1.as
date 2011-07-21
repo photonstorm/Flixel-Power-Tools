@@ -58,13 +58,16 @@ package tests.extendedsprite
 			eggplant = new FlxExtendedSprite(164, 132, AssetsRegistry.eggplantPNG);
 			eggplant.enableMouseDrag(true, true);
 			
-			//	The tomato and onion are stuck in a fixed rectangle!
-			var cage:FlxRect = new FlxRect(32, 128, 200, 64);
+			//	The tomato and onion are stuck in this fixed rectangle!
+			var cage:FlxRect = new FlxRect(16, 160, 200, 64);
 			
-			tomato = new FlxExtendedSprite(64, 160, AssetsRegistry.tomatoPNG);
+			//	This is just so we can see the drag bounds on-screen
+			var cageOutline:FlxSprite = new FlxSprite(cage.x, cage.y).makeGraphic(cage.width, cage.height, 0x66FF0080);
+			
+			tomato = new FlxExtendedSprite(64, 170, AssetsRegistry.tomatoPNG);
 			tomato.enableMouseDrag(true, true, 255, cage);
 			
-			onion = new FlxExtendedSprite(160, 170, AssetsRegistry.onionPNG);
+			onion = new FlxExtendedSprite(140, 180, AssetsRegistry.onionPNG);
 			onion.enableMouseDrag(true, true, 255, cage);
 			
 			tasty.add(carrot);
@@ -74,6 +77,7 @@ package tests.extendedsprite
 			tasty.add(tomato);
 			tasty.add(onion);
 			
+			add(cageOutline);
 			add(tasty);
 			
 			//	Header overlay
@@ -84,8 +88,16 @@ package tests.extendedsprite
 		{
 			super.update();
 			
-			//	Sorts the balls on the Y axis (further down the screen = on the top)
+			//	Sorts the sprites on the Y axis (the further down the screen they are, the more "on-top" they visually appear)
 			tasty.sort();
+		}
+		
+		override public function destroy():void
+		{
+			//	Important! Clear out the plugin otherwise resources will get messed right up after a while
+			FlxMouseControl.clear();
+			
+			super.destroy();
 		}
 		
 	}
