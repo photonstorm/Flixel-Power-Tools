@@ -31,6 +31,7 @@ package org.flixel.plugin.photonstorm
 		private var dragOffsetY:int;
 		private var dragFromPoint:Boolean;
 		public var boundsRect:FlxRect = null;
+		public var boundsSprite:FlxSprite = null;
 		
 		public function FlxExtendedSprite(X:Number = 0, Y:Number = 0, SimpleGraphic:Class = null)
 		{
@@ -50,32 +51,33 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * Make this Sprite draggable by the mouse
 		 * 
-		 * @param	lockCenter			If true the Sprite will drag from where you click it. If false it will center itself to the tip of the mouse pointer.
-		 * @param	boundsRect			If you want to restrict the drag of this sprite to a specific FlxRect, pass the FlxRect here, otherwise it's free to drag anywhere
+		 * @param	lockCenter			If false the Sprite will drag from where you click it. If true it will center itself to the tip of the mouse pointer.
 		 * @param	pixelPerfect		If true it will use a pixel perfect test to see if you clicked the Sprite. False uses the bounding box.
 		 * @param	alphaThreshold		If using pixel perfect collision this specifies the alpha level from 0 to 255 above which a collision is processed (default 255)
+		 * @param	boundsRect			If you want to restrict the drag of this sprite to a specific FlxRect, pass the FlxRect here, otherwise it's free to drag anywhere
+		 * @param	boundsSprite		If you want to restrict the drag of this sprite to within the bounding box of another sprite, pass it here
 		 */
-		public function enableMouseDrag(lockCenter:Boolean = true, boundsRect:FlxRect = null, pixelPerfect:Boolean = false, alphaThreshold:uint = 255):void
+		public function enableMouseDrag(lockCenter:Boolean = false, pixelPerfect:Boolean = false, alphaThreshold:uint = 255, boundsRect:FlxRect = null, boundsSprite:FlxSprite = null):void
 		{
 			draggable = true;
+			
+			dragFromPoint = lockCenter;
+			dragPixelPerfect = pixelPerfect;
+			dragPixelPerfectAlpha = alphaThreshold;
 			
 			if (boundsRect)
 			{
 				this.boundsRect = boundsRect;
 			}
 			
-			dragPixelPerfect = pixelPerfect;
-			dragPixelPerfectAlpha = alphaThreshold;
-			dragFromPoint = lockCenter;
+			if (boundsSprite)
+			{
+				this.boundsSprite = boundsSprite;
+			}
 		}
 		
 		private function checkBoundsRect():void
 		{
-			if (boundsRect == null)
-			{
-				return;
-			}
-			
 			if (x < boundsRect.left)
 			{
 				x = boundsRect.x;
@@ -92,6 +94,27 @@ package org.flixel.plugin.photonstorm
 			else if (y > boundsRect.bottom)
 			{
 				y = boundsRect.bottom;
+			}
+		}
+		
+		private function checkBoundsSprite():void
+		{
+			if (x < boundsSprite.x)
+			{
+				x = boundsSprite.x;
+			}
+			else if (x > (boundsSprite.x + boundsSprite.width))
+			{
+				x = boundsSprite.x + boundsSprite.width;
+			}
+			
+			if (y < boundsSprite.y)
+			{
+				y = boundsSprite.y;
+			}
+			else if (y > (boundsSprite.y + boundsSprite.height))
+			{
+				y = boundsSprite.y + boundsSprite.height;
 			}
 		}
 		
@@ -141,7 +164,7 @@ package org.flixel.plugin.photonstorm
 		{
 			isDragged = true;
 			
-			if (dragFromPoint)
+			if (dragFromPoint == false)
 			{
 				dragOffsetX = int(FlxG.mouse.x) - x;
 				dragOffsetY = int(FlxG.mouse.y) - y;
@@ -162,7 +185,15 @@ package org.flixel.plugin.photonstorm
 			x = int(FlxG.mouse.x) - dragOffsetX;
 			y = int(FlxG.mouse.y) - dragOffsetY;
 			
-			checkBoundsRect();
+			if (boundsRect)
+			{
+				checkBoundsRect();
+			}
+
+			if (boundsSprite)
+			{
+				checkBoundsSprite();
+			}
 		}
 		
 		public function stopDrag():void

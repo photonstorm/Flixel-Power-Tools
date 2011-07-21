@@ -16,12 +16,12 @@ package tests.extendedsprite
 		
 		private var tasty:FlxGroup;
 		
+		private var carrot:FlxExtendedSprite;
+		private var mushroom:FlxExtendedSprite;
 		private var melon:FlxExtendedSprite;
 		private var tomato:FlxExtendedSprite;
 		private var onion:FlxExtendedSprite;
-		private var mushroom:FlxExtendedSprite;
 		private var eggplant:FlxExtendedSprite;
-		private var carrot:FlxExtendedSprite;
 		
 		public function ExtendedSpriteTest1() 
 		{
@@ -42,22 +42,37 @@ package tests.extendedsprite
 			
 			tasty = new FlxGroup(6);
 			
-			//	You can drag the carrot from anywhere inside the bounding area (including the transparent edges)
-			//	This is the fastest method of dragging (in terms of CPU) so use it if you can!
+			//	You can drag the carrot from anywhere inside its bounding box (including transparent parts)
+			//	This is the fastest method of dragging (in terms of CPU) so use it if you can! Especially for rectangle shaped sprites
 			carrot = new FlxExtendedSprite(32, 32, AssetsRegistry.carrotPNG);
 			carrot.enableMouseDrag();
 			
 			//	The mushroom needs a pixel perfect drag, so the edges are not included
-			mushroom = new FlxExtendedSprite(34, 34, AssetsRegistry.mushroomPNG);
-			mushroom.enableMouseDrag(true, null, true);
+			mushroom = new FlxExtendedSprite(64, 64, AssetsRegistry.mushroomPNG);
+			mushroom.enableMouseDrag(false, true);
 			
-			//	The melon is pixel perfect as well, but this time the middle of the sprite snaps to the mouse coordinates
+			//	The melon and eggplant need pixel perfect clicks as well, but this time the middle of the sprites snaps to the mouse coordinates (lockCenter)
 			melon = new FlxExtendedSprite(128, 128, AssetsRegistry.melonPNG);
-			melon.enableMouseDrag(false, null, true);
-						
+			melon.enableMouseDrag(true, true);
+			
+			eggplant = new FlxExtendedSprite(164, 132, AssetsRegistry.eggplantPNG);
+			eggplant.enableMouseDrag(true, true);
+			
+			//	The tomato and onion are stuck in a fixed rectangle!
+			var cage:FlxRect = new FlxRect(32, 128, 200, 64);
+			
+			tomato = new FlxExtendedSprite(64, 160, AssetsRegistry.tomatoPNG);
+			tomato.enableMouseDrag(true, true, 255, cage);
+			
+			onion = new FlxExtendedSprite(160, 170, AssetsRegistry.onionPNG);
+			onion.enableMouseDrag(true, true, 255, cage);
+			
 			tasty.add(carrot);
 			tasty.add(mushroom);
 			tasty.add(melon);
+			tasty.add(eggplant);
+			tasty.add(tomato);
+			tasty.add(onion);
 			
 			add(tasty);
 			
