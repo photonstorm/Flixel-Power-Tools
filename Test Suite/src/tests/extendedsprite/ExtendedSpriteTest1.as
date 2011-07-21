@@ -7,18 +7,21 @@ package tests.extendedsprite
 	public class ExtendedSpriteTest1 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "ExtSprite 1";
-		public static var description:String = "Extended FlxSprite";
+		public static var title:String = "Sprite Drag 1";
+		public static var description:String = "Draggable Sprites";
 		private var instructions:String = "Drag the sprites with the mouse";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
 		
-		private var balls:FlxGroup;
+		private var tasty:FlxGroup;
 		
-		private var red:FlxExtendedSprite;
-		private var green:FlxExtendedSprite;
-		private var blue:FlxExtendedSprite;
+		private var melon:FlxExtendedSprite;
+		private var tomato:FlxExtendedSprite;
+		private var onion:FlxExtendedSprite;
+		private var mushroom:FlxExtendedSprite;
+		private var eggplant:FlxExtendedSprite;
+		private var carrot:FlxExtendedSprite;
 		
 		public function ExtendedSpriteTest1() 
 		{
@@ -31,26 +34,32 @@ package tests.extendedsprite
 			
 			//	Test specific
 			
-			balls = new FlxGroup(3);
+			//	Enable the plugin - you only need do this once (unless you destroy the plugin)
+			if (FlxG.getPlugin(FlxMouseControl) == null)
+			{
+				FlxG.addPlugin(new FlxMouseControl);
+			}
 			
-			//	You can drag the red ball from anywhere inside the bounding area (including the transparent edges)
+			tasty = new FlxGroup(6);
+			
+			//	You can drag the carrot from anywhere inside the bounding area (including the transparent edges)
 			//	This is the fastest method of dragging (in terms of CPU) so use it if you can!
-			red = new FlxExtendedSprite(32, 32, AssetsRegistry.redPNG);
-			red.setMouseDrag();
+			carrot = new FlxExtendedSprite(32, 32, AssetsRegistry.carrotPNG);
+			carrot.enableMouseDrag();
 			
-			//	The green ball needs a pixel perfect drag, so the edges are not included
-			green = new FlxExtendedSprite(96, 96, AssetsRegistry.greenPNG);
-			green.setMouseDrag(true, true);
+			//	The mushroom needs a pixel perfect drag, so the edges are not included
+			mushroom = new FlxExtendedSprite(34, 34, AssetsRegistry.mushroomPNG);
+			mushroom.enableMouseDrag(true, null, true);
 			
-			//	The blue ball is pixel perfect as well, but this time the middle of the sprite snaps to the mouse coordinates
-			blue = new FlxExtendedSprite(128, 128, AssetsRegistry.bluePNG);
-			blue.setMouseDrag(false, true);
+			//	The melon is pixel perfect as well, but this time the middle of the sprite snaps to the mouse coordinates
+			melon = new FlxExtendedSprite(128, 128, AssetsRegistry.melonPNG);
+			melon.enableMouseDrag(false, null, true);
 						
-			balls.add(blue);
-			balls.add(red);
-			balls.add(green);
+			tasty.add(carrot);
+			tasty.add(mushroom);
+			tasty.add(melon);
 			
-			add(balls);
+			add(tasty);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -60,7 +69,8 @@ package tests.extendedsprite
 		{
 			super.update();
 			
-			balls.sort();
+			//	Sorts the balls on the Y axis (further down the screen = on the top)
+			tasty.sort();
 		}
 		
 	}

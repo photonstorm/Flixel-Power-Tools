@@ -1,10 +1,11 @@
 /**
- * FlxControls
+ * FlxControl
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.1 Fixed and added documentation
  * v1.0 First release
  * 
- * @version 1.0 - May 18th 2011
+ * @version 1.1 - July 21st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -29,6 +30,19 @@ package org.flixel.plugin.photonstorm
 		{
 		}
 		
+		/**
+		 * Creates a new FlxControlHandler. You can have as many FlxControlHandlers as you like, but you usually only have one per player. The first handler you make
+		 * will be assigned to the FlxControl.player1 var. The 2nd to FlxControl.player2 and so on for player3 and player4. Beyond this you need to keep a reference to the
+		 * handler yourself.
+		 * 
+		 * @param	source			The FlxSprite you want this class to control. It can only control one FlxSprite at once.
+		 * @param	movementType	Set to either MOVEMENT_INSTANT or MOVEMENT_ACCELERATES
+		 * @param	stoppingType	Set to STOPPING_INSTANT, STOPPING_DECELERATES or STOPPING_NEVER
+		 * @param	updateFacing	If true it sets the FlxSprite.facing value to the direction pressed (default false)
+		 * @param	enableArrowKeys	If true it will enable all arrow keys (default) - see setCursorControl for more fine-grained control
+		 * 
+		 * @return	The new FlxControlHandler
+		 */
 		public static function create(source:FlxSprite, movementType:int, stoppingType:int, player:int = 1, updateFacing:Boolean = false, enableArrowKeys:Boolean = true):FlxControlHandler
 		{
 			var result:FlxControlHandler;
@@ -68,10 +82,10 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Removes an FlxSprite and all of its scrolling zones. Note that it doesn't restore the sprite bitmapData.
+		 * Removes an FlxControlHandler 
 		 * 
-		 * @param	source	The FlxSprite to remove all scrolling zones for.
-		 * @return	Boolean	true if the FlxSprite was removed, otherwise false.
+		 * @param	source	The FlxControlHandler to delete
+		 * @return	Boolean	true if the FlxControlHandler was removed, otherwise false.
 		 */
 		public static function remove(source:FlxControlHandler):Boolean
 		{
