@@ -45,7 +45,7 @@ package
 		[Embed(source = '../assets/fonts/171.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = ExtendedSpriteTest2;
+		private var shortcut:Class = ExtendedSpriteTest3;
 		
 		private var version:String;
 		private var options:Array;

@@ -64,6 +64,7 @@ package
 		[Embed(source = '../assets/sprites/atari130xe.png')] public static var atari130xePNG:Class;
 		[Embed(source = '../assets/sprites/atari800xl.png')] public static var atari800xlPNG:Class;
 		[Embed(source = '../assets/sprites/shinyball.png')] public static var shinyBallPNG:Class;
+		[Embed(source = '../assets/sprites/arrows.png')] public static var arrowsPNG:Class;
 		
 		//	Pictures
 		[Embed(source = '../assets/pics/mask-test.png')] public static var alphaMaskPNG:Class;

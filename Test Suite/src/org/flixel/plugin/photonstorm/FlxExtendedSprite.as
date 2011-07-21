@@ -31,6 +31,9 @@ package org.flixel.plugin.photonstorm
 		private var dragOffsetX:int;
 		private var dragOffsetY:int;
 		private var dragFromPoint:Boolean;
+		private var allowHorizontalDrag:Boolean = true;
+		private var allowVerticalDrag:Boolean = true;
+		
 		public var boundsRect:FlxRect = null;
 		public var boundsSprite:FlxSprite = null;
 		
@@ -89,6 +92,18 @@ package org.flixel.plugin.photonstorm
 				isDragged = false;
 				draggable = false;
 			}
+		}
+		 
+		/**
+		* Restricts this sprite to drag movement only on the given axis. Note: If both are set to false the sprite will never move!
+		 * 
+		 * @param	allowHorizontal		To enable the sprite to be dragged horizontally set to true, otherwise false
+		 * @param	allowVertical		To enable the sprite to be dragged vertically set to true, otherwise false
+		 */
+		public function setDragLock(allowHorizontal:Boolean = true, allowVertical:Boolean = true):void
+		{
+			allowHorizontalDrag = allowHorizontal;
+			allowVerticalDrag = allowVertical;
 		}
 		
 		override public function update():void
@@ -150,8 +165,15 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function updateDrag():void
 		{
-			x = int(FlxG.mouse.x) - dragOffsetX;
-			y = int(FlxG.mouse.y) - dragOffsetY;
+			if (allowHorizontalDrag)
+			{
+				x = int(FlxG.mouse.x) - dragOffsetX;
+			}
+			
+			if (allowVerticalDrag)
+			{
+				y = int(FlxG.mouse.y) - dragOffsetY;
+			}
 			
 			if (boundsRect)
 			{
