@@ -52,7 +52,8 @@ package org.flixel.plugin.photonstorm
 			{
 				if (FlxG.mouse.pressed() && dragTarget)
 				{
-					dragTarget.updateDrag();
+					// TODO Ideally we'd do it like this, but not until Adam adds support for plugins to run in post and pre Update loops!
+					//dragTarget.updateDrag();
 				}
 				else if (FlxG.mouse.pressed() == false && dragTarget)
 				{

@@ -16,6 +16,16 @@ package org.flixel.plugin.photonstorm
 	import flash.display.BitmapData;
 	import org.flixel.*;
 
+	/**
+	 * 
+	 * TODO
+	 * 
+	 * I need to do a "break limit / breaking point" - a distance which if the mouse pointer moves that far away from the sprite
+	 * it'll break the drag, even if the button is still pressed down. That will stop the problem with dragging
+	 * sprites through tile maps.
+	 * 
+	 */
+	
 	public class FlxExtendedSprite extends FlxSprite
 	{
 		public var priorityID:uint;
@@ -111,6 +121,10 @@ package org.flixel.plugin.photonstorm
 			if (draggable && isDragged == false)
 			{
 				checkForDrag();
+			}
+			else if (isDragged)
+			{
+				updateDrag();
 			}
 			
 			super.update();
