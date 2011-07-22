@@ -38,11 +38,12 @@ package org.flixel.plugin.photonstorm
 		
 		private var callbacks:Array;
 		
-		//public var mouseOverCallback:Function;
-		//public var mouseOutCallback:Function;
-		//public var mouseClickCallback:Function;
-		//public var mouseStartDragCallback:Function;
-		//public var mouseStopDragCallback:Function;
+		private var clickable:Boolean = false;
+		private var clickOnRelease:Boolean = false;
+		private var clickPixelPerfect:Boolean = false;
+		private var clickPixelPerfectAlpha:uint;
+		private var clickCounter:uint;
+		private var mouseClickCallback:Function;
 		
 		/**
 		 * Is this sprite being dragged by the mouse or not?
@@ -57,6 +58,8 @@ package org.flixel.plugin.photonstorm
 		private var dragFromPoint:Boolean;
 		private var allowHorizontalDrag:Boolean = true;
 		private var allowVerticalDrag:Boolean = true;
+		//public var mouseStartDragCallback:Function;
+		//public var mouseStopDragCallback:Function;
 		
 		public var boundsRect:FlxRect = null;
 		public var boundsSprite:FlxSprite = null;
@@ -66,24 +69,48 @@ package org.flixel.plugin.photonstorm
 			super(X, Y, SimpleGraphic);
 		}
 		
-		public function addCallback(type:uint, callback:Function):void
+		/**
+		 * Allow this Sprite to receive mouse clicks and optionally call a callback function as a result.<br>
+		 * The total number of times this sprite is clicked is stored in this.clicks<br>
+		 * Note that you do not have to enable this if you only want the sprite to be dragged.
+		 * 
+		 * @param	onRelease			Set if you want to register a click as being when the mouse is pressed down (false) or when it's released from a press (true)
+		 * @param	callback			A function that is called when this sprite is clicked. Function will be passed the following parameters: obj:FlxExtendedSprite, x:int, y:int
+		 * @param	pixelPerfect		If true it will use a pixel perfect test to see if you clicked the Sprite. False uses the bounding box.
+		 * @param	alphaThreshold		If using pixel perfect collision this specifies the alpha level from 0 to 255 above which a collision is processed (default 255)
+		 */
+		public function enableMouseClicks(onRelease:Boolean, callback:Function = null , pixelPerfect:Boolean = false, alphaThreshold:uint = 255):void
 		{
-			//callbacks.push(
-		}
-		
-		public function removeCallback(type:uint, callback:Function):void
-		{
+			clickable = true;
 			
+			clickOnRelease = onRelease;
+			clickPixelPerfect = pixelPerfect;
+			clickPixelPerfectAlpha = alphaThreshold;
 		}
 		
-		public function get point():FlxPoint
+		/**
+		 * Stops this sprite from checking for mouse clicks
+		 */
+		public function disableMouseClicks():void
 		{
-			return _point;
+			clickable = false;
+			mouseClickCallback = null;
 		}
 		
-		public function set point(p:FlxPoint):void
+		/**
+		 * Returns the number of times this sprite has been clicked (can be reset by setting clicks to zero)
+		 */
+		public function get clicks():uint
 		{
-			_point = p;
+			return clickCounter;
+		}
+		
+		/**
+		 * Sets the number of clicks this item has received. Usually you'd only set it to zero.
+		 */
+		public function set clicks(i:uint):void
+		{
+			clickCounter = i;
 		}
 		
 		/**
@@ -140,22 +167,58 @@ package org.flixel.plugin.photonstorm
 			allowVerticalDrag = allowVertical;
 		}
 		
+		/**
+		 * Core update loop
+		 */
 		override public function update():void
 		{
-			if (draggable && isDragged == false)
+			if (draggable)
 			{
-				checkForDrag();
+				if (isDragged)
+				{
+					updateDrag();
+				}
+				else
+				{
+					checkForDrag();
+				}
 			}
-			else if (isDragged)
+			
+			if (clickable && FlxG.mouse.justReleased() || FlxG.mouse.justPressed())
 			{
-				updateDrag();
+				checkForClick();
 			}
 			
 			super.update();
 		}
 		
+		private function checkForClick():void
+		{
+			if (mouseOver)
+			{
+				if ((clickOnRelease && FlxG.mouse.justReleased()) || (clickOnRelease == false && FlxG.mouse.justPressed()))
+				{
+					if ((dragPixelPerfect == true && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha)) || dragPixelPerfect == false)
+					{
+						FlxMouseControl.addToDragStack(this);
+					}
+				}
+			}
+		}
+		
+		public function clickHandler():void
+		{
+			clickCounter++;
+			
+			if (mouseClickCallback is Function)
+			{
+				mouseClickCallback.apply(null, [ this, FlxG.mouse.x, FlxG.mouse.y ] );
+			}
+		}
+		
 		/**
-		 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration.
+		 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration 
+		 * and does not check if there are other sprites potentially on-top of this one
 		 */
 		public function get mouseOver():Boolean
 		{
@@ -272,6 +335,16 @@ package org.flixel.plugin.photonstorm
 		public function stopDrag():void
 		{
 			isDragged = false;
+		}
+		
+		public function get point():FlxPoint
+		{
+			return _point;
+		}
+		
+		public function set point(p:FlxPoint):void
+		{
+			_point = p;
 		}
 		
 	}

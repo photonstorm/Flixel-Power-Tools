@@ -32,7 +32,7 @@ package org.flixel.plugin.photonstorm
 		public static var isDragging:Boolean = false;
 		public static var dragTarget:FlxExtendedSprite;
 		
-		private static var dragStack:Array;
+		private static var clickStack:Array;
 		
 		public function FlxMouseControl() 
 		{
@@ -40,7 +40,7 @@ package org.flixel.plugin.photonstorm
 		
 		public static function addToDragStack(item:FlxExtendedSprite):void
 		{
-			dragStack.push(item);
+			clickStack.push(item);
 		}
 		
 		/**
@@ -52,7 +52,7 @@ package org.flixel.plugin.photonstorm
 			{
 				if (FlxG.mouse.pressed() && dragTarget)
 				{
-					// TODO Ideally we'd do it like this, but not until Adam adds support for plugins to run in post and pre Update loops!
+					// TODO Ideally we'd do it like this, but not until Adam adds support for plugins to run in post and pre Update loops
 					//dragTarget.updateDrag();
 				}
 				else if (FlxG.mouse.pressed() == false && dragTarget)
@@ -68,10 +68,13 @@ package org.flixel.plugin.photonstorm
 			{
 				if (FlxG.mouse.justPressed())
 				{
-					dragStack = new Array();
+					clickStack = new Array();
 				}
 				
-				if (FlxG.mouse.pressed() && dragStack.length > 0)
+				//	If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedSprite
+				//	adds itself to the clickStack
+				
+				if (FlxG.mouse.pressed() && clickStack.length > 0)
 				{
 					assignDraggedSprite();
 				}
@@ -80,25 +83,25 @@ package org.flixel.plugin.photonstorm
 		
 		private function assignDraggedSprite():void
 		{
-			if (dragStack.length == 1)
+			if (clickStack.length == 1)
 			{
 				//	Easy, there's only one anyway ...
-				dragTarget = dragStack.pop();
+				dragTarget = clickStack.pop();
 				
 				dragTarget.startDrag();
 				
-				dragStack = [];
+				clickStack = [];
 			}
 			else
 			{
 				//	We've got more than one candidate, so we need to sort them
-				dragStack.sort(sortHandler);
+				clickStack.sort(sortHandler);
 				
-				dragTarget = dragStack.pop();
+				dragTarget = clickStack.pop();
 				
 				dragTarget.startDrag();
 				
-				dragStack = [];
+				clickStack = [];
 			}
 		}
 		
