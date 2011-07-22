@@ -30,6 +30,20 @@ package org.flixel.plugin.photonstorm
 	{
 		public var priorityID:uint;
 		
+		public static const MOUSE_OVER:uint = 0;
+		public static const MOUSE_OUT:uint = 1;
+		public static const MOUSE_CLICK:uint = 2;
+		public static const MOUSE_START_DRAG:uint = 3;
+		public static const MOUSE_STOP_DRAG:uint = 4;
+		
+		private var callbacks:Array;
+		
+		//public var mouseOverCallback:Function;
+		//public var mouseOutCallback:Function;
+		//public var mouseClickCallback:Function;
+		//public var mouseStartDragCallback:Function;
+		//public var mouseStopDragCallback:Function;
+		
 		/**
 		 * Is this sprite being dragged by the mouse or not?
 		 */
@@ -50,6 +64,16 @@ package org.flixel.plugin.photonstorm
 		public function FlxExtendedSprite(X:Number = 0, Y:Number = 0, SimpleGraphic:Class = null)
 		{
 			super(X, Y, SimpleGraphic);
+		}
+		
+		public function addCallback(type:uint, callback:Function):void
+		{
+			//callbacks.push(
+		}
+		
+		public function removeCallback(type:uint, callback:Function):void
+		{
+			
 		}
 		
 		public function get point():FlxPoint
