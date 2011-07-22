@@ -1,6 +1,6 @@
-19th July 2011
+21st July 2011
 
-
+FlxMouseControl and FlxExtendedSprite given a serious overhaul and now provide for totally draggable sprites!
 
 21st June 2011
 

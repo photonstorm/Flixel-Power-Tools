@@ -53,6 +53,18 @@ package
 		[Embed(source = '../assets/sprites/advanced_wars_tank.png')] public static var advWarsTankPNG:Class;
 		[Embed(source = '../assets/sprites/advanced_wars_land.png')] public static var advWarsLandPNG:Class;
 		[Embed(source = '../assets/sprites/asteroids_ship.png')] public static var asteroidsShipPNG:Class;
+		[Embed(source = '../assets/sprites/carrot.png')] public static var carrotPNG:Class;
+		[Embed(source = '../assets/sprites/eggplant.png')] public static var eggplantPNG:Class;
+		[Embed(source = '../assets/sprites/melon.png')] public static var melonPNG:Class;
+		[Embed(source = '../assets/sprites/mushroom.png')] public static var mushroomPNG:Class;
+		[Embed(source = '../assets/sprites/onion.png')] public static var onionPNG:Class;
+		[Embed(source = '../assets/sprites/pepper.png')] public static var pepperPNG:Class;
+		[Embed(source = '../assets/sprites/pineapple.png')] public static var pineapplePNG:Class;
+		[Embed(source = '../assets/sprites/tomato.png')] public static var tomatoPNG:Class;
+		[Embed(source = '../assets/sprites/atari130xe.png')] public static var atari130xePNG:Class;
+		[Embed(source = '../assets/sprites/atari800xl.png')] public static var atari800xlPNG:Class;
+		[Embed(source = '../assets/sprites/shinyball.png')] public static var shinyBallPNG:Class;
+		[Embed(source = '../assets/sprites/arrows.png')] public static var arrowsPNG:Class;
 		
 		//	Pictures
 		[Embed(source = '../assets/pics/mask-test.png')] public static var alphaMaskPNG:Class;

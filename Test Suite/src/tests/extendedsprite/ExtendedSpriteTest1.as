@@ -7,18 +7,21 @@ package tests.extendedsprite
 	public class ExtendedSpriteTest1 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "ExtSprite 1";
-		public static var description:String = "Extended FlxSprite";
+		public static var title:String = "Sprite Drag 1";
+		public static var description:String = "Draggable Sprites";
 		private var instructions:String = "Drag the sprites with the mouse";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
 		
-		private var balls:FlxGroup;
+		private var tasty:FlxGroup;
 		
-		private var red:FlxExtendedSprite;
-		private var green:FlxExtendedSprite;
-		private var blue:FlxExtendedSprite;
+		private var carrot:FlxExtendedSprite;
+		private var mushroom:FlxExtendedSprite;
+		private var melon:FlxExtendedSprite;
+		private var tomato:FlxExtendedSprite;
+		private var onion:FlxExtendedSprite;
+		private var eggplant:FlxExtendedSprite;
 		
 		public function ExtendedSpriteTest1() 
 		{
@@ -31,26 +34,51 @@ package tests.extendedsprite
 			
 			//	Test specific
 			
-			balls = new FlxGroup(3);
+			//	Enable the plugin - you only need do this once (unless you destroy the plugin)
+			if (FlxG.getPlugin(FlxMouseControl) == null)
+			{
+				FlxG.addPlugin(new FlxMouseControl);
+			}
 			
-			//	You can drag the red ball from anywhere inside the bounding area (including the transparent edges)
-			//	This is the fastest method of dragging (in terms of CPU) so use it if you can!
-			red = new FlxExtendedSprite(32, 32, AssetsRegistry.redPNG);
-			red.setMouseDrag();
+			tasty = new FlxGroup(6);
 			
-			//	The green ball needs a pixel perfect drag, so the edges are not included
-			green = new FlxExtendedSprite(96, 96, AssetsRegistry.greenPNG);
-			green.setMouseDrag(true, true);
+			//	You can drag the carrot from anywhere inside its bounding box (including transparent parts)
+			//	This is the fastest method of dragging (in terms of CPU) so use it if you can! Especially for rectangle shaped sprites
+			carrot = new FlxExtendedSprite(32, 32, AssetsRegistry.carrotPNG);
+			carrot.enableMouseDrag();
 			
-			//	The blue ball is pixel perfect as well, but this time the middle of the sprite snaps to the mouse coordinates
-			blue = new FlxExtendedSprite(128, 128, AssetsRegistry.bluePNG);
-			blue.setMouseDrag(false, true);
-						
-			balls.add(blue);
-			balls.add(red);
-			balls.add(green);
+			//	The mushroom needs a pixel perfect drag, so the edges are not included
+			mushroom = new FlxExtendedSprite(64, 64, AssetsRegistry.mushroomPNG);
+			mushroom.enableMouseDrag(false, true);
 			
-			add(balls);
+			//	The melon and eggplant need pixel perfect clicks as well, but this time the middle of the sprites snaps to the mouse coordinates (lockCenter)
+			melon = new FlxExtendedSprite(128, 128, AssetsRegistry.melonPNG);
+			melon.enableMouseDrag(true, true);
+			
+			eggplant = new FlxExtendedSprite(164, 132, AssetsRegistry.eggplantPNG);
+			eggplant.enableMouseDrag(true, true);
+			
+			//	The tomato and onion are stuck in this fixed rectangle!
+			var cage:FlxRect = new FlxRect(16, 160, 200, 64);
+			
+			//	This is just so we can see the drag bounds on-screen
+			var cageOutline:FlxSprite = new FlxSprite(cage.x, cage.y).makeGraphic(cage.width, cage.height, 0x66FF0080);
+			
+			tomato = new FlxExtendedSprite(64, 170, AssetsRegistry.tomatoPNG);
+			tomato.enableMouseDrag(true, true, 255, cage);
+			
+			onion = new FlxExtendedSprite(140, 180, AssetsRegistry.onionPNG);
+			onion.enableMouseDrag(true, true, 255, cage);
+			
+			tasty.add(carrot);
+			tasty.add(mushroom);
+			tasty.add(melon);
+			tasty.add(eggplant);
+			tasty.add(tomato);
+			tasty.add(onion);
+			
+			add(cageOutline);
+			add(tasty);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -60,7 +88,16 @@ package tests.extendedsprite
 		{
 			super.update();
 			
-			balls.sort();
+			//	Sorts the sprites on the Y axis (the further down the screen they are, the more "on-top" they visually appear)
+			tasty.sort();
+		}
+		
+		override public function destroy():void
+		{
+			//	Important! Clear out the plugin otherwise resources will get messed right up after a while
+			FlxMouseControl.clear();
+			
+			super.destroy();
 		}
 		
 	}

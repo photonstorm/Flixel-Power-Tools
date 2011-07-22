@@ -1,13 +1,14 @@
 /**
  * Flixel Power Tools Test Suite
  * 
+ * v1.8 - Extended Sprites / Linked Groups
  * v1.7 - New FlxBar and FlxWeapon tests
  * v1.6 - FlxControl and new Special FX Plugins
  * v1.5 - Massive restructure to split the tests up and move to git
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
  * v1.3 - Updated for Flixel v2.53
  * 
- * @version 1.7 - June 10th 2011
+ * @version 1.8 - July 20th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -27,6 +28,7 @@ package
 	import tests.extendedsprite.*;
 	import tests.flod.*;
 	import tests.gradient.*;
+	import tests.linkedgroup.*;
 	import tests.flxbar.*;
 	import tests.screengrab.*;
 	import tests.scrollingtext.*;
@@ -43,7 +45,7 @@ package
 		[Embed(source = '../assets/fonts/171.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = FlxBarTest5;
+		private var shortcut:Class = ExtendedSpriteTest4;
 		
 		private var version:String;
 		private var options:Array;
@@ -77,15 +79,17 @@ package
 			sections.push( { title: "Controls", 		isNew: false,	pic: AssetsRegistry.nonohaPurplePNG } );
 			sections.push( { title: "Delay", 			isNew: false,	pic: AssetsRegistry.pigChampagnePNG } );
 			sections.push( { title: "Display", 			isNew: false,	pic: AssetsRegistry.nonohaBluePNG } );
+			sections.push( { title: "Extended Sprites",	isNew: false,	pic: AssetsRegistry.nonohaBluePNG } );
 			sections.push( { title: "Flod", 			isNew: false,	pic: AssetsRegistry.cactuarPNG } );
-			sections.push( { title: "FlxBar", 			isNew: true,	pic: AssetsRegistry.spyroPNG } );
+			sections.push( { title: "FlxBar", 			isNew: false,	pic: AssetsRegistry.spyroPNG } );
 			sections.push( { title: "Gradient", 		isNew: false,	pic: AssetsRegistry.goldenGirlMackPNG } );
+			//sections.push( { title: "Linked Group",		isNew: true,	pic: AssetsRegistry.goldenGirlMackPNG } );
 			sections.push( { title: "Screen Grab", 		isNew: false,	pic: AssetsRegistry.ayaTouhouTengPNG } );
 			sections.push( { title: "Scrolling Text", 	isNew: false,	pic: AssetsRegistry.shockLuluPNG } );
 			sections.push( { title: "Scrolling Zones", 	isNew: false,	pic: AssetsRegistry.profilSadPlushPNG } );
 			sections.push( { title: "Special FX", 		isNew: false, 	pic: AssetsRegistry.shockAngel2PNG } );
 			sections.push( { title: "Velocity", 		isNew: false,	pic: AssetsRegistry.nslideSnotPNG } );
-			sections.push( { title: "Weapons", 			isNew: true,	pic: AssetsRegistry.shockLeon2PNG } );
+			sections.push( { title: "Weapons", 			isNew: false,	pic: AssetsRegistry.shockLeon2PNG } );
 			
 			options = new Array;
 			
@@ -96,9 +100,11 @@ package
 			options["Controls"] = [ControlTest1, ControlTest2, ControlTest3, ControlTest4, ControlTest5, ControlTest6, ControlTest7 ];
 			options["Delay"] = [DelayTest1];
 			options["Display"] = [AlphaMaskTest1, AlphaMaskTest2, AlphaMaskTest3];
+			options["Extended Sprites"] = [ExtendedSpriteTest1, ExtendedSpriteTest2, ExtendedSpriteTest3, ExtendedSpriteTest4];
 			options["Flod"] = [FlodTest1];
 			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3];
 			options["Gradient"] = [GradientTest1, GradientTest2, GradientTest3];
+			options["Linked Group"] = [LinkedGroupTest1];
 			options["Screen Grab"] = [ScreenGrabTest1, ScreenGrabTest2];
 			options["Scrolling Text"] = [ScrollingTextTest1, ScrollingTextTest2, ScrollingTextTest3];
 			options["Scrolling Zones"] = [ScrollZoneTest1, ScrollZoneTest2, ScrollZoneTest3, ScrollZoneTest4, ScrollZoneTest5];
