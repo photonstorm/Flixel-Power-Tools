@@ -36,8 +36,6 @@ package org.flixel.plugin.photonstorm
 		public static const MOUSE_START_DRAG:uint = 3;
 		public static const MOUSE_STOP_DRAG:uint = 4;
 		
-		private var callbacks:Array;
-		
 		private var clickable:Boolean = false;
 		private var clickOnRelease:Boolean = false;
 		private var clickPixelPerfect:Boolean = false;

@@ -16,6 +16,7 @@ package
 	import org.flixel.*;
 	
 	[Frame(factoryClass="Preloader")]
+	
 	public class Main extends FlxGame
 	{
 		public function Main():void 

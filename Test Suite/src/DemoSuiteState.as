@@ -15,8 +15,11 @@
 
 package  
 {
+	import flash.display.Sprite;
+	
 	import org.flixel.*;
 	import org.flixel.plugin.photonstorm.*;
+	
 	import tests.*;
 	import tests.bitmapfont.*;
 	import tests.buttonplus.*;
@@ -320,6 +323,31 @@ package
 		private function runCredits():void
 		{
 			FlxG.switchState(new CreditsState);
+		}
+		
+		private function dump():void
+		{
+			trace("stage numChildren", FlxG.stage.numChildren);
+			trace("stage child 1", FlxG.stage.getChildAt(0));
+			
+			trace("Preloader numChildren", Sprite(FlxG.stage.getChildAt(0)).numChildren);
+			trace("Preloader child 1", Sprite(FlxG.stage.getChildAt(0)).getChildAt(0));
+			
+			var mainRef:Sprite = Sprite(FlxG.stage.getChildAt(0)).getChildAt(0) as Sprite;
+			
+			trace("Main numChildren", mainRef.numChildren);
+			
+			trace("Main child 1", mainRef.getChildAt(0), "Game Camera 1");
+			trace("Main child 2", mainRef.getChildAt(1), "Mouse Pointer");
+			trace("Main child 3", mainRef.getChildAt(2), "FlxDebugger");
+			trace("Main child 4", mainRef.getChildAt(3), "Sound Tray");
+			trace("Main child 5", mainRef.getChildAt(4), "Focus Screen");
+			
+			trace("Game numChildren", Sprite(mainRef.getChildAt(0)).numChildren);
+			
+			var gameRef:Sprite = Sprite(mainRef.getChildAt(0));
+			
+			trace("Game child 1", gameRef.getChildAt(0), "The Bitmap to which your game is rendered");
 		}
 		
 	}
