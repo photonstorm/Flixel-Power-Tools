@@ -9,8 +9,8 @@ package tests.extendedsprite
 	{
 		//	Common variables
 		public static var title:String = "Sprite Drag 4";
-		public static var description:String = "Direction Locked Dragging";
-		private var instructions:String = "The arrows are direction drag-locked";
+		public static var description:String = "Drag through a TileMap";
+		private var instructions:String = "Drag the UFO around the tile map";
 		private var header:TestsHeader;
 		
 		//	Test specific variables

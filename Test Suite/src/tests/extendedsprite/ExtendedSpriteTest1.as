@@ -8,7 +8,7 @@ package tests.extendedsprite
 	{
 		//	Common variables
 		public static var title:String = "Sprite Drag 1";
-		public static var description:String = "Draggable Sprites";
+		public static var description:String = "Lots of Draggable Sprites";
 		private var instructions:String = "Drag the sprites with the mouse";
 		private var header:TestsHeader;
 		

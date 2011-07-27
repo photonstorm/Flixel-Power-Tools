@@ -2,10 +2,11 @@
  * FlxDelay
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.3 Added secondsElapsed and secondsRemaining and some more documentation
  * v1.2 Added callback support
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.2 - June 13th 2011
+ * @version 1.3 - July27th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -28,6 +29,9 @@ package org.flixel.plugin.photonstorm
 	
 	public class FlxDelay extends Sprite
 	{
+		/**
+		 * true if the timer is currently running, otherwise false
+		 */
 		public var isRunning:Boolean;
 		
 		/**
@@ -35,8 +39,12 @@ package org.flixel.plugin.photonstorm
 		 */
 		public var callback:Function;
 		
-		private var started:int;
+		/**
+		 * The duration of the Delay in milliseconds
+		 */
 		public var duration:int;
+		
+		private var started:int;
 		private var expires:int;
 		private var pauseStarted:int;
 		private var pausedTimerRunning:Boolean;
@@ -86,6 +94,22 @@ package org.flixel.plugin.photonstorm
 			duration = newDuration;
 			
 			start();
+		}
+		
+		/**
+		 * The amount of seconds that have elapsed since the timer was started
+		 */
+		public function get secondsElapsed():int
+		{
+			return int((getTimer() - started) / 1000);
+		}
+		
+		/**
+		 * The amount of seconds that are remaining until the timer completes
+		 */
+		public function get secondsRemaining():int
+		{
+			return int((expires - getTimer()) / 1000);
 		}
 		
 		private function update(event:Event):void

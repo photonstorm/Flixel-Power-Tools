@@ -8,7 +8,7 @@ package tests.extendedsprite
 	{
 		//	Common variables
 		public static var title:String = "Sprite Drag 2";
-		public static var description:String = "Draggable Sprites";
+		public static var description:String = "Priority Order Sprite Drag";
 		private var instructions:String = "The ball is always dragged first, even when behind";
 		private var header:TestsHeader;
 		

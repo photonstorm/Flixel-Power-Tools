@@ -33,42 +33,60 @@ package org.flixel.plugin.photonstorm
 		public static var dragTarget:FlxExtendedSprite;
 		
 		private static var clickStack:Array;
+		private static var clickCoords:FlxPoint;
+		public static var clickTarget:FlxExtendedSprite;
+		private static var hasClickTarget:Boolean = false;
 		
 		public function FlxMouseControl() 
 		{
 		}
 		
-		public static function addToDragStack(item:FlxExtendedSprite):void
+		public static function addToStack(item:FlxExtendedSprite):void
 		{
 			clickStack.push(item);
 		}
 		
 		/**
-		 * 
+		 * Main Update Loop - checks mouse status and updates FlxExtendedSprites accordingly
 		 */
 		override public function update():void
 		{
-			if (isDragging)
+			//	Is the mouse currently pressed down on a target?
+			
+			if (hasClickTarget)
 			{
-				if (FlxG.mouse.pressed() && dragTarget)
+				if (FlxG.mouse.pressed())
 				{
-					// TODO Ideally we'd do it like this, but not until Adam adds support for plugins to run in post and pre Update loops
-					//dragTarget.updateDrag();
+					//	Has the mouse moved? If so then we're candidate for a drag
+					if (isDragging == false && clickTarget.draggable && (clickCoords.x != FlxG.mouse.x || clickCoords.y != FlxG.mouse.y))
+					{
+						//	Drag on
+						isDragging = true;
+						
+						dragTarget = clickTarget;
+						
+						dragTarget.startDrag();
+					}
 				}
-				else if (FlxG.mouse.pressed() == false && dragTarget)
+				else
 				{
-					dragTarget.stopDrag();
+					//	Mouse is no longer down, so tell the click target it's free - this will also stop dragging if happening
+					clickTarget.mouseReleasedHandler();
 					
-					dragTarget = null;
+					hasClickTarget = false;
+					clickTarget = null;
 					
 					isDragging = false;
+					dragTarget = null;
 				}
 			}
 			else
 			{
+				//	No target, but is the mouse down?
+				
 				if (FlxG.mouse.justPressed())
 				{
-					clickStack = new Array();
+					clickStack = new Array;
 				}
 				
 				//	If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedSprite
@@ -76,33 +94,28 @@ package org.flixel.plugin.photonstorm
 				
 				if (FlxG.mouse.pressed() && clickStack.length > 0)
 				{
-					assignDraggedSprite();
+					assignClickedSprite();
 				}
 			}
 		}
 		
-		private function assignDraggedSprite():void
+		private function assignClickedSprite():void
 		{
-			if (clickStack.length == 1)
+			//	If there is more than one potential target then sort them
+			if (clickStack.length > 1)
 			{
-				//	Easy, there's only one anyway ...
-				dragTarget = clickStack.pop();
-				
-				dragTarget.startDrag();
-				
-				clickStack = [];
-			}
-			else
-			{
-				//	We've got more than one candidate, so we need to sort them
 				clickStack.sort(sortHandler);
-				
-				dragTarget = clickStack.pop();
-				
-				dragTarget.startDrag();
-				
-				clickStack = [];
 			}
+			
+			clickTarget = clickStack.pop();
+			
+			clickCoords = clickTarget.point;
+			
+			hasClickTarget = true;
+			
+			clickTarget.mousePressedHandler();
+			
+			clickStack = [];
 		}
 		
 		/**
@@ -127,16 +140,17 @@ package org.flixel.plugin.photonstorm
 			return 0;
 		}
 		
-		/**
-		 * Runs when this plugin is destroyed
-		 */
-		override public function destroy():void
-		{
-			clear();
-		}
-		
 		public static function clear():void
 		{
+			hasClickTarget = false;
+			
+			if (clickTarget)
+			{
+				clickTarget.mouseReleasedHandler();
+			}
+			
+			clickTarget = null;
+			
 			isDragging = false;
 			
 			if (dragTarget)
@@ -145,6 +159,14 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			dragTarget = null;
+		}
+		
+		/**
+		 * Runs when this plugin is destroyed
+		 */
+		override public function destroy():void
+		{
+			clear();
 		}
 		
 	}

@@ -2,18 +2,17 @@
  * FlxExtendedSprite
  * -- Part of the Flixel Power Tools set
  * 
- * v1.2 Now works fully with FlxMouseControl to be completely draggable!
+ * v1.2 Now works fully with FlxMouseControl to be completely clickable and draggable!
  * v1.1 Added "setMouseDrag" and "mouse over" states
  * v1.0 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.2 - July 21st 2011
+ * @version 1.2 - July 26th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
 package org.flixel.plugin.photonstorm 
 {
-	import flash.display.BitmapData;
 	import org.flixel.*;
 
 	/**
@@ -21,34 +20,50 @@ package org.flixel.plugin.photonstorm
 	 * TODO
 	 * 
 	 * I need to do a "break limit / breaking point" - a distance which if the mouse pointer moves that far away from the sprite
-	 * it'll break the drag, even if the button is still pressed down. That will stop the problem with dragging
-	 * sprites through tile maps.
+	 * it'll break the drag, even if the button is still pressed down. That will stop the problem with dragging sprites through tile maps.
 	 * 
 	 */
 	
 	public class FlxExtendedSprite extends FlxSprite
 	{
+		/**
+		 * Used by FlxMouseControl when multiple sprites overlap and register clicks, and you need to determine which sprite has priority
+		 */
 		public var priorityID:uint;
 		
-		public static const MOUSE_OVER:uint = 0;
-		public static const MOUSE_OUT:uint = 1;
-		public static const MOUSE_CLICK:uint = 2;
-		public static const MOUSE_START_DRAG:uint = 3;
-		public static const MOUSE_STOP_DRAG:uint = 4;
+		/**
+		 * If the mouse currently pressed down on this sprite?
+		 */
+		public var isPressed:Boolean = false;
 		
-		private var clickable:Boolean = false;
+		/**
+		 * Is this sprite allowed to be clicked?
+		 */
+		public var clickable:Boolean = false;
 		private var clickOnRelease:Boolean = false;
 		private var clickPixelPerfect:Boolean = false;
 		private var clickPixelPerfectAlpha:uint;
 		private var clickCounter:uint;
-		private var mouseClickCallback:Function;
+		
+		/**
+		 * Function called when the mouse is pressed down on this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 */
+		public var mousePressedCallback:Function;
+		
+		/**
+		 * Function called when the mouse is released from this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 */
+		public var mouseReleasedCallback:Function;
 		
 		/**
 		 * Is this sprite being dragged by the mouse or not?
 		 */
 		public var isDragged:Boolean = false;
 		
-		private var draggable:Boolean = false;
+		/**
+		 * Is this sprite allowed to be dragged by the mouse? true = yes, false = no
+		 */
+		public var draggable:Boolean = false;
 		private var dragPixelPerfect:Boolean = false;
 		private var dragPixelPerfectAlpha:uint;
 		private var dragOffsetX:int;
@@ -56,10 +71,25 @@ package org.flixel.plugin.photonstorm
 		private var dragFromPoint:Boolean;
 		private var allowHorizontalDrag:Boolean = true;
 		private var allowVerticalDrag:Boolean = true;
-		//public var mouseStartDragCallback:Function;
-		//public var mouseStopDragCallback:Function;
 		
+		/**
+		 * Function called when the mouse starts to drag this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 */
+		public var mouseStartDragCallback:Function;
+		
+		/**
+		 * Function called when the mouse stops dragging this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 */
+		public var mouseStopDragCallback:Function;
+		
+		/**
+		 * An FlxRect region of the game world within which the sprite is restricted during mouse drag
+		 */
 		public var boundsRect:FlxRect = null;
+		
+		/**
+		 * An FlxSprite the bounds of which this sprite is restricted during mouse drag
+		 */
 		public var boundsSprite:FlxSprite = null;
 		
 		public function FlxExtendedSprite(X:Number = 0, Y:Number = 0, SimpleGraphic:Class = null)
@@ -68,31 +98,31 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Allow this Sprite to receive mouse clicks and optionally call a callback function as a result.<br>
-		 * The total number of times this sprite is clicked is stored in this.clicks<br>
-		 * Note that you do not have to enable this if you only want the sprite to be dragged.
+		 * Allow this Sprite to receive mouse clicks, the total number of times this sprite is clicked is stored in this.clicks<br>
+		 * You can add callbacks via mousePressedCallback and mouseReleasedCallback
 		 * 
 		 * @param	onRelease			Set if you want to register a click as being when the mouse is pressed down (false) or when it's released from a press (true)
-		 * @param	callback			A function that is called when this sprite is clicked. Function will be passed the following parameters: obj:FlxExtendedSprite, x:int, y:int
 		 * @param	pixelPerfect		If true it will use a pixel perfect test to see if you clicked the Sprite. False uses the bounding box.
 		 * @param	alphaThreshold		If using pixel perfect collision this specifies the alpha level from 0 to 255 above which a collision is processed (default 255)
 		 */
-		public function enableMouseClicks(onRelease:Boolean, callback:Function = null , pixelPerfect:Boolean = false, alphaThreshold:uint = 255):void
+		public function enableMouseClicks(onRelease:Boolean, pixelPerfect:Boolean = false, alphaThreshold:uint = 255):void
 		{
 			clickable = true;
 			
 			clickOnRelease = onRelease;
 			clickPixelPerfect = pixelPerfect;
 			clickPixelPerfectAlpha = alphaThreshold;
+			clickCounter = 0;
 		}
 		
 		/**
-		 * Stops this sprite from checking for mouse clicks
+		 * Stops this sprite from checking for mouse clicks and clears any set callbacks
 		 */
 		public function disableMouseClicks():void
 		{
 			clickable = false;
-			mouseClickCallback = null;
+			mousePressedCallback = null;
+			mouseReleasedCallback = null;
 		}
 		
 		/**
@@ -112,7 +142,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Make this Sprite draggable by the mouse
+		 * Make this Sprite draggable by the mouse. You can also optionally set mouseStartDragCallback and mouseStopDragCallback
 		 * 
 		 * @param	lockCenter			If false the Sprite will drag from where you click it. If true it will center itself to the tip of the mouse pointer.
 		 * @param	pixelPerfect		If true it will use a pixel perfect test to see if you clicked the Sprite. False uses the bounding box.
@@ -140,7 +170,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Stops this sprite from being able to be dragged. If it is currently the target of an active drag it will be stopped immediately.
+		 * Stops this sprite from being able to be dragged. If it is currently the target of an active drag it will be stopped immediately. Also disables any set callbacks.
 		 */
 		public function disableMouseDrag():void
 		{
@@ -148,9 +178,13 @@ package org.flixel.plugin.photonstorm
 			{
 				FlxMouseControl.dragTarget = null;
 				FlxMouseControl.isDragging = false;
-				isDragged = false;
-				draggable = false;
 			}
+			
+			isDragged = false;
+			draggable = false;
+			
+			mouseStartDragCallback = null;
+			mouseStopDragCallback = null;
 		}
 		 
 		/**
@@ -170,19 +204,12 @@ package org.flixel.plugin.photonstorm
 		 */
 		override public function update():void
 		{
-			if (draggable)
+			if (draggable && isDragged)
 			{
-				if (isDragged)
-				{
-					updateDrag();
-				}
-				else
-				{
-					checkForDrag();
-				}
+				updateDrag();
 			}
 			
-			if (clickable && FlxG.mouse.justReleased() || FlxG.mouse.justPressed())
+			if (isPressed == false && FlxG.mouse.justPressed())
 			{
 				checkForClick();
 			}
@@ -190,54 +217,67 @@ package org.flixel.plugin.photonstorm
 			super.update();
 		}
 		
+		/**
+		 * Checks if the mouse is over this sprite and pressed, then does a pixel perfect check if needed and adds it to the FlxMouseControl check stack
+		 */
 		private function checkForClick():void
 		{
-			if (mouseOver)
+			if (mouseOver && FlxG.mouse.justPressed())
 			{
-				if ((clickOnRelease && FlxG.mouse.justReleased()) || (clickOnRelease == false && FlxG.mouse.justPressed()))
+				if (dragPixelPerfect == false && clickPixelPerfect == false)
 				{
-					if ((dragPixelPerfect == true && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha)) || dragPixelPerfect == false)
-					{
-						FlxMouseControl.addToDragStack(this);
-					}
+					FlxMouseControl.addToStack(this);
+				}
+				else if ((clickPixelPerfect && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, clickPixelPerfectAlpha)) || (dragPixelPerfect && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha)))
+				{
+					FlxMouseControl.addToStack(this);
 				}
 			}
 		}
 		
-		public function clickHandler():void
-		{
-			clickCounter++;
-			
-			if (mouseClickCallback is Function)
-			{
-				mouseClickCallback.apply(null, [ this, FlxG.mouse.x, FlxG.mouse.y ] );
-			}
-		}
-		
 		/**
-		 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration 
-		 * and does not check if there are other sprites potentially on-top of this one
+		 * Called by FlxMouseControl when this sprite is clicked. Should not usually be called directly.
 		 */
-		public function get mouseOver():Boolean
+		public function mousePressedHandler():void
 		{
-			return FlxMath.pointInCoordinates(FlxG.mouse.x, FlxG.mouse.y, x, y, width, height);
-		}
-
-		private function checkForDrag():void
-		{
-			if (FlxG.mouse.justPressed() && mouseOver && FlxMouseControl.isDragging == false)
+			isPressed = true;
+			
+			if (clickable && clickOnRelease == false)
 			{
-				if ((dragPixelPerfect == true && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha)) || dragPixelPerfect == false)
-				{
-					//	The mouse was just pressed, it's over this sprite and it's not dragging something already - so add it to the drag stack
-					//	This doesn't mean it WILL be dragged as there might be another sprite on-top of it, just that it's a potential candidate
-					FlxMouseControl.addToDragStack(this);
-				}
+				clickCounter++;
+			}
+			
+			if (mousePressedCallback is Function)
+			{
+				mousePressedCallback.apply(null, [ this, mouseX, mouseY ] );
 			}
 		}
 		
 		/**
-		 * Starts Mouse Drag on this Sprite. Usually you never call this directly, it should be called by FlxMouseControl
+		 * Called by FlxMouseControl when this sprite is released from a click. Should not usually be called directly.
+		 */
+		public function mouseReleasedHandler():void
+		{
+			isPressed = false;
+			
+			if (isDragged)
+			{
+				stopDrag();
+			}
+			
+			if (clickable && clickOnRelease == true)
+			{
+				clickCounter++;
+			}
+			
+			if (mouseReleasedCallback is Function)
+			{
+				mouseReleasedCallback.apply(null, [ this, mouseX, mouseY ] );
+			}
+		}
+		
+		/**
+		 * Called by FlxMouseControl when Mouse Drag starts on this Sprite. Should not usually be called directly.
 		 */
 		public function startDrag():void
 		{
@@ -254,15 +294,12 @@ package org.flixel.plugin.photonstorm
 				dragOffsetX = (frameWidth / 2);
 				dragOffsetY = (frameHeight / 2);
 			}
-			
-			FlxMouseControl.isDragging = true;
-			FlxMouseControl.dragTarget = this;
 		}
 		
 		/**
-		 * Updates the Mouse Drag on this Sprite. Usually you never call this directly, it should be called by FlxMouseControl
+		 * Updates the Mouse Drag on this Sprite.
 		 */
-		public function updateDrag():void
+		private function updateDrag():void
 		{
 			if (allowHorizontalDrag)
 			{
@@ -285,6 +322,9 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		/**
+		 * Bounds Rect check for the sprite drag
+		 */
 		private function checkBoundsRect():void
 		{
 			if (x < boundsRect.left)
@@ -306,6 +346,9 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		/**
+		 * Parent Sprite Bounds check for the sprite drag
+		 */
 		private function checkBoundsSprite():void
 		{
 			if (x < boundsSprite.x)
@@ -328,21 +371,54 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Stops Mouse Drag on this Sprite. Usually you never call this directly, it should be called by FlxMouseControl
+		 * Called by FlxMouseControl when Mouse Drag is stopped on this Sprite. Should not usually be called directly.
 		 */
 		public function stopDrag():void
 		{
 			isDragged = false;
 		}
 		
+		/**
+		 * Returns an FlxPoint consisting of this sprites world x/y coordinates
+		 */
 		public function get point():FlxPoint
 		{
 			return _point;
 		}
 		
-		public function set point(p:FlxPoint):void
+		/**
+		 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration and does not check if there 
+		 * are other sprites potentially on-top of this one. Check the value of this.isPressed if you need to know if the mouse is currently clicked on this sprite.
+		 */
+		public function get mouseOver():Boolean
 		{
-			_point = p;
+			return FlxMath.pointInCoordinates(FlxG.mouse.x, FlxG.mouse.y, x, y, width, height);
+		}
+		
+		/**
+		 * Returns how many horizontal pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
+		 */
+		public function get mouseX():int
+		{
+			if (mouseOver)
+			{
+				return FlxG.mouse.x - x;
+			}
+			
+			return -1;
+		}
+		
+		/**
+		 * Returns how many vertical pixels the mouse pointer is inside this sprite from the top left corner. Returns -1 if outside.
+		 */
+		public function get mouseY():int
+		{
+			if (mouseOver)
+			{
+				return FlxG.mouse.y - y;
+			}
+			
+			return -1;
 		}
 		
 	}
