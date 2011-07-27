@@ -2,11 +2,12 @@
  * FlxCollision
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Added createCameraWall
  * v1.4 Added pixelPerfectPointCheck()
  * v1.3 Update fixes bug where it wouldn't accurately perform collision on AutoBuffered rotated sprites, or sprites with offsets
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - May 19th 2011
+ * @version 1.5 - July 27th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -26,6 +27,10 @@ package org.flixel.plugin.photonstorm
 	public class FlxCollision 
 	{
 		public static var debug:BitmapData = new BitmapData(1, 1, false);
+		
+		public static var CAMERA_WALL_OUTSIDE:uint = 0;
+		public static var CAMERA_WALL_INSIDE:uint = 1;
+		public static var CAMERA_WALL_OVERLAP:uint = 2;
 		
 		public function FlxCollision() 
 		{
@@ -125,6 +130,66 @@ package org.flixel.plugin.photonstorm
 			{
 				return false;
 			}
+		}
+		
+		/**
+		 * Creates a "wall" around the given camera which can be used for FlxSprite collision
+		 * 
+		 * @param	camera				The FlxCamera to use for the wall bounds (can be FlxG.camera for the current one)
+		 * @param	placement			CAMERA_WALL_OUTSIDE, CAMERA_WALL_INSIDE or CAMERA_WALL_OVERLAP
+		 * @param	thickness			The thickness of the wall in pixels
+		 * @param	adjustWorldBounds	Adjust the FlxG.worldBounds based on the wall (true) or leave alone (false)
+		 * 
+		 * @return	FlxGroup The 4 FlxTileblocks that are created are placed into this FlxGroup which should be added to your State
+		 */
+		public static function createCameraWall(camera:FlxCamera, placement:uint, thickness:uint, adjustWorldBounds:Boolean = false):FlxGroup
+		{
+			var region:Rectangle = new Rectangle(camera.x, camera.y, camera.width, camera.height);
+			
+			//	Region is now the same size as the camera bounds
+			
+			switch (placement)
+			{
+				case CAMERA_WALL_OUTSIDE:
+					region.x -= thickness;
+					region.y -= thickness;
+					region.width += thickness * 2;
+					region.height += thickness * 2;
+					break;
+					
+				case CAMERA_WALL_INSIDE:
+					region.width -= thickness;
+					region.height -= thickness;
+					break;
+					
+				case CAMERA_WALL_OVERLAP:
+					region.x -= thickness / 2;
+					region.y -= thickness / 2;
+					//region.width -= thickness / 2;
+					//region.height -= thickness / 2;
+					break;
+			}
+			
+			trace(region);
+			
+			var left:FlxTileblock = new FlxTileblock(region.x, region.y, thickness, region.height);
+			var right:FlxTileblock = new FlxTileblock(region.right, region.y, thickness, region.height);
+			var top:FlxTileblock = new FlxTileblock(region.x, region.y, region.width, thickness);
+			var bottom:FlxTileblock = new FlxTileblock(region.x, region.height, region.width, thickness);
+			
+			if (adjustWorldBounds)
+			{
+				FlxG.worldBounds = new FlxRect(region.x, region.y, region.width, region.height);
+			}
+			
+			var result:FlxGroup = new FlxGroup(4);
+			
+			result.add(left);
+			result.add(right);
+			result.add(top);
+			result.add(bottom);
+			
+			return result;
 		}
 		
 	}

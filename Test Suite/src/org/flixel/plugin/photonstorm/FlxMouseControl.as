@@ -37,6 +37,11 @@ package org.flixel.plugin.photonstorm
 		public static var clickTarget:FlxExtendedSprite;
 		private static var hasClickTarget:Boolean = false;
 		
+		private static var oldX:int;
+		private static var oldY:int;
+		public static var speedX:int;
+		public static var speedY:int;
+		
 		public function FlxMouseControl() 
 		{
 		}
@@ -51,8 +56,14 @@ package org.flixel.plugin.photonstorm
 		 */
 		override public function update():void
 		{
-			//	Is the mouse currently pressed down on a target?
+			//	Update mouse speed
+			speedX = FlxG.mouse.x - oldX;
+			speedY = FlxG.mouse.y - oldY;
 			
+			oldX = FlxG.mouse.x;
+			oldY = FlxG.mouse.y;
+			
+			//	Is the mouse currently pressed down on a target?
 			if (hasClickTarget)
 			{
 				if (FlxG.mouse.pressed())
