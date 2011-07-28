@@ -2,11 +2,12 @@
  * FlxExtendedSprite
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.3 Added Gravity, Friction and Tolerance support
  * v1.2 Now works fully with FlxMouseControl to be completely clickable and draggable!
  * v1.1 Added "setMouseDrag" and "mouse over" states
  * v1.0 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.2 - July 26th 2011
+ * @version 1.3 - July 28th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -33,11 +34,13 @@ package org.flixel.plugin.photonstorm
 		
 		/**
 		 * If the mouse currently pressed down on this sprite?
+		 * @default false
 		 */
 		public var isPressed:Boolean = false;
 		
 		/**
 		 * Is this sprite allowed to be clicked?
+		 * @default false
 		 */
 		public var clickable:Boolean = false;
 		private var clickOnRelease:Boolean = false;
@@ -47,11 +50,13 @@ package org.flixel.plugin.photonstorm
 		
 		/**
 		 * Function called when the mouse is pressed down on this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 * @default null
 		 */
 		public var mousePressedCallback:Function;
 		
 		/**
 		 * Function called when the mouse is released from this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 * @default null
 		 */
 		public var mouseReleasedCallback:Function;
 		
@@ -59,16 +64,42 @@ package org.flixel.plugin.photonstorm
 		public var throwXFactor:int;
 		public var throwYFactor:int;
 		
-		private var gravityX:int;
-		private var gravityY:int;
+		public var hasGravity:Boolean = false;
+		public var hasSpin:Boolean = false;
+		public var gravityX:int;
+		public var gravityY:int;
+		
+		/**
+		 * Determines how quickly the Sprite come to rest on the walls if the sprite has x gravity enabled
+		 * @default 500
+		 */
+		public var frictionX:Number;
+		
+		/**
+		 * Determines how quickly the Sprite come to rest on the ground if the sprite has y gravity enabled
+		 * @default 500
+		 */
+		public var frictionY:Number;
+		
+		/**
+		 * If the velocity.x of this sprite falls between zero and this amount, then the sprite will come to a halt (have velocity.x set to zero)
+		 */
+		public var toleranceX:Number;
+		
+		/**
+		 * If the velocity.y of this sprite falls between zero and this amount, then the sprite will come to a halt (have velocity.y set to zero)
+		 */
+		public var toleranceY:Number;
 		
 		/**
 		 * Is this sprite being dragged by the mouse or not?
+		 * @default false
 		 */
 		public var isDragged:Boolean = false;
 		
 		/**
 		 * Is this sprite allowed to be dragged by the mouse? true = yes, false = no
+		 * @default false
 		 */
 		public var draggable:Boolean = false;
 		private var dragPixelPerfect:Boolean = false;
@@ -81,21 +112,25 @@ package org.flixel.plugin.photonstorm
 		
 		/**
 		 * Function called when the mouse starts to drag this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 * @default null
 		 */
 		public var mouseStartDragCallback:Function;
 		
 		/**
 		 * Function called when the mouse stops dragging this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
+		 * @default null
 		 */
 		public var mouseStopDragCallback:Function;
 		
 		/**
 		 * An FlxRect region of the game world within which the sprite is restricted during mouse drag
+		 * @default null
 		 */
 		public var boundsRect:FlxRect = null;
 		
 		/**
 		 * An FlxSprite the bounds of which this sprite is restricted during mouse drag
+		 * @default null
 		 */
 		public var boundsSprite:FlxSprite = null;
 		
@@ -247,7 +282,118 @@ package org.flixel.plugin.photonstorm
 				checkForClick();
 			}
 			
+			if (hasGravity)
+			{
+				updateGravity();
+			}
+			
 			super.update();
+		}
+		
+		/**
+		 * Called by update, applies friction if the sprite has gravity to stop jittery motion when slowing down
+		 */
+		private function updateGravity():void
+		{
+			//	A sprite can have horizontal and/or vertical gravity in each direction (positiive / negative)
+			
+			//	First let's check the x movement
+			
+			if (velocity.x != 0)
+			{
+				if (acceleration.x < 0)
+				{
+					//	Gravity is pulling them left
+					if (touching & WALL)
+					{
+						drag.y = frictionY;
+						
+						if ((wasTouching & WALL) == false)
+						{
+							if (velocity.x < toleranceX)
+							{
+								//trace("(left) velocity.x", velocity.x, "stopped via tolerance break", toleranceX);
+								velocity.x = 0;
+							}
+						}
+					}
+					else
+					{
+						drag.y = 0;
+					}
+				}
+				else if (acceleration.x > 0)
+				{
+					//	Gravity is pulling them right
+					if (touching & WALL)
+					{
+						//	Stop them sliding like on ice
+						drag.y = frictionY;
+						
+						if ((wasTouching & WALL) == false)
+						{
+							if (velocity.x > -toleranceX)
+							{
+								//trace("(right) velocity.x", velocity.x, "stopped via tolerance break", toleranceX);
+								velocity.x = 0;
+							}
+						}
+					}
+					else
+					{
+						drag.y = 0;
+					}
+				}
+			}
+			
+			//	Now check the y movement
+			
+			if (velocity.y != 0)
+			{
+				if (acceleration.y < 0)
+				{
+					//	Gravity is pulling them up (velocity is negative)
+					if (touching & CEILING)
+					{
+						drag.x = frictionX;
+						
+						if ((wasTouching & CEILING) == false)
+						{
+							if (velocity.y < toleranceY)
+							{
+								//trace("(down) velocity.y", velocity.y, "stopped via tolerance break", toleranceY);
+								velocity.y = 0;
+							}
+						}
+					}
+					else
+					{
+						drag.x = 0;
+					}
+				}
+				else if (acceleration.y > 0)
+				{
+					//	Gravity is pulling them down (velocity is positive)
+					if (touching & FLOOR)
+					{
+						//	Stop them sliding like on ice
+						drag.x = frictionX;
+						
+						if ((wasTouching & FLOOR) == false)
+						{
+							if (velocity.y > -toleranceY)
+							{
+								//trace("(down) velocity.y", velocity.y, "stopped via tolerance break", toleranceY);
+								velocity.y = 0;
+							}
+						}
+					}
+					else
+					{
+						drag.x = 0;
+					}
+				}
+			}
 		}
 		
 		/**
@@ -418,17 +564,33 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Gravity can be applied to the sprite, pulling it in any direction.<br>
-		 * Gravity is given in pixels per second and is applied as acceleration. The speed the sprite reaches under gravity will never exceed the Maximum Movement Speeds set.<br>
-		 * If you don't want gravity for a specific direction pass a value of zero.
+		 * Gravity can be applied to the sprite, pulling it in any direction. Gravity is given in pixels per second and is applied as acceleration.
+		 * If you don't want gravity for a specific direction pass a value of zero. To cancel it entirely pass both values as zero.
 		 * 
-		 * @param	xForce	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
-		 * @param	yForce	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up. Zero disables vertical gravity.
+		 * @param	gravityX	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
+		 * @param	gravityY	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up. Zero disables vertical gravity.
+		 * @param	frictionX	The amount of friction applied to the sprite if it hits a wall. Allows it to come to a stop without constantly jittering.
+		 * @param	frictionY	The amount of friction applied to the sprite if it hits the floor/roof. Allows it to come to a stop without constantly jittering.
+		 * @param	toleranceX	If the velocity.x of the sprite falls between 0 and +- this value, it is set to stop (velocity.x = 0)
+		 * @param	toleranceY	If the velocity.y of the sprite falls between 0 and +- this value, it is set to stop (velocity.y = 0)
 		 */
-		public function setGravity(xForce:int, yForce:int):void
+		public function setGravity(gravityX:int, gravityY:int, frictionX:Number = 500, frictionY:Number = 500, toleranceX:Number = 10, toleranceY:Number = 10):void
 		{
-			gravityX = xForce;
-			gravityY = yForce;
+			hasGravity = true;
+			
+			this.gravityX = gravityX;
+			this.gravityY = gravityY;
+			
+			this.frictionX = frictionX;
+			this.frictionY = frictionY;
+			
+			this.toleranceX = toleranceX;
+			this.toleranceY = toleranceY;
+			
+			if (gravityX == 0 && gravityY == 0)
+			{
+				hasGravity = false;
+			}
 			
 			acceleration.x = gravityX;
 			acceleration.y = gravityY;

@@ -1,3 +1,7 @@
+28th July 2011
+
+FlxExtendedSprite : Added Gravity, Friction and Tolerance support
+
 27th July 2011
 
 Added createCameraWall to FlxCollision and created lots more tests

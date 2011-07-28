@@ -36,7 +36,7 @@ package tests.extendedsprite
 			ball = new FlxExtendedSprite(64, 48, AssetsRegistry.shinyBallPNG);
 			
 			//	Just to make it visually more interesting we apply gravity pulling the ball down
-			ball.setGravity(0, 100);
+			ball.setGravity(0, 100, 500, 500, 10, 10);
 			
 			//	For the best feeling you should enable Mouse Drag along with Mouse Throw, but it's not essential.
 			//	If you don't enable Drag or Clicks then enabling Mouse Throw will automatically enable Mouse Clicks.
