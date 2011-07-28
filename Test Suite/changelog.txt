@@ -1,6 +1,7 @@
 27th July 2011
 
 Added createCameraWall to FlxCollision and created lots more tests
+FlxMouseControl: Added Mouse Zone, Mouse Speed and refactored addToStack process
 
 21st July 2011
 

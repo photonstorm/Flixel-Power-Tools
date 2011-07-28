@@ -30,7 +30,6 @@ package org.flixel.plugin.photonstorm
 		
 		public static var CAMERA_WALL_OUTSIDE:uint = 0;
 		public static var CAMERA_WALL_INSIDE:uint = 1;
-		public static var CAMERA_WALL_OVERLAP:uint = 2;
 		
 		public function FlxCollision() 
 		{
@@ -136,7 +135,7 @@ package org.flixel.plugin.photonstorm
 		 * Creates a "wall" around the given camera which can be used for FlxSprite collision
 		 * 
 		 * @param	camera				The FlxCamera to use for the wall bounds (can be FlxG.camera for the current one)
-		 * @param	placement			CAMERA_WALL_OUTSIDE, CAMERA_WALL_INSIDE or CAMERA_WALL_OVERLAP
+		 * @param	placement			CAMERA_WALL_OUTSIDE or CAMERA_WALL_INSIDE
 		 * @param	thickness			The thickness of the wall in pixels
 		 * @param	adjustWorldBounds	Adjust the FlxG.worldBounds based on the wall (true) or leave alone (false)
 		 * 
@@ -144,42 +143,36 @@ package org.flixel.plugin.photonstorm
 		 */
 		public static function createCameraWall(camera:FlxCamera, placement:uint, thickness:uint, adjustWorldBounds:Boolean = false):FlxGroup
 		{
-			var region:Rectangle = new Rectangle(camera.x, camera.y, camera.width, camera.height);
-			
-			//	Region is now the same size as the camera bounds
+			var left:FlxTileblock;
+			var right:FlxTileblock;
+			var top:FlxTileblock;
+			var bottom:FlxTileblock;
 			
 			switch (placement)
 			{
 				case CAMERA_WALL_OUTSIDE:
-					region.x -= thickness;
-					region.y -= thickness;
-					region.width += thickness * 2;
-					region.height += thickness * 2;
+					left = new FlxTileblock(camera.x - thickness, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					right = new FlxTileblock(camera.x + camera.width, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					top = new FlxTileblock(camera.x - thickness, camera.y - thickness, camera.width + thickness * 2, thickness);
+					bottom = new FlxTileblock(camera.x - thickness, camera.height, camera.width + thickness * 2, thickness);
+					
+					if (adjustWorldBounds)
+					{
+						FlxG.worldBounds = new FlxRect(camera.x - thickness, camera.y - thickness, camera.width + thickness * 2, camera.height + thickness * 2);
+					}
 					break;
 					
 				case CAMERA_WALL_INSIDE:
-					region.width -= thickness;
-					region.height -= thickness;
-					break;
+					left = new FlxTileblock(camera.x, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					right = new FlxTileblock(camera.x + camera.width - thickness, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					top = new FlxTileblock(camera.x, camera.y, camera.width, thickness);
+					bottom = new FlxTileblock(camera.x, camera.height - thickness, camera.width, thickness);
 					
-				case CAMERA_WALL_OVERLAP:
-					region.x -= thickness / 2;
-					region.y -= thickness / 2;
-					//region.width -= thickness / 2;
-					//region.height -= thickness / 2;
+					if (adjustWorldBounds)
+					{
+						FlxG.worldBounds = new FlxRect(camera.x, camera.y, camera.width, camera.height);
+					}
 					break;
-			}
-			
-			trace(region);
-			
-			var left:FlxTileblock = new FlxTileblock(region.x, region.y, thickness, region.height);
-			var right:FlxTileblock = new FlxTileblock(region.right, region.y, thickness, region.height);
-			var top:FlxTileblock = new FlxTileblock(region.x, region.y, region.width, thickness);
-			var bottom:FlxTileblock = new FlxTileblock(region.x, region.height, region.width, thickness);
-			
-			if (adjustWorldBounds)
-			{
-				FlxG.worldBounds = new FlxRect(region.x, region.y, region.width, region.height);
 			}
 			
 			var result:FlxGroup = new FlxGroup(4);

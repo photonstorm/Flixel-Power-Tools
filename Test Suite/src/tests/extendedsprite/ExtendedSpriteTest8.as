@@ -4,19 +4,20 @@ package tests.extendedsprite
 	import org.flixel.plugin.photonstorm.*;
 	import tests.TestsHeader;
 
-	public class ExtendedSpriteTest7 extends FlxState
+	public class ExtendedSpriteTest8 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "Sprite Throw 1";
-		public static var description:String = "Throw a Sprite";
-		private var instructions:String = "Throw the sprite with the mouse";
+		public static var title:String = "Mouse Zone 1";
+		public static var description:String = "Limit mouse actions to an FlxRect";
+		private var instructions:String = "Mouse can only click/drag/throw while in this zone";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
 		
 		private var ball:FlxExtendedSprite;
+		private var walls:FlxGroup;
 		
-		public function ExtendedSpriteTest7() 
+		public function ExtendedSpriteTest8() 
 		{
 		}
 		
@@ -33,6 +34,15 @@ package tests.extendedsprite
 				FlxG.addPlugin(new FlxMouseControl);
 			}
 			
+			//	The Mouse Zone is a region outside of which mouse actions are ignored.
+			//	For example you won't be able to click, drag or throw the ball unless it's within the mouse zone.
+			//	If you are dragging the ball and the mouse leaves the zone, it'll automatically let go.
+			FlxMouseControl.mouseZone = new FlxRect(0, 156, 320, 100);
+			
+			//	This is just so we can visually see the mouse zone - it's not required for actual use
+			var debugZone:FlxSprite = new FlxSprite(0, 156).makeGraphic(320, 100, 0x55FF0080);
+			
+			//	From here on down it's mostly the same as ExtendedSpriteTest7
 			ball = new FlxExtendedSprite(64, 48, AssetsRegistry.shinyBallPNG);
 			
 			//	Just to make it visually more interesting we apply gravity pulling the ball down
@@ -49,8 +59,10 @@ package tests.extendedsprite
 			ball.elasticity = 0.5;
 			
 			//	Some walls to collide against
-			add(FlxCollision.createCameraWall(FlxG.camera, FlxCollision.CAMERA_WALL_OUTSIDE, 16, true));
+			walls = FlxCollision.createCameraWall(FlxG.camera, FlxCollision.CAMERA_WALL_OUTSIDE, 16, true);
 			
+			add(debugZone);
+			add(walls);
 			add(ball);
 			
 			//	Header overlay
@@ -61,7 +73,7 @@ package tests.extendedsprite
 		{
 			super.update();
 			
-			FlxG.collide();
+			FlxG.collide(ball, walls);
 		}
 		
 		override public function destroy():void

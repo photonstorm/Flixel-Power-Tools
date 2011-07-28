@@ -55,6 +55,13 @@ package org.flixel.plugin.photonstorm
 		 */
 		public var mouseReleasedCallback:Function;
 		
+		public var throwable:Boolean = false;
+		public var throwXFactor:int;
+		public var throwYFactor:int;
+		
+		private var gravityX:int;
+		private var gravityY:int;
+		
 		/**
 		 * Is this sprite being dragged by the mouse or not?
 		 */
@@ -200,6 +207,32 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * Make this Sprite throwable by the mouse. The sprite is thrown only when the mouse button is released.
+		 * 
+		 * @param	xFactor		The sprites velocity is set to FlxMouseControl.speedX * xFactor. Try a value around 50+
+		 * @param	yFactor		The sprites velocity is set to FlxMouseControl.speedY * yFactor. Try a value around 50+
+		 */
+		public function enableMouseThrow(xFactor:int, yFactor:int):void
+		{
+			throwable = true;
+			throwXFactor = xFactor;
+			throwYFactor = yFactor;
+			
+			if (clickable == false && draggable == false)
+			{
+				clickable = true;
+			}
+		}
+		
+		/**
+		 * Stops this sprite from being able to be thrown. If it currently has velocity this is NOT removed from it.
+		 */
+		public function disableMouseThrow():void
+		{
+			throwable = false;
+		}
+		
+		/**
 		 * Core update loop
 		 */
 		override public function update():void
@@ -268,6 +301,12 @@ package org.flixel.plugin.photonstorm
 			if (clickable && clickOnRelease == true)
 			{
 				clickCounter++;
+			}
+			
+			if (throwable)
+			{
+				velocity.x = FlxMouseControl.speedX * throwXFactor;
+				velocity.y = FlxMouseControl.speedY * throwYFactor;
 			}
 			
 			if (mouseReleasedCallback is Function)
@@ -376,6 +415,42 @@ package org.flixel.plugin.photonstorm
 		public function stopDrag():void
 		{
 			isDragged = false;
+		}
+		
+		/**
+		 * Gravity can be applied to the sprite, pulling it in any direction.<br>
+		 * Gravity is given in pixels per second and is applied as acceleration. The speed the sprite reaches under gravity will never exceed the Maximum Movement Speeds set.<br>
+		 * If you don't want gravity for a specific direction pass a value of zero.
+		 * 
+		 * @param	xForce	A positive value applies gravity dragging the sprite to the right. A negative value drags the sprite to the left. Zero disables horizontal gravity.
+		 * @param	yForce	A positive value applies gravity dragging the sprite down. A negative value drags the sprite up. Zero disables vertical gravity.
+		 */
+		public function setGravity(xForce:int, yForce:int):void
+		{
+			gravityX = xForce;
+			gravityY = yForce;
+			
+			acceleration.x = gravityX;
+			acceleration.y = gravityY;
+		}
+		
+		/**
+		 * Switches the gravity applied to the sprite. If gravity was +400 Y (pulling them down) this will swap it to -400 Y (pulling them up)<br>
+		 * To reset call flipGravity again
+		 */
+		public function flipGravity():void
+		{
+			if (gravityX && gravityX != 0)
+			{
+				gravityX = -gravityX;
+				acceleration.x = gravityX;
+			}
+			
+			if (gravityY && gravityY != 0)
+			{
+				gravityY = -gravityY;
+				acceleration.y = gravityY;
+			}
 		}
 		
 		/**

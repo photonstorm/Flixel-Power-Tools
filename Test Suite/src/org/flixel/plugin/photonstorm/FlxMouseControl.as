@@ -2,10 +2,11 @@
  * FlxMouseControl
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.2 Added Mouse Zone, Mouse Speed and refactored addToStack process
  * v1.1 Moved to a native plugin
  * v1.0 First release
  * 
- * @version 1.1 - July 21st 2011
+ * @version 1.2 - July 28th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -26,29 +27,77 @@ package org.flixel.plugin.photonstorm
 		 */
 		public static const DESCENDING:int = 1;
 		
+		/**
+		 * The value that the FlxExtendedSprites are sorted by before deciding which is "on-top" for click select
+		 */
 		public static var sortIndex:String = "y";
+		
+		/**
+		 * The sorting order. If the sortIndex is "y" and the order is ASCENDING then a sprite with a Y value of 200 would be "on-top" of one with a Y value of 100.
+		 */
 		public static var sortOrder:int = ASCENDING;
 		
+		/**
+		 * Is the mouse currently dragging a sprite? If you have just clicked but NOT yet moved the mouse then this might return false.
+		 */
 		public static var isDragging:Boolean = false;
+		
+		/**
+		 * The FlxExtendedSprite that is currently being dragged, if any.
+		 */
 		public static var dragTarget:FlxExtendedSprite;
 		
+		/**
+		 * The FlxExtendedSprite that currently has the mouse button pressed on it
+		 */
+		public static var clickTarget:FlxExtendedSprite;
 		private static var clickStack:Array;
 		private static var clickCoords:FlxPoint;
-		public static var clickTarget:FlxExtendedSprite;
 		private static var hasClickTarget:Boolean = false;
 		
 		private static var oldX:int;
 		private static var oldY:int;
+		
+		/**
+		 * The speed the mouse is moving on the X axis in pixels per frame
+		 */
 		public static var speedX:int;
+		
+		/**
+		 * The speed the mouse is moving on the Y axis in pixels per frame
+		 */
 		public static var speedY:int;
+		
+		/**
+		 * The mouse can be set to only be active within a specific FlxRect region of the game world.
+		 * If outside this FlxRect no clicks, drags or throws will be processed.
+		 * If the mouse leaves this region while still dragging then the sprite is automatically dropped and its release handler is called.
+		 * Set the FlxRect to null to disable the zone.
+		 */
+		public static var mouseZone:FlxRect;
 		
 		public function FlxMouseControl() 
 		{
 		}
 		
+		/**
+		 * Adds the given FlxExtendedSprite to the stack of potential sprites that were clicked, the stack is then sorted and the final sprite is selected from that
+		 * 
+		 * @param	item	The FlxExtendedSprite that was clicked by the mouse
+		 */
 		public static function addToStack(item:FlxExtendedSprite):void
 		{
-			clickStack.push(item);
+			if (mouseZone is FlxRect)
+			{
+				if (FlxMath.pointInFlxRect(FlxG.mouse.x, FlxG.mouse.y, mouseZone) == true)
+				{
+					clickStack.push(item);
+				}
+			}
+			else
+			{
+				clickStack.push(item);
+			}
 		}
 		
 		/**
@@ -81,14 +130,13 @@ package org.flixel.plugin.photonstorm
 				}
 				else
 				{
-					//	Mouse is no longer down, so tell the click target it's free - this will also stop dragging if happening
-					clickTarget.mouseReleasedHandler();
-					
-					hasClickTarget = false;
-					clickTarget = null;
-					
-					isDragging = false;
-					dragTarget = null;
+					releaseMouse();
+				}
+				
+				//	Is a mouse zone enabled? In which case check if we're still in it
+				if (mouseZone is FlxRect && FlxMath.pointInFlxRect(FlxG.mouse.x, FlxG.mouse.y, mouseZone) == false)
+				{
+					releaseMouse();
 				}
 			}
 			else
@@ -110,6 +158,24 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
+		/**
+		 * Internal function used to release the click / drag targets and reset the mouse state
+		 */
+		private function releaseMouse():void
+		{
+			//	Mouse is no longer down, so tell the click target it's free - this will also stop dragging if happening
+			clickTarget.mouseReleasedHandler();
+			
+			hasClickTarget = false;
+			clickTarget = null;
+			
+			isDragging = false;
+			dragTarget = null;
+		}
+		
+		/**
+		 * Once the clickStack is created this sorts it and then picks the sprite with the highest priority (based on sortIndex and sortOrder)
+		 */
 		private function assignClickedSprite():void
 		{
 			//	If there is more than one potential target then sort them
@@ -151,6 +217,9 @@ package org.flixel.plugin.photonstorm
 			return 0;
 		}
 		
+		/**
+		 * Removes all references to any click / drag targets and resets this class
+		 */
 		public static function clear():void
 		{
 			hasClickTarget = false;

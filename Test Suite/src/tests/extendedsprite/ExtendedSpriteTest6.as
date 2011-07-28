@@ -16,12 +16,7 @@ package tests.extendedsprite
 		
 		private var clock:FlxDelay;
 		private var timer:FlxText;
-		
 		private var balls:FlxGroup;
-		private var left:FlxTileblock;
-		private var right:FlxTileblock;
-		private var top:FlxTileblock;
-		private var bottom:FlxTileblock;
 		
 		public function ExtendedSpriteTest6() 
 		{
@@ -65,23 +60,12 @@ package tests.extendedsprite
 			timer.shadow = 0xff000000;
 			
 			//	Walls for the balls to rebound off, positioned just outside the screen edges
-			left = new FlxTileblock(-16, 0, 16, FlxG.height);
-			right = new FlxTileblock(FlxG.width, 0, 16, FlxG.height);
-			top = new FlxTileblock(0, 0, FlxG.width, 16);
-			bottom = new FlxTileblock(0, FlxG.height - 16, FlxG.width, 16);
-			
-			//	Increase the world size otherwise the above walls fall out and don't work
-			FlxG.worldBounds = new FlxRect( -16, 0, FlxG.width + 32, FlxG.height + 32);
+			add(FlxCollision.createCameraWall(FlxG.camera, FlxCollision.CAMERA_WALL_OUTSIDE, 16, true));
 			
 			//	A 30-second timer to beat
 			clock = new FlxDelay(1000 * 30);
 			timer.text = clock.secondsRemaining.toString();
 			clock.start();
-			
-			add(left);
-			add(right);
-			add(top);
-			add(bottom);
 			
 			add(timer);
 			add(balls);
