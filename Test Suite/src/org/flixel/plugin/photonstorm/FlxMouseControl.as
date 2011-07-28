@@ -51,7 +51,7 @@ package org.flixel.plugin.photonstorm
 		 * The FlxExtendedSprite that currently has the mouse button pressed on it
 		 */
 		public static var clickTarget:FlxExtendedSprite;
-		private static var clickStack:Array;
+		private static var clickStack:Array = new Array;
 		private static var clickCoords:FlxPoint;
 		private static var hasClickTarget:Boolean = false;
 		
@@ -106,11 +106,11 @@ package org.flixel.plugin.photonstorm
 		override public function update():void
 		{
 			//	Update mouse speed
-			speedX = FlxG.mouse.x - oldX;
-			speedY = FlxG.mouse.y - oldY;
+			speedX = FlxG.mouse.screenX - oldX;
+			speedY = FlxG.mouse.screenY - oldY;
 			
-			oldX = FlxG.mouse.x;
-			oldY = FlxG.mouse.y;
+			oldX = FlxG.mouse.screenX;
+			oldY = FlxG.mouse.screenY;
 			
 			//	Is the mouse currently pressed down on a target?
 			if (hasClickTarget)
@@ -145,7 +145,7 @@ package org.flixel.plugin.photonstorm
 				
 				if (FlxG.mouse.justPressed())
 				{
-					clickStack = new Array;
+					clickStack.length = 0;
 				}
 				
 				//	If you are wondering how the brand new array can have anything in it by now, it's because FlxExtendedSprite
@@ -192,7 +192,7 @@ package org.flixel.plugin.photonstorm
 			
 			clickTarget.mousePressedHandler();
 			
-			clickStack = [];
+			clickStack.length = 0;
 		}
 		
 		/**

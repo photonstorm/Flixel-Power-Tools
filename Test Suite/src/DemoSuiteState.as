@@ -48,7 +48,7 @@ package
 		[Embed(source = '../assets/fonts/171.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = ExtendedSpriteTest7;
+		private var shortcut:Class = ExtendedSpriteTest11;
 		
 		private var version:String;
 		private var options:Array;
@@ -103,7 +103,7 @@ package
 			options["Controls"] = [ControlTest1, ControlTest2, ControlTest3, ControlTest4, ControlTest5, ControlTest6, ControlTest7 ];
 			options["Delay"] = [DelayTest1];
 			options["Display"] = [AlphaMaskTest1, AlphaMaskTest2, AlphaMaskTest3];
-			options["Extended Sprites"] = [ExtendedSpriteTest1, ExtendedSpriteTest2, ExtendedSpriteTest3, ExtendedSpriteTest4, ExtendedSpriteTest5, ExtendedSpriteTest6];
+			options["Extended Sprites"] = [ExtendedSpriteTest1, ExtendedSpriteTest2, ExtendedSpriteTest3, ExtendedSpriteTest4, ExtendedSpriteTest5, ExtendedSpriteTest6, ExtendedSpriteTest7, ExtendedSpriteTest8, ExtendedSpriteTest9, ExtendedSpriteTest10];
 			options["Flod"] = [FlodTest1];
 			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3];
 			options["Gradient"] = [GradientTest1, GradientTest2, GradientTest3];

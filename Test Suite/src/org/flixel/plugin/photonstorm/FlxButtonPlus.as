@@ -2,10 +2,11 @@
  * FlxButtonPlus
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Added scrollFactor to button and swapped to using mouseInFlxRect so buttons in scrolling worlds work
  * v1.3 Updated gradient colour values to include alpha
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 5th 2011
+ * @version 1.4 - July 28th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -127,12 +128,17 @@ package org.flixel.plugin.photonstorm
 			buttonNormal.makeGraphic(Width, Height, borderColor);
 			buttonNormal.stamp(FlxGradient.createGradientFlxSprite(Width - 2, Height - 2, offColor), 1, 1);
 			buttonNormal.solid = false;
+			buttonNormal.scrollFactor.x = 0;
+			buttonNormal.scrollFactor.y = 0;
 			
 			buttonHighlight = new FlxExtendedSprite(X, Y);
 			buttonHighlight.makeGraphic(Width, Height, borderColor);
 			buttonHighlight.stamp(FlxGradient.createGradientFlxSprite(Width - 2, Height - 2, onColor), 1, 1);
 			buttonHighlight.solid = false;
 			buttonHighlight.visible = false;
+			buttonHighlight.scrollFactor.x = 0;
+			buttonHighlight.scrollFactor.y = 0;
+			
 			
 			add(buttonNormal);
 			add(buttonHighlight);
@@ -269,9 +275,7 @@ package org.flixel.plugin.photonstorm
 				{
 					c = buttonNormal.cameras[i++] as FlxCamera;
 					
-					FlxG.mouse.getWorldPosition(c, buttonNormal.point);
-					
-					if (buttonNormal.overlapsPoint(buttonNormal.point,false,c))
+					if (FlxMath.mouseInFlxRect(false, buttonNormal.rect))
 					{
 						offAll = false;
 						

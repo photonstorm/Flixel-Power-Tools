@@ -2,12 +2,11 @@
 <project>
   <version>2.0.6</version>
   <bgColor>0x000000</bgColor>
-  <viewPos x="10.999999999999986" y="13.999999999999986"/>
+  <viewPos x="10" y="9"/>
   <firstLayersTop>false</firstLayersTop>
   <spriteEntries currentId="1"/>
   <layers>
     <group name="Group1" xScroll="1" yScroll="1" visible="true" open="true" locked="false" exports="true">
-      <imagelayer name="Image2" file="../assets/pics/platformer_backdrop.png" xScroll="1" yScroll="1" x="0" y="0" visible="true" opacity="1" locked="false" exports="false"/>
       <maplayer name="Map1" xScroll="1" yScroll="1" x="0" y="0" width="20" height="18" tileset="../assets/tiles/platformer_tiles.png" tileWidth="16" tileHeight="16" visible="true" hasHits="false" drawIdx="1" collideIdx="1" eraseIdx="0" locked="false" exports="true" tileSpacingX="16" tileSpacingY="16" xStagger="0" tileOffsetX="0" tileOffsetY="0" isMaster="false" mapType="2d" hasHeight="false" repeatX="false" repeatY="false" selected="true">
         <row>31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31</row>
         <row>32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32</row>

@@ -65,6 +65,7 @@ package
 		[Embed(source = '../assets/sprites/atari800xl.png')] public static var atari800xlPNG:Class;
 		[Embed(source = '../assets/sprites/shinyball.png')] public static var shinyBallPNG:Class;
 		[Embed(source = '../assets/sprites/arrows.png')] public static var arrowsPNG:Class;
+		[Embed(source = '../assets/sprites/mana_card.png')] public static var manaCardPNG:Class;
 		
 		//	Pictures
 		[Embed(source = '../assets/pics/mask-test.png')] public static var alphaMaskPNG:Class;
@@ -111,6 +112,7 @@ package
 		[Embed(source = '../assets/tiles/platformer_tiles.png')] public static var platformerTilesPNG:Class;
 		[Embed(source = '../assets/pics/platformer_backdrop.png')] public static var platformerBackdropPNG:Class;
 		[Embed(source = '../assets/maps/platformer_map.csv', mimeType = 'application/octet-stream')] public static var platformerMapCSV:Class;
+		[Embed(source = '../assets/maps/mapCSV_Group1_Map1.csv', mimeType = 'application/octet-stream')] public static var bigMapCSV:Class;
 		
 		//	Sci-Fi Game
 		[Embed(source = '../assets/sprites/humstar.png')] public static var humstarPNG:Class;

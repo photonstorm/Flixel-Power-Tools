@@ -2,11 +2,12 @@
  * FlxMath
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.7 Added mouseInFlxRect
  * v1.6 Added wrapAngle, angleLimit and more documentation
  * v1.5 Added pointInCoordinates, pointInFlxRect and pointInRectangle
  * v1.4 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.6 - June 12th 2011
+ * @version 1.7 - June 28th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -14,7 +15,8 @@
 package org.flixel.plugin.photonstorm 
 {
 	import flash.geom.Rectangle;
-	import org.flixel.FlxRect;
+	
+	import org.flixel.*;
 	
 	/**
 	 * Adds a set of fast Math functions and extends a few commonly used ones
@@ -75,6 +77,26 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			return false;
+		}
+		
+		/**
+		 * Returns true if the mouse world x/y coordinate are within the given rectangular block
+		 * 
+		 * @param	useWorldCoords	If true the world x/y coordinates of the mouse will be used, otherwise screen x/y
+		 * @param	rect			The FlxRect to test within
+		 * 
+		 * @return	true if mouse is within the FlxRect, otherwise false
+		 */
+		public static function mouseInFlxRect(useWorldCoords:Boolean, rect:FlxRect):Boolean
+		{
+			if (useWorldCoords)
+			{
+				return pointInFlxRect(FlxG.mouse.x, FlxG.mouse.y, rect);
+			}
+			else
+			{
+				return pointInFlxRect(FlxG.mouse.screenX, FlxG.mouse.screenY, rect);
+			}
 		}
 		
 		/**

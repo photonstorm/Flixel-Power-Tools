@@ -1,7 +1,8 @@
 28th July 2011
 
 FlxExtendedSprite : Added Gravity, Friction and Tolerance support
-
+FlxButtonPlus : Added scrollFactor to buttonNormal and buttonHighlight
+ 
 27th July 2011
 
 Added createCameraWall to FlxCollision and created lots more tests

@@ -20,6 +20,12 @@ package org.flixel.plugin.photonstorm
 	 * 
 	 * TODO
 	 * 
+	 * Springs
+	 * 
+	 * Break Limit
+	 * 
+	 * Test on a Tile Map (throwing around a map)
+	 * 
 	 * I need to do a "break limit / breaking point" - a distance which if the mouse pointer moves that far away from the sprite
 	 * it'll break the drag, even if the button is still pressed down. That will stop the problem with dragging sprites through tile maps.
 	 * 
@@ -109,6 +115,13 @@ package org.flixel.plugin.photonstorm
 		private var dragFromPoint:Boolean;
 		private var allowHorizontalDrag:Boolean = true;
 		private var allowVerticalDrag:Boolean = true;
+		
+		public var snapOnDrag:Boolean = false;
+		public var snapOnRelease:Boolean = false;
+		private var snapX:int;
+		private var snapY:int;
+		
+		private var tempPoint:FlxPoint;
 		
 		/**
 		 * Function called when the mouse starts to drag this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
@@ -268,6 +281,32 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * Make this Sprite snap to the given grid either during drag or when it's released.
+		 * For example 16x16 as the snapX and snapY would make the sprite snap to every 16 pixels.
+		 * 
+		 * @param	snapX		The width of the grid cell in pixels
+		 * @param	snapY		The height of the grid cell in pixels
+		 * @param	onDrag		If true the sprite will snap to the grid while being dragged
+		 * @param	onRelease	If true the sprite will snap to the grid when released
+		 */
+		public function enableMouseSnap(snapX:int, snapY:int, onDrag:Boolean = true, onRelease:Boolean = false):void
+		{
+			snapOnDrag = onDrag;
+			snapOnRelease = onRelease;
+			this.snapX = snapX;
+			this.snapY = snapY;
+		}
+		
+		/**
+		 * Stops the sprite from snapping to a grid during drag or release.
+		 */
+		public function disableMouseSnap():void
+		{
+			snapOnDrag = false;
+			snapOnRelease = false;
+		}
+		
+		/**
 		 * Core update loop
 		 */
 		override public function update():void
@@ -397,19 +436,63 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * Updates the Mouse Drag on this Sprite.
+		 */
+		private function updateDrag():void
+		{
+			//FlxG.mouse.getWorldPosition(null, tempPoint);
+			
+			if (allowHorizontalDrag)
+			{
+				x = int(FlxG.mouse.x) - dragOffsetX;
+			}
+			
+			if (allowVerticalDrag)
+			{
+				y = int(FlxG.mouse.y) - dragOffsetY;
+			}
+			
+			if (boundsRect)
+			{
+				checkBoundsRect();
+			}
+
+			if (boundsSprite)
+			{
+				checkBoundsSprite();
+			}
+			
+			if (snapOnDrag)
+			{
+				x = int(Math.floor(x / snapX) * snapX);
+				y = int(Math.floor(y / snapY) * snapY);
+			}
+		}
+		
+		/**
 		 * Checks if the mouse is over this sprite and pressed, then does a pixel perfect check if needed and adds it to the FlxMouseControl check stack
 		 */
 		private function checkForClick():void
 		{
 			if (mouseOver && FlxG.mouse.justPressed())
 			{
-				if (dragPixelPerfect == false && clickPixelPerfect == false)
+				//	If we don't need a pixel perfect check, then don't bother running one! By this point we know the mouse is over the sprite already
+				if (clickPixelPerfect == false && dragPixelPerfect == false)
 				{
 					FlxMouseControl.addToStack(this);
+					return;
 				}
-				else if ((clickPixelPerfect && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, clickPixelPerfectAlpha)) || (dragPixelPerfect && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha)))
+				
+				if (clickPixelPerfect && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, clickPixelPerfectAlpha))
 				{
 					FlxMouseControl.addToStack(this);
+					return;
+				}
+				
+				if (dragPixelPerfect && FlxCollision.pixelPerfectPointCheck(FlxG.mouse.x, FlxG.mouse.y, this, dragPixelPerfectAlpha))
+				{
+					FlxMouseControl.addToStack(this);
+					return;
 				}
 			}
 		}
@@ -482,32 +565,6 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Updates the Mouse Drag on this Sprite.
-		 */
-		private function updateDrag():void
-		{
-			if (allowHorizontalDrag)
-			{
-				x = int(FlxG.mouse.x) - dragOffsetX;
-			}
-			
-			if (allowVerticalDrag)
-			{
-				y = int(FlxG.mouse.y) - dragOffsetY;
-			}
-			
-			if (boundsRect)
-			{
-				checkBoundsRect();
-			}
-
-			if (boundsSprite)
-			{
-				checkBoundsSprite();
-			}
-		}
-		
-		/**
 		 * Bounds Rect check for the sprite drag
 		 */
 		private function checkBoundsRect():void
@@ -561,6 +618,12 @@ package org.flixel.plugin.photonstorm
 		public function stopDrag():void
 		{
 			isDragged = false;
+			
+			if (snapOnRelease)
+			{
+				x = int(Math.floor(x / snapX) * snapX);
+				y = int(Math.floor(y / snapY) * snapY);
+			}
 		}
 		
 		/**
@@ -623,6 +686,11 @@ package org.flixel.plugin.photonstorm
 			return _point;
 		}
 		
+		public function set point(p:FlxPoint):void
+		{
+			_point = p;
+		}
+		
 		/**
 		 * Return true if the mouse is over this Sprite, otherwise false. Only takes the Sprites bounding box into consideration and does not check if there 
 		 * are other sprites potentially on-top of this one. Check the value of this.isPressed if you need to know if the mouse is currently clicked on this sprite.
@@ -656,6 +724,19 @@ package org.flixel.plugin.photonstorm
 			}
 			
 			return -1;
+		}
+		
+		/**
+		 * Returns an FlxRect consisting of the bounds of this Sprite.
+		 */
+		public function get rect():FlxRect
+		{
+			_rect.x = x;
+			_rect.y = y;
+			_rect.width = width;
+			_rect.height = height;
+			
+			return _rect;
 		}
 		
 	}
