@@ -83,12 +83,17 @@ package org.flixel.plugin.photonstorm
 		 * Returns true if the mouse world x/y coordinate are within the given rectangular block
 		 * 
 		 * @param	useWorldCoords	If true the world x/y coordinates of the mouse will be used, otherwise screen x/y
-		 * @param	rect			The FlxRect to test within
+		 * @param	rect			The FlxRect to test within. If this is null for any reason this function always returns true.
 		 * 
 		 * @return	true if mouse is within the FlxRect, otherwise false
 		 */
 		public static function mouseInFlxRect(useWorldCoords:Boolean, rect:FlxRect):Boolean
 		{
+			if (rect == null)
+			{
+				return true;
+			}
+			
 			if (useWorldCoords)
 			{
 				return pointInFlxRect(FlxG.mouse.x, FlxG.mouse.y, rect);

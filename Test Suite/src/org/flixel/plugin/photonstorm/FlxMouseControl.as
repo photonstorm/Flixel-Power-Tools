@@ -76,6 +76,13 @@ package org.flixel.plugin.photonstorm
 		 */
 		public static var mouseZone:FlxRect;
 		
+		/**
+		 * Instead of using a mouseZone (which is calculated in world coordinates) you can limit the mouse to the FlxG.camera.deadzone area instead.
+		 * If set to true the mouse will use the camera deadzone. If false (or the deadzone is null) no check will take place.
+		 * Note that this takes priority over the mouseZone above. If the mouseZone and deadzone are set, the deadzone is used.
+		 */
+		public static var linkToDeadZone:Boolean = false;
+		
 		public function FlxMouseControl() 
 		{
 		}
@@ -133,9 +140,16 @@ package org.flixel.plugin.photonstorm
 					releaseMouse();
 				}
 				
-				//	Is a mouse zone enabled? In which case check if we're still in it
-				if (mouseZone is FlxRect && FlxMath.pointInFlxRect(FlxG.mouse.x, FlxG.mouse.y, mouseZone) == false)
+				if (linkToDeadZone)
 				{
+					if (FlxMath.mouseInFlxRect(false, FlxG.camera.deadzone) == false)
+					{
+						releaseMouse();
+					}
+				}
+				else if (FlxMath.mouseInFlxRect(true, mouseZone) == false)
+				{
+					//	Is a mouse zone enabled? In which case check if we're still in it
 					releaseMouse();
 				}
 			}

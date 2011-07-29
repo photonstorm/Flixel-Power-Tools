@@ -15,19 +15,15 @@
 package org.flixel.plugin.photonstorm 
 {
 	import org.flixel.*;
+	import org.flixel.plugin.photonstorm.BaseTypes.Spring;
 
 	/**
-	 * 
 	 * TODO
+	 * ----
 	 * 
-	 * Springs
-	 * 
-	 * Break Limit
-	 * 
-	 * Test on a Tile Map (throwing around a map)
-	 * 
-	 * I need to do a "break limit / breaking point" - a distance which if the mouse pointer moves that far away from the sprite
-	 * it'll break the drag, even if the button is still pressed down. That will stop the problem with dragging sprites through tile maps.
+	 * 2) Break Limit
+	 * 4) New test that has a value slider, could use snap and drag lock x?
+	 * 5) Stress Test Demo - 100 overlapping sprites?
 	 * 
 	 */
 	
@@ -116,13 +112,6 @@ package org.flixel.plugin.photonstorm
 		private var allowHorizontalDrag:Boolean = true;
 		private var allowVerticalDrag:Boolean = true;
 		
-		public var snapOnDrag:Boolean = false;
-		public var snapOnRelease:Boolean = false;
-		private var snapX:int;
-		private var snapY:int;
-		
-		private var tempPoint:FlxPoint;
-		
 		/**
 		 * Function called when the mouse starts to drag this sprite. Function is passed these parameters: obj:FlxExtendedSprite, x:int, y:int
 		 * @default null
@@ -147,6 +136,25 @@ package org.flixel.plugin.photonstorm
 		 */
 		public var boundsSprite:FlxSprite = null;
 		
+		private var snapOnDrag:Boolean = false;
+		private var snapOnRelease:Boolean = false;
+		private var snapX:int;
+		private var snapY:int;
+		
+		//	Document
+		public var hasSpring:Boolean = false;
+		public var spring:Spring;
+		public var springOffsetX:int;
+		public var springOffsetY:int;
+		
+		/**
+		 * Creates a white 8x8 square <code>FlxExtendedSprite</code> at the specified position.
+		 * Optionally can load a simple, one-frame graphic instead.
+		 * 
+		 * @param	X				The initial X position of the sprite.
+		 * @param	Y				The initial Y position of the sprite.
+		 * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+		 */
 		public function FlxExtendedSprite(X:Number = 0, Y:Number = 0, SimpleGraphic:Class = null)
 		{
 			super(X, Y, SimpleGraphic);
@@ -306,6 +314,30 @@ package org.flixel.plugin.photonstorm
 			snapOnRelease = false;
 		}
 		
+		public function addSpring(spring:Spring):void
+		{
+			hasSpring = true;
+			
+			this.spring = spring;
+		}
+		
+		public function removeSpring():void
+		{
+			hasSpring = false;
+			
+			this.spring = null;
+		}
+		
+		public function get springX():int
+		{
+			return x + springOffsetX;
+		}
+		
+		public function get springY():int
+		{
+			return y + springOffsetY;
+		}
+		
 		/**
 		 * Core update loop
 		 */
@@ -324,6 +356,11 @@ package org.flixel.plugin.photonstorm
 			if (hasGravity)
 			{
 				updateGravity();
+			}
+			
+			if (hasSpring)
+			{
+				spring.update();
 			}
 			
 			super.update();
