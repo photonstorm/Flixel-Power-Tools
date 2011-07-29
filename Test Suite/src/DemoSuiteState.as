@@ -1,14 +1,14 @@
 /**
  * Flixel Power Tools Test Suite
  * 
- * v1.8 - Extended Sprites / Linked Groups
+ * v1.8 - Extended Sprites and new FlxFlectrum / FlxFlod class
  * v1.7 - New FlxBar and FlxWeapon tests
  * v1.6 - FlxControl and new Special FX Plugins
  * v1.5 - Massive restructure to split the tests up and move to git
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
  * v1.3 - Updated for Flixel v2.53
  * 
- * @version 1.8 - July 20th 2011
+ * @version 1.8 - July 29th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -43,12 +43,12 @@ package
 	
 	public class DemoSuiteState extends FlxState
 	{
-		[Embed(source = '../assets/suite/melon_dino.png')] private var dinoPNG:Class;
+		[Embed(source = '../assets/suite/exocet_spaceman.png')] private var spacemanPNG:Class;
 		[Embed(source = '../assets/suite/amigamouse.png')] private var mouseCursorPNG:Class;
-		[Embed(source = '../assets/fonts/171.png')] private var blueFontPNG:Class;
+		[Embed(source = '../assets/fonts/087.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = ExtendedSpriteTest12;
+		private var shortcut:Class = FlodTest3;
 		
 		private var version:String;
 		private var options:Array;
@@ -57,7 +57,7 @@ package
 		private var sections:Array;
 		private var sectionList:FlxGroup;
 		private var list:FlxRect;
-		private var dino:FlxSprite;
+		private var spaceman:FlxSprite;
 		private var listBackground:FlxSprite;
 		
 		//	Sections
@@ -82,8 +82,8 @@ package
 			sections.push( { title: "Controls", 		isNew: false,	pic: AssetsRegistry.nonohaPurplePNG } );
 			sections.push( { title: "Delay", 			isNew: false,	pic: AssetsRegistry.pigChampagnePNG } );
 			sections.push( { title: "Display", 			isNew: false,	pic: AssetsRegistry.nonohaBluePNG } );
-			sections.push( { title: "Extended Sprites",	isNew: false,	pic: AssetsRegistry.nonohaBluePNG } );
-			sections.push( { title: "Flod", 			isNew: false,	pic: AssetsRegistry.cactuarPNG } );
+			sections.push( { title: "Extended Sprites",	isNew: true,	pic: AssetsRegistry.ladyCopyPNG } );
+			sections.push( { title: "Flod", 			isNew: true,	pic: AssetsRegistry.cactuarPNG } );
 			sections.push( { title: "FlxBar", 			isNew: false,	pic: AssetsRegistry.spyroPNG } );
 			sections.push( { title: "Gradient", 		isNew: false,	pic: AssetsRegistry.goldenGirlMackPNG } );
 			//sections.push( { title: "Linked Group",		isNew: true,	pic: AssetsRegistry.goldenGirlMackPNG } );
@@ -103,11 +103,11 @@ package
 			options["Controls"] = [ControlTest1, ControlTest2, ControlTest3, ControlTest4, ControlTest5, ControlTest6, ControlTest7 ];
 			options["Delay"] = [DelayTest1];
 			options["Display"] = [AlphaMaskTest1, AlphaMaskTest2, AlphaMaskTest3];
-			options["Extended Sprites"] = [ExtendedSpriteTest1, ExtendedSpriteTest2, ExtendedSpriteTest3, ExtendedSpriteTest4, ExtendedSpriteTest5, ExtendedSpriteTest6, ExtendedSpriteTest7, ExtendedSpriteTest8, ExtendedSpriteTest9, ExtendedSpriteTest10];
-			options["Flod"] = [FlodTest1];
+			options["Extended Sprites"] = [ExtendedSpriteTest1, ExtendedSpriteTest2, ExtendedSpriteTest3, ExtendedSpriteTest4, ExtendedSpriteTest5, ExtendedSpriteTest6, ExtendedSpriteTest7, ExtendedSpriteTest8, ExtendedSpriteTest9, ExtendedSpriteTest10, ExtendedSpriteTest11, ExtendedSpriteTest12, ExtendedSpriteTest13, ExtendedSpriteTest14];
+			options["Flod"] = [FlodTest1, FlodTest2, FlodTest3];
 			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3];
 			options["Gradient"] = [GradientTest1, GradientTest2, GradientTest3];
-			options["Linked Group"] = [LinkedGroupTest1];
+			//options["Linked Group"] = [LinkedGroupTest1];
 			options["Screen Grab"] = [ScreenGrabTest1, ScreenGrabTest2];
 			options["Scrolling Text"] = [ScrollingTextTest1, ScrollingTextTest2, ScrollingTextTest3];
 			options["Scrolling Zones"] = [ScrollZoneTest1, ScrollZoneTest2, ScrollZoneTest3, ScrollZoneTest4, ScrollZoneTest5];
@@ -121,23 +121,24 @@ package
 			version = "- Demo Suite v" + FlxPowerTools.LIBRARY_MAJOR_VERSION + "." + FlxPowerTools.LIBRARY_MINOR_VERSION + " - Contains " + countTests().toString() + " examples -";
 
 			header = new TestsHeader(version, false);
+			header.showDarkBackground();
 			header.mainMenu = true;
 			
 			FlxG.mouse.load(mouseCursorPNG, 2);
 			
 			//	Section Menu List
 			
-			listBackground = new FlxSprite(200, 33).makeGraphic(120, 11, 0xff669911);
+			listBackground = new FlxSprite(200 - 32, 33).makeGraphic(150, 11, 0xffe06000);
 			listBackground.visible = false;
 			
 			sectionList = new FlxGroup(sections.length);
 			
-			var tx:int = 200;
-			var ty:int = 32;
+			var tx:int = 200 - 32;
+			var ty:int = 32 - 8;
 			
 			for each (var item:Object in sections)
 			{
-				var txt:FlxText = new FlxText(tx, ty, 120, item.title);
+				var txt:FlxText = new FlxText(tx, ty, 160, item.title);
 				
 				if (item.isNew)
 				{
@@ -151,11 +152,11 @@ package
 				ty += 12;
 			}
 			
-			list = new FlxRect(tx, 32, 120, ty - (32));
+			list = new FlxRect(tx, 32 - 8, 160, ty - (32));
 			
 			//	Sections
 			
-			sectionTitle = new FlxBitmapFont(blueFontPNG, 16, 18, FlxBitmapFont.TEXT_SET10 + "| 0123456789*=!@:.,\\?-~=%^&()'", 19, 0, 1);
+			sectionTitle = new FlxBitmapFont(blueFontPNG, 16, 16, FlxBitmapFont.TEXT_SET10 + ")!()", 20);
 			sectionTitle.setText("Bitmap Fonts");
 			sectionTitle.x = 320 + 16;
 			sectionTitle.y = 32;
@@ -183,7 +184,7 @@ package
 			
 			//	Misc stuff
 			
-			dino = new FlxSprite(0, 24, dinoPNG);
+			spaceman = new FlxSprite(0, 0, spacemanPNG);
 			
 			credits = new FlxButton(16, 214, "Credits", runCredits);
 			
@@ -194,10 +195,10 @@ package
 			add(header);
 			add(dolly);
 			add(listBackground);
-			add(dino);
+			add(spaceman);
 			add(sectionList);
 			add(demoList);
-			add(sectionBG);
+			//add(sectionBG);
 			add(sectionTitle);
 			add(credits);
 			add(header.overlay);

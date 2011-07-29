@@ -1,7 +1,7 @@
 Flixel Power Tools Test Suite
 -----------------------------
 
-Updated 16th June 2011
+Updated 29th July 2011
 
 http://www.photonstorm.com
 

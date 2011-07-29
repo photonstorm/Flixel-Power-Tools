@@ -16,7 +16,6 @@ package tests.extendedsprite
 		//	Test specific variables
 		
 		private var player:FlxExtendedSprite;
-		private var ball:FlxSprite;
 		private var scene:ControlTestScene1;
 		
 		public function ExtendedSpriteTest4() 
@@ -41,14 +40,9 @@ package tests.extendedsprite
 			player.allowCollisions = FlxObject.ANY;
 			player.enableMouseDrag(false, true);
 			
-			ball = new FlxSprite(128, 128, AssetsRegistry.redPNG);
-			ball.solid = true;
-			ball.elasticity = 0.8;
-			
 			scene = new ControlTestScene1;
 			
 			add(scene);
-			add(ball);
 			add(player);
 			
 			//	Header overlay
@@ -60,7 +54,6 @@ package tests.extendedsprite
 			super.update();
 			
 			FlxG.collide(player, scene.map);
-			FlxG.collide(player, ball);
 		}
 		
 		override public function destroy():void

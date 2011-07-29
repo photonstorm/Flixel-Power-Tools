@@ -2,15 +2,18 @@
  * FlxFlod
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.3 Added full FlxFlectrum support
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.2 - April 23rd 2011
+ * @version 1.3 - July 29th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
 package org.flixel.plugin.photonstorm 
 {
+	import neoart.flectrum.Flectrum;
+	import neoart.flectrum.SoundEx;
 	import org.flixel.*;
 	import neoart.flod.*;
 	
@@ -47,6 +50,9 @@ package org.flixel.plugin.photonstorm
 		
 		private static var callbackHooksCreated:Boolean = false;
 		
+		private static var sound:SoundEx = new SoundEx;
+		public static var flectrum:FlxFlectrum;
+		
 		/**
 		 * Starts playback of a tracker module
 		 * 
@@ -66,7 +72,7 @@ package org.flixel.plugin.photonstorm
 			{
 				processor.loopSong = true;
 				processor.stereo = 0;
-				processor.play();
+				processor.play(sound);
 				
 				if (processor.soundChannel)
 				{
@@ -87,6 +93,40 @@ package org.flixel.plugin.photonstorm
 			{
 				return false;
 			}
+		}
+		
+		/**
+		 * Creates a Flectrum (VU Meter / Spectrum Analyser)
+		 * 
+		 * @param	x				The x position of the flectrum in game world coordinates
+		 * @param	y				The y position of the flectrum in game world coordinates
+		 * @param	meter			A graphic to use for the meter (bar) of the flectrum. Default null uses a solid fill rectangle.
+		 * @param	showBackground	Display an alpha background behind the meters
+		 * @param	backgroundBeat	Makes the alpha background pulsate in time to the music
+		 * @param	columns			The number of columns in the flectrum
+		 * @param	columnSize		The width of each column in pixels - if you use your own meter graphic this value is ignored
+		 * @param	columnSpacing	The spacing in pixels between each column (meter) of the flectrum
+		 * @param	rows			The number of rows in the flectrum
+		 * @param	rowSize			The height of each row. Overall flectrum height is rowSize + rowSpacing * rows - if you use your own meter graphic this value is ignored
+		 * @param	rowSpacing		The spacing in pixels between each row of the flectrum - if you use your own meter graphic this value is ignored
+		 * 
+		 * @return	The FlxFlectrum instance for further modification. Also available via FlxFlod.flectrum
+		 */
+		public static function createFlectrum(x:int, y:int, meter:Class = null, showBackground:Boolean = false, backgroundBeat:Boolean = false, columns:int = 15, columnSize:int = 10, columnSpacing:int = 0, rows:int = 32, rowSize:int = 3, rowSpacing:int = 0):FlxFlectrum
+		{
+			flectrum = new FlxFlectrum();
+			
+			flectrum.init(x, y, sound, columns, columnSize, columnSpacing, rows, rowSize, rowSpacing);
+			
+			if (meter)
+			{
+				flectrum.useBitmap(meter);
+			}
+			
+			flectrum.showBackground = showBackground;
+			flectrum.backgroundBeat = backgroundBeat;
+			
+			return flectrum;
 		}
 		
 		/**
@@ -174,14 +214,6 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * TODO!
-		 * @param	duration
-		 */
-		public static function fadeOut(duration:int):void
-		{
-		}
-		
-		/**
 		 * Is a tune already playing?
 		 */
 		public static function get isPlaying():Boolean
@@ -210,58 +242,6 @@ package org.flixel.plugin.photonstorm
 				return false;
 			}
 		}
-		
-		
-		/*
-		private function playSongWithFlectrum():void
-		{
-			//	1) First we get the module into a ByteArray
-			
-			stream = new Song1() as ByteArray;
-			
-			//	2) Create the ModProcessor which will play the song
-			
-			processor = new ModProcessor();
-			
-			//	3) Create the SoundEx, this keeps track of the sound channel and sound mixer
-			
-			sound = new SoundEx();
-			
-			//	4) Create the Flectrum - the first parameter is the soundEx above. The second two control the size of the flectrum
-			
-			flectrum = new Flectrum(sound, 64, 32);
-			//	This bitmap is the vu meter
-			flectrum.useBitmap(Bitmap(new FlectrumMeter2PNG()).bitmapData);
-			//	You can control the spacing between the peaks with these pixel values
-			flectrum.rowSpacing = 0;
-			flectrum.columnSpacing = 0;
-			//	Turn it on to see it in action :)
-			flectrum.showBackground = false;
-			//	Should the background pulse to the beat? You can also control its alpha
-			flectrum.backgroundBeat = true;
-			//	Location of the flectrum on-screen
-			flectrum.x = 0;
-			flectrum.y = 380;
-			
-			//	Add it to the display list
-			addChild(flectrum);
-			
-			//	5) Load the song (now converted into a ByteArray) into the ModProcessor
-			//	This returns true on success, meaning the module was parsed successfully
-			
-			if (processor.load(stream))
-			{
-				//	Will the song loop at the end? (boolean)
-				processor.loopSong = true;
-				
-				//	6) Play it! Note that this time we pass in the SoundEx to the ModProcessor, so it can update the Flectrum
-				processor.play(sound);
-			}
-		}
-		*/
-		
-		
-		
 		
 	}
 

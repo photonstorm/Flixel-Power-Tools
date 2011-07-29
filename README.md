@@ -1,9 +1,9 @@
 Flixel Power Tools
 ==================
 
-Version 1.7
+Version 1.8
 
-June 16th 2011
+July 29th 2011
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
@@ -73,10 +73,11 @@ The following classes are currently in the Flixel Power Tools:
 * FlxCollision
 * FlxColor
 * FlxControl (includes FlxControlHandler)
+* FlxCoreUtils
 * FlxDelay
 * FlxDisplay
 * FlxExtendedSprite
-* FlxFlod
+* FlxFlod (includes FlxFlectrum)
 * FlxGradient
 * FlxGridOverlay
 * FlxLinkedGroup
@@ -97,6 +98,7 @@ Special FX Includes
 * GlitchFX
 * PlasmaFX
 * RainbowLineFX
+* RevealFX
 * SineWaveFX
 * StarfieldFX
 

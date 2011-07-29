@@ -4,12 +4,12 @@ package tests.extendedsprite
 	import org.flixel.plugin.photonstorm.*;
 	import tests.TestsHeader;
 
-	public class ExtendedSpriteTest12 extends FlxState
+	public class ExtendedSpriteTest13 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "Springs 1";
-		public static var description:String = "Thing on a Spring!";
-		private var instructions:String = "A sprite on the end of a Spring";
+		public static var title:String = "Springs 2";
+		public static var description:String = "Mouse Spring only active on click";
+		private var instructions:String = "The spring is only active on click";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
@@ -17,7 +17,7 @@ package tests.extendedsprite
 		private var ball:FlxExtendedSprite;
 		private var debug:FlxSprite;
 		
-		public function ExtendedSpriteTest12() 
+		public function ExtendedSpriteTest13() 
 		{
 		}
 		
@@ -35,16 +35,17 @@ package tests.extendedsprite
 			}
 			
 			ball = new FlxExtendedSprite(160, 120, AssetsRegistry.redPNG);
-			
-			//	Adds a Mouse Spring to this sprite. The first parameter (false) means the spring is always active.
-			ball.enableMouseSpring(false);
+			ball.enableMouseSpring(true);
 			
 			//	As the sprite is 16x16 and we want the spring to attach to the middle of it, we need an 8x8 offset
 			ball.springOffsetX = 8;
 			ball.springOffsetY = 8;
 			
-			//	This is just to draw the spring on, to make it visible
 			debug = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0x0);
+			debug.solid = false;
+			
+			//	Walls for the ball to rebound off, positioned just outside the camera edges
+			add(FlxCollision.createCameraWall(FlxG.camera, FlxCollision.CAMERA_WALL_OUTSIDE, 16, true));
 			
 			add(debug);
 			add(ball);
@@ -57,9 +58,16 @@ package tests.extendedsprite
 		{
 			super.update();
 			
-			//	Draw the spring line to the debug sprite
+			FlxG.collide();
+			
+			//	Draw the spring
+			
 			debug.fill(0x0);
-			debug.drawLine(ball.springX, ball.springY, FlxG.mouse.x, FlxG.mouse.y, 0xffFFFFFF, 1);
+			
+			if (ball.isPressed)
+			{
+				debug.drawLine(ball.springX, ball.springY, FlxG.mouse.x, FlxG.mouse.y, 0xffFFFFFF, 1);
+			}
 		}
 		
 		override public function destroy():void

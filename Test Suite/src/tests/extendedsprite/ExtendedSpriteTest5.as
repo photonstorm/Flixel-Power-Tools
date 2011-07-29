@@ -35,9 +35,9 @@ package tests.extendedsprite
 			}
 			
 			atari = new FlxExtendedSprite(64, 96, AssetsRegistry.atari130xePNG);
-			atari.enableMouseClicks(true);
+			atari.enableMouseClicks(false);
 			atari.enableMouseDrag(false);
-			atari.mousePressedCallback = spriteClicked;
+			atari.mouseReleasedCallback = spriteClicked;
 			
 			clickCounter = new FlxText(16, 32, 200, "");
 			

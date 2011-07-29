@@ -67,7 +67,7 @@ package
 			font = new FlxBitmapFont(AssetsRegistry.knightHawksPurpleFontPNG, 31, 25, FlxBitmapFont.TEXT_SET6, 10, 1, 1);
 			//font = new FlxBitmapFont(AssetsRegistry.bluepinkFontPNG, 32, 32, FlxBitmapFont.TEXT_SET2, 10);
 			
-			var scrollText:String = "- PHOTON STORM - ARE HAPPY TO PRESENT V1.7 OF THE FLIXEL POWER TOOLS            ";
+			var scrollText:String = "- PHOTON STORM - ARE HAPPY TO PRESENT V1.8 OF THE FLIXEL POWER TOOLS            ";
 			scrollText = scrollText.concat("THIS RELEASE IS THE BIGGEST YET! WITH STACKS OF NEW FEATURES JUST WAITING TO HIT YOUR GAMES.      ");
 			scrollText = scrollText.concat("CREDITS: ALL CODE BY RICH DAVEY ...... GRAPHICS ON THIS SCREEN, AND IN LOTS OF THE DEMOS: ILIJA MELENTIJEVIC (ILKKE) ...... ");
 			scrollText = scrollText.concat("MUSIC TAKEN FROM THE FALCON 030 DEMO OBNOXIOUS BY INTER ...... ");

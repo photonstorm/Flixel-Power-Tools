@@ -1,3 +1,8 @@
+29th July 2011
+
+FlxFlod : Added full FlxFlectrum support
+FlxFlectrum - new class
+
 28th July 2011
 
 FlxExtendedSprite : Added Gravity, Friction and Tolerance support

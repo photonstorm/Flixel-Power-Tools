@@ -252,7 +252,11 @@ package org.flixel.plugin.photonstorm
 				dragTarget.stopDrag();
 			}
 			
+			speedX = 0;
+			speedY = 0;
 			dragTarget = null;
+			mouseZone = null;
+			linkToDeadZone = false;
 		}
 		
 		/**

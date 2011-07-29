@@ -35,6 +35,7 @@ package
 		[Embed(source = '../assets/sprites/ilkke.png')] public static var ilkkePNG:Class;
 		[Embed(source = '../assets/sprites/healthbar.png')] public static var healthBarPNG:Class;
 		[Embed(source = '../assets/sprites/flectrum.png')] public static var flectrumPNG:Class;
+		[Embed(source = '../assets/sprites/flectrum2.png')] public static var flectrum2PNG:Class;
 		[Embed(source = '../assets/sprites/balls.png')] public static var ballsPNG:Class;
 		[Embed(source = '../assets/sprites/chick.png')] public static var chickPNG:Class;
 		[Embed(source = '../assets/sprites/car.png')] public static var carPNG:Class;
@@ -99,14 +100,15 @@ package
 		[Embed(source = '../assets/pics/profil-sad_plush.png')] public static var profilSadPlushPNG:Class;
 		[Embed(source = '../assets/pics/nslide_snot.png')] public static var nslideSnotPNG:Class;
 		[Embed(source = '../assets/pics/mack_golden_girl.png')] public static var goldenGirlMackPNG:Class;
+		[Embed(source = '../assets/pics/ladycop.png')] public static var ladyCopyPNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/mods/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;
-		[Embed(source = '../assets/mods/yo_africa.MOD', mimeType = 'application/octet-stream')] public static var yoAfricaMOD:Class;
+		//[Embed(source = '../assets/mods/yo_africa.MOD', mimeType = 'application/octet-stream')] public static var yoAfricaMOD:Class;
 		[Embed(source = '../assets/mods/obnoxious_seq3_front6.MOD', mimeType = 'application/octet-stream')] public static var obnoxiousMOD:Class;
 		[Embed(source = '../assets/mods/alpine_cut.MOD', mimeType = 'application/octet-stream')] public static var alpineCutMOD:Class;
 		[Embed(source = '../assets/mods/anarchy.mod', mimeType = 'application/octet-stream')] public static var anarchyMOD:Class;
-		[Embed(source = '../assets/mods/harlequin_barry_leitch.MOD', mimeType = 'application/octet-stream')] public static var harlequinMOD:Class;
+		//[Embed(source = '../assets/mods/harlequin_barry_leitch.MOD', mimeType = 'application/octet-stream')] public static var harlequinMOD:Class;
 		
 		//	Platformer Game
 		[Embed(source = '../assets/tiles/platformer_tiles.png')] public static var platformerTilesPNG:Class;

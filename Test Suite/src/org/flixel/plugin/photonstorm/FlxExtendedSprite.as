@@ -2,12 +2,13 @@
  * FlxExtendedSprite
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Added MouseSpring, plugin checks and all the missing documentation
  * v1.3 Added Gravity, Friction and Tolerance support
  * v1.2 Now works fully with FlxMouseControl to be completely clickable and draggable!
  * v1.1 Added "setMouseDrag" and "mouse over" states
  * v1.0 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - July 28th 2011
+ * @version 1.4 - July 29th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -15,18 +16,11 @@
 package org.flixel.plugin.photonstorm 
 {
 	import org.flixel.*;
-	import org.flixel.plugin.photonstorm.BaseTypes.Spring;
+	import org.flixel.plugin.photonstorm.BaseTypes.MouseSpring;
 
 	/**
-	 * TODO
-	 * ----
-	 * 
-	 * 2) Break Limit
-	 * 4) New test that has a value slider, could use snap and drag lock x?
-	 * 5) Stress Test Demo - 100 overlapping sprites?
-	 * 
+	 * An enhanced FlxSprite that is capable of receiving mouse clicks, being dragged and thrown, mouse springs, gravity and other useful things
 	 */
-	
 	public class FlxExtendedSprite extends FlxSprite
 	{
 		/**
@@ -62,13 +56,28 @@ package org.flixel.plugin.photonstorm
 		 */
 		public var mouseReleasedCallback:Function;
 		
+		/**
+		 * Is this sprite allowed to be thrown?
+		 * @default false
+		 */
 		public var throwable:Boolean = false;
-		public var throwXFactor:int;
-		public var throwYFactor:int;
+		private var throwXFactor:int;
+		private var throwYFactor:int;
 		
+		/**
+		 * Does this sprite have gravity applied to it?
+		 * @default false
+		 */
 		public var hasGravity:Boolean = false;
-		public var hasSpin:Boolean = false;
+		
+		/**
+		 * The x axis gravity influence
+		 */
 		public var gravityX:int;
+		
+		/**
+		 * The y axis gravity influence
+		 */
 		public var gravityY:int;
 		
 		/**
@@ -141,10 +150,31 @@ package org.flixel.plugin.photonstorm
 		private var snapX:int;
 		private var snapY:int;
 		
-		//	Document
-		public var hasSpring:Boolean = false;
-		public var spring:Spring;
+		/**
+		 * Is this sprite using a mouse spring?
+		 * @default false
+		 */
+		public var hasMouseSpring:Boolean = false;
+		
+		/**
+		 * Will the Mouse Spring be active always (false) or only when pressed (true)
+		 * @default true
+		 */
+		public var springOnPressed:Boolean = true;
+		
+		/**
+		 * The MouseSpring object which is used to tie this sprite to the mouse
+		 */
+		public var mouseSpring:MouseSpring;
+		
+		/**
+		 * By default the spring attaches to the top left of the sprite. To change this location provide an x offset (in pixels)
+		 */
 		public var springOffsetX:int;
+		
+		/**
+		 * By default the spring attaches to the top left of the sprite. To change this location provide a y offset (in pixels)
+		 */
 		public var springOffsetY:int;
 		
 		/**
@@ -164,12 +194,17 @@ package org.flixel.plugin.photonstorm
 		 * Allow this Sprite to receive mouse clicks, the total number of times this sprite is clicked is stored in this.clicks<br>
 		 * You can add callbacks via mousePressedCallback and mouseReleasedCallback
 		 * 
-		 * @param	onRelease			Set if you want to register a click as being when the mouse is pressed down (false) or when it's released from a press (true)
+		 * @param	onRelease			Register the click when the mouse is pressed down (false) or when it's released (true). Note that callbacks still fire regardless of this setting.
 		 * @param	pixelPerfect		If true it will use a pixel perfect test to see if you clicked the Sprite. False uses the bounding box.
 		 * @param	alphaThreshold		If using pixel perfect collision this specifies the alpha level from 0 to 255 above which a collision is processed (default 255)
 		 */
 		public function enableMouseClicks(onRelease:Boolean, pixelPerfect:Boolean = false, alphaThreshold:uint = 255):void
 		{
+			if (FlxG.getPlugin(FlxMouseControl) == null)
+			{
+				throw Error("FlxExtendedSprite.enableMouseClicks called but FlxMouseControl plugin not activated");
+			}
+			
 			clickable = true;
 			
 			clickOnRelease = onRelease;
@@ -215,6 +250,11 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function enableMouseDrag(lockCenter:Boolean = false, pixelPerfect:Boolean = false, alphaThreshold:uint = 255, boundsRect:FlxRect = null, boundsSprite:FlxSprite = null):void
 		{
+			if (FlxG.getPlugin(FlxMouseControl) == null)
+			{
+				throw Error("FlxExtendedSprite.enableMouseDrag called but FlxMouseControl plugin not activated");
+			}
+			
 			draggable = true;
 			
 			dragFromPoint = lockCenter;
@@ -270,6 +310,11 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function enableMouseThrow(xFactor:int, yFactor:int):void
 		{
+			if (FlxG.getPlugin(FlxMouseControl) == null)
+			{
+				throw Error("FlxExtendedSprite.enableMouseThrow called but FlxMouseControl plugin not activated");
+			}
+			
 			throwable = true;
 			throwXFactor = xFactor;
 			throwYFactor = yFactor;
@@ -314,25 +359,68 @@ package org.flixel.plugin.photonstorm
 			snapOnRelease = false;
 		}
 		
-		public function addSpring(spring:Spring):void
+		/**
+		 * Adds a simple spring between the mouse and this Sprite. The spring can be activated either when the mouse is pressed (default), or enabled all the time.
+		 * Note that nearly always the Spring will over-ride any other motion setting the sprite has (like velocity or gravity)
+		 * 
+		 * @param	onPressed			true if the spring should only be active when the mouse is pressed down on this sprite
+		 * @param	retainVelocity		true to retain the velocity of the spring when the mouse is released, or false to clear it
+		 * @param	tension				The tension of the spring, smaller numbers create springs closer to the mouse pointer
+		 * @param	friction			The friction applied to the spring as it moves
+		 * @param	gravity				The gravity controls how far "down" the spring hangs (use a negative value for it to hang up!)
+		 * 
+		 * @return	The MouseSpring object if you wish to perform further chaining on it. Also available via FlxExtendedSprite.mouseSpring
+		 */ 
+		public function enableMouseSpring(onPressed:Boolean = true, retainVelocity:Boolean = false, tension:Number = 0.1, friction:Number = 0.95, gravity:Number = 0):MouseSpring
 		{
-			hasSpring = true;
+			if (FlxG.getPlugin(FlxMouseControl) == null)
+			{
+				throw Error("FlxExtendedSprite.enableMouseSpring called but FlxMouseControl plugin not activated");
+			}
 			
-			this.spring = spring;
+			hasMouseSpring = true;
+			springOnPressed = onPressed;
+			
+			if (mouseSpring == null)
+			{
+				mouseSpring = new MouseSpring(this, retainVelocity, tension, friction, gravity);
+			}
+			else
+			{
+				mouseSpring.tension = tension;
+				mouseSpring.friction = friction;
+				mouseSpring.gravity = gravity;
+			}
+			
+			if (clickable == false && draggable == false)
+			{
+				clickable = true;
+			}
+			
+			return mouseSpring;
 		}
 		
-		public function removeSpring():void
+		/**
+		 * Stops the sprite to mouse spring from being active
+		 */
+		public function disableMouseSpring():void
 		{
-			hasSpring = false;
+			hasMouseSpring = false;
 			
-			this.spring = null;
+			mouseSpring = null;
 		}
 		
+		/**
+		 * The spring x coordinate in game world space. Consists of sprite.x + springOffsetX
+		 */
 		public function get springX():int
 		{
 			return x + springOffsetX;
 		}
 		
+		/**
+		 * The spring y coordinate in game world space. Consists of sprite.y + springOffsetY
+		 */
 		public function get springY():int
 		{
 			return y + springOffsetY;
@@ -358,9 +446,23 @@ package org.flixel.plugin.photonstorm
 				updateGravity();
 			}
 			
-			if (hasSpring)
+			if (hasMouseSpring)
 			{
-				spring.update();
+				if (springOnPressed == false)
+				{
+					mouseSpring.update();
+				}
+				else
+				{
+					if (isPressed == true)
+					{
+						mouseSpring.update();
+					}
+					else
+					{
+						mouseSpring.reset();
+					}
+				}
 			}
 			
 			super.update();
