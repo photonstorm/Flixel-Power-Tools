@@ -2,11 +2,12 @@
  * FlxDelay
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Modified abort so it no longer runs the stop callback (thanks to Cambrian-Man)
  * v1.3 Added secondsElapsed and secondsRemaining and some more documentation
  * v1.2 Added callback support
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - July27th 2011
+ * @version 1.4 - July 31st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -21,9 +22,9 @@ package org.flixel.plugin.photonstorm
 	import org.flixel.*;
 	
 	/**
-	 * A useful timer that can be used to trigger events after certain amounts of time are up.<br />
-	 * Uses getTimer so is low on resources and avoids using Flash events.<br />
-	 * Also takes into consideration the Pause state of your game.<br />
+	 * A useful timer that can be used to trigger events after certain amounts of time are up.
+	 * Uses getTimer so is low on resources and avoids using Flash events.
+	 * Also takes into consideration the Pause state of your game.
 	 * If your game pauses, when it starts again the timer notices and adjusts the expires time accordingly.
 	 */
 	
@@ -139,17 +140,17 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function abort():void
 		{
-			stop();
+			stop(false);
 		}
 		
-		private function stop():void
+		private function stop(runCallback:Boolean = true):void
 		{
 			removeEventListener(Event.ENTER_FRAME, update);
 			
 			isRunning = false;
 			complete = true;
 			
-			if (callback is Function)
+			if (callback is Function && runCallback == true)
 			{
 				callback.call();
 			}
