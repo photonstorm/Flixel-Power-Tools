@@ -21,6 +21,7 @@ package
 	import org.flixel.plugin.photonstorm.*;
 	
 	import tests.*;
+	import tests.api.*;
 	import tests.bitmapfont.*;
 	import tests.buttonplus.*;
 	import tests.collision.*;
@@ -48,7 +49,7 @@ package
 		[Embed(source = '../assets/fonts/087.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = FlodTest3;
+		private var shortcut:Class = KongregateAPITest1;
 		
 		private var version:String;
 		private var options:Array;

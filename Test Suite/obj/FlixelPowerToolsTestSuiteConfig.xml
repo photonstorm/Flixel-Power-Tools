@@ -8,19 +8,17 @@
   <compiler>
     <define append="true">
       <name>CONFIG::debug</name>
-      <value>false</value>
-    </define>
-    <define append="true">
-      <name>CONFIG::release</name>
       <value>true</value>
     </define>
     <define append="true">
-      <name>CONFIG::timeStamp</name>
-      <value>'29/07/2011'</value>
+      <name>CONFIG::release</name>
+      <value>false</value>
     </define>
-    <optimize>true</optimize>
-    <omit-trace-statements>true</omit-trace-statements>
-    <verbose-stacktraces>false</verbose-stacktraces>
+    <define append="true">
+      <name>CONFIG::timeStamp</name>
+      <value>'03/08/2011'</value>
+    </define>
+    <verbose-stacktraces>true</verbose-stacktraces>
     <source-path append="true">
       <path-element>G:\Flash\Flixel-Power-Tools\Test Suite\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>

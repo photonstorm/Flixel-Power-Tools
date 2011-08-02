@@ -2,11 +2,12 @@
  * FlxButtonPlus
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Added setOnClickCallback
  * v1.4 Added scrollFactor to button and swapped to using mouseInFlxRect so buttons in scrolling worlds work
  * v1.3 Updated gradient colour values to include alpha
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - July 28th 2011
+ * @version 1.5 - August 3rd 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -203,6 +204,14 @@ package org.flixel.plugin.photonstorm
 		{
 			return _y;
 		}
+		
+		//public function set scrollFactor(value:Number):void
+		//{
+			//buttonNormal;
+			//buttonHighlight;
+			//textNormal;
+			//textHighlight;
+		//}
 		
 		override public function preUpdate():void
 		{
@@ -467,6 +476,22 @@ package org.flixel.plugin.photonstorm
 			leaveCallback = callback;
 			
 			leaveCallbackParams = params;
+		}
+		
+		/**
+		 * Sets a callback function for when the mouse clicks on this button
+		 * 
+		 * @param	callback	The function to call whenever the button is clicked.
+		 * @param	params		An optional array of parameters that will be passed to the Callback function
+		 */
+		public function setOnClickCallback(callback:Function, params:Array = null):void
+		{
+			_onClick = callback;
+			
+			if (params)
+			{
+				onClickParams = params;
+			}
 		}
 		
 	}
