@@ -13,7 +13,6 @@ package tests.weapon
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var controls:FlxControlHandler;
 		private var player:FlxSprite;
 		private var lazer:FlxWeapon;
 		

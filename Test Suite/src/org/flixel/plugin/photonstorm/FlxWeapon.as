@@ -2,33 +2,30 @@
  * FlxWeapon
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.1 Added pre-fire, fire and post-fire callbacks and sound support, rnd factors, boolean returns and currentBullet
  * v1.0 First release
  * 
- * @version 1.0 - June 10th 2011
+ * @version 1.1 - August 3rd 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
 package org.flixel.plugin.photonstorm 
 {
+	import mx.core.ButtonAsset;
 	import org.flixel.*;
 	import flash.utils.getTimer;
 	import org.flixel.plugin.photonstorm.BaseTypes.Bullet;
 	import org.flixel.plugin.photonstorm.FlxVelocity;
 	
 	/**
-	 * A Weapon can only fire 1 type of bullet. But it can fire many of them at once (in different directions if needed) via createBulletPattern
-	 * A Player could fire multiple Weapons at the same time however, if you need to layer them up
-	 * 
 	 * TODO
 	 * ----
 	 * 
 	 * Angled bullets
-	 * RND factor
 	 * Baked Rotation support for angled bullets
 	 * Bullet death styles (particle effects)
 	 * Bullet trails - blur FX style and Missile Command "draw lines" style? (could be another FX plugin)
-	 * Assigning sound effects
 	 * Homing Missiles
 	 * Bullet uses random sprite from sprite sheet (for rainbow style bullets), or cycles through them in sequence?
 	 * Some Weapon base classes like shotgun, lazer, etc?
@@ -70,14 +67,26 @@ package org.flixel.plugin.photonstorm
 		
 		private var velocity:FlxPoint;
 		
+		public var bulletLifeSpan:uint = 0;
+		public var rndFactorAngle:uint = 0;
+		public var rndFactorLifeSpan:uint = 0;
+		public var rndFactorSpeed:uint = 0;
+		public var rndFactorPosition:FlxPoint = new FlxPoint;
+		
+		/**
+		 * A reference to the Bullet that was fired
+		 */
+		public var currentBullet:Bullet;
+		
 		//	Callbacks
-		public var onKillCallback:Function;
+		public var onPreFireCallback:Function;
 		public var onFireCallback:Function;
+		public var onPostFireCallback:Function;
 		
 		//	Sounds
-		public var playSounds:Boolean;
-		public var onKillSound:FlxSound;
+		public var onPreFireSound:FlxSound;
 		public var onFireSound:FlxSound;
+		public var onPostFireSound:FlxSound;
 		
 		//	Quick firing direction angle constants
 		public static const BULLET_UP:int = -90;
@@ -92,7 +101,7 @@ package org.flixel.plugin.photonstorm
 		//	TODO :)
 		private var bulletsFired:uint;
 		private var currentMagazine:uint;
-		private var currentBullet:uint;
+		//private var currentBullet:uint;
 		private var magazineCount:uint;
 		private var bulletsPerMagazine:uint;
 		private var magazineSwapDelay:uint;
@@ -237,24 +246,35 @@ package org.flixel.plugin.photonstorm
 		 * @param	x
 		 * @param	y
 		 * @param	target
+		 * @return	true if a bullet was fired or false if one wasn't available. The bullet last fired is stored in FlxWeapon.prevBullet
 		 */
-		private function runFire(method:uint, x:int = 0, y:int = 0, target:FlxSprite = null, angle:int = 0):void
+		private function runFire(method:uint, x:int = 0, y:int = 0, target:FlxSprite = null, angle:int = 0):Boolean
 		{
 			if (fireRate > 0 && (getTimer() < nextFire))
 			{
-				return;
+				return false;
 			}
 			
-			var bullet:Bullet = getFreeBullet();
+			currentBullet = getFreeBullet();
 			
-			if (bullet == null)
+			if (currentBullet == null)
 			{
-				return;
+				return false;
 			}
 
+			if (onPreFireCallback is Function)
+			{
+				onPreFireCallback.apply();
+			}
+			
+			if (onPreFireSound)
+			{
+				onPreFireSound.play();
+			}
+			
 			//	Clear any velocity that may have been previously set from the pool
-			bullet.velocity.x = 0;
-			bullet.velocity.y = 0;
+			currentBullet.velocity.x = 0;
+			currentBullet.velocity.y = 0;
 			
 			lastFired = getTimer();
 			nextFire = getTimer() + fireRate;
@@ -276,44 +296,60 @@ package org.flixel.plugin.photonstorm
 			//	Faster (less CPU) to use this small if-else ladder than a switch statement
 			if (method == FIRE)
 			{
-				bullet.fire(launchX, launchY, velocity.x, velocity.y);
+				currentBullet.fire(launchX, launchY, velocity.x, velocity.y);
 			}
 			else if (method == FIRE_AT_MOUSE)
 			{
-				bullet.fireAtMouse(launchX, launchY, bulletSpeed);
+				currentBullet.fireAtMouse(launchX, launchY, bulletSpeed);
 			}
 			else if (method == FIRE_AT_POSITION)
 			{
-				bullet.fireAtPosition(launchX, launchY, x, y, bulletSpeed);
+				currentBullet.fireAtPosition(launchX, launchY, x, y, bulletSpeed);
 			}
 			else if (method == FIRE_AT_TARGET)
 			{
-				bullet.fireAtTarget(launchX, launchY, target, bulletSpeed);
+				currentBullet.fireAtTarget(launchX, launchY, target, bulletSpeed);
 			}
 			else if (method == FIRE_FROM_ANGLE)
 			{
-				bullet.fireFromAngle(launchX, launchY, angle, bulletSpeed);
+				currentBullet.fireFromAngle(launchX, launchY, angle, bulletSpeed);
 			}
 			else if (method == FIRE_FROM_PARENT_ANGLE)
 			{
-				bullet.fireFromAngle(launchX, launchY, parent.angle, bulletSpeed);
+				currentBullet.fireFromAngle(launchX, launchY, parent.angle, bulletSpeed);
 			}
+			
+			if (onPostFireCallback is Function)
+			{
+				onPostFireCallback.apply();
+			}
+			
+			if (onPostFireSound)
+			{
+				onPostFireSound.play();
+			}
+			
+			return true;
 		}
 		
 		/**
 		 * Fires a bullet (if one is available). The bullet will be given the velocity defined in setBulletDirection and fired at the rate set in setFireRate.
+		 * 
+		 * @return	true if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 		 */
-		public function fire():void
+		public function fire():Boolean
 		{
-			runFire(FIRE);
+			return runFire(FIRE);
 		}
 		
 		/**
 		 * Fires a bullet (if one is available) at the mouse coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
+		 * 
+		 * @return	true if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 		 */
-		public function fireAtMouse():void
+		public function fireAtMouse():Boolean
 		{
-			runFire(FIRE_AT_MOUSE);
+			return runFire(FIRE_AT_MOUSE);
 		}
 		
 		/**
@@ -321,30 +357,43 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @param	x	The x coordinate (in game world pixels) to fire at
 		 * @param	y	The y coordinate (in game world pixels) to fire at
+		 * @return	true if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 		 */
-		public function fireAtPosition(x:int, y:int):void
+		public function fireAtPosition(x:int, y:int):Boolean
 		{
-			runFire(FIRE_AT_POSITION, x, y);
+			return runFire(FIRE_AT_POSITION, x, y);
 		}
 		
 		/**
 		 * Fires a bullet (if one is available) at the given targets x/y coordinates, using the speed set in setBulletSpeed and the rate set in setFireRate.
 		 * 
 		 * @param	target	The FlxSprite you wish to fire the bullet at
+		 * @return	true if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
 		 */
-		public function fireAtTarget(target:FlxSprite):void
+		public function fireAtTarget(target:FlxSprite):Boolean
 		{
-			runFire(FIRE_AT_TARGET, 0, 0, target);
+			return runFire(FIRE_AT_TARGET, 0, 0, target);
 		}
 		
-		public function fireFromAngle(angle:int):void
+		/**
+		 * Fires a bullet (if one is available) based on the given angle
+		 * 
+		 * @param	angle	The angle (in degrees) calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
+		 * @return	true if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
+		 */
+		public function fireFromAngle(angle:int):Boolean
 		{
-			runFire(FIRE_FROM_ANGLE, 0, 0, null, angle);
+			return runFire(FIRE_FROM_ANGLE, 0, 0, null, angle);
 		}
 		
-		public function fireFromParentAngle():void
+		/**
+		 * Fires a bullet (if one is available) based on the angle of the Weapons parent
+		 * 
+		 * @return	true if a bullet was fired or false if one wasn't available. A reference to the bullet fired is stored in FlxWeapon.currentBullet.
+		 */
+		public function fireFromParentAngle():Boolean
 		{
-			runFire(FIRE_FROM_PARENT_ANGLE);
+			return runFire(FIRE_FROM_PARENT_ANGLE);
 		}
 		
 		/**
@@ -392,7 +441,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * The speed in pixels/sec (sq) that the bullet travels at when fired via fireAtMouse, fireAtPosition or fireAtTarget.<br>
+		 * The speed in pixels/sec (sq) that the bullet travels at when fired via fireAtMouse, fireAtPosition or fireAtTarget.
 		 * You can update this value in real-time, should you need to speed-up or slow-down your bullets (i.e. collecting a power-up)
 		 * 
 		 * @param	speed		The speed it will move, in pixels per second (sq)
@@ -413,7 +462,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Sets the firing rate of the Weapon. By default there is no rate, as it can be controlled by FlxControl.setFireButton.<br>
+		 * Sets the firing rate of the Weapon. By default there is no rate, as it can be controlled by FlxControl.setFireButton.
 		 * However if you are firing using the mouse you may wish to set a firing rate.
 		 * 
 		 * @param	rate	The delay in milliseconds (ms) between which each bullet is fired, set to zero to clear
@@ -435,8 +484,8 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Set the direction the bullet will travel when fired.<br>
-		 * You can use one of the consts such as BULLET_UP, BULLET_DOWN or BULLET_NORTH_EAST to set the angle easily.<br>
+		 * Set the direction the bullet will travel when fired.
+		 * You can use one of the consts such as BULLET_UP, BULLET_DOWN or BULLET_NORTH_EAST to set the angle easily.
 		 * Speed should be given in pixels/sec (sq) and is the speed at which the bullet travels when fired.
 		 * 
 		 * @param	angle		The angle of the bullet. In clockwise positive direction: Right = 0, Down = 90, Left = 180, Up = -90. You can use one of the consts such as BULLET_UP, etc
@@ -461,8 +510,8 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * If you'd like your bullets to accelerate to their top speed rather than be launched already at it, then set the acceleration value here.<br>
-		 * If you've previously set the acceleration then setting it to zero will cancel the effect.<br>
+		 * If you'd like your bullets to accelerate to their top speed rather than be launched already at it, then set the acceleration value here.
+		 * If you've previously set the acceleration then setting it to zero will cancel the effect.
 		 * This will update ALL bullets, even those currently "in flight", so be careful about when you call this!
 		 * 
 		 * @param	xAcceleration		Acceleration speed in pixels per second to apply to the sprites horizontal movement, set to zero to cancel. Negative values move left, positive move right.
@@ -504,20 +553,32 @@ package org.flixel.plugin.photonstorm
 		 * To make the bullet apply a random factor to either its angle, speed, or both when fired, set these values. Can create a nice "scatter gun" effect.
 		 * 
 		 * @param	randomAngle		The +- value applied to the angle when fired. For example 20 means the bullet can fire up to 20 degrees under or over its angle when fired.
-		 * @param	randomSpeed		The +- value applied to the speed when fired. For example 20 means the bullet can fire up to 20 px/sec slower or faster when fired.
+		 * @param	randomSpeed		The +- value applied to the bullet speed when fired. For example 10 means the bullet speed varies by +- 10px/sec
+		 * @param	randomPosition	The +- values applied to the x/y coordinates the bullet is fired from.
+		 * @param	randomLifeSpan	The +- values applied to the life span of the bullet.
 		 */
-		public function setBulletRandomFactor(randomAngle:uint, randomSpeed:uint):void
+		public function setBulletRandomFactor(randomAngle:uint = 0, randomSpeed:uint = 0, randomPosition:FlxPoint = null, randomLifeSpan:uint = 0):void
 		{
+			rndFactorAngle = randomAngle;
+			rndFactorSpeed = randomSpeed;
+			
+			if (randomPosition != null)
+			{
+				rndFactorPosition = randomPosition;
+			}
+			
+			rndFactorLifeSpan = randomLifeSpan;
 		}
 		
 		/**
-		 * If the bullet should have a fixed life span use this function to set it.<br>
-		 * The bullet will be killed once it passes this lifespan, if still alive and in bounds.
+		 * If the bullet should have a fixed life span use this function to set it.
+		 * The bullet will be killed once it passes this lifespan (if still alive and in bounds)
 		 * 
-		 * @param	lifespan	The lifespan of the bullet, given in ms (milliseconds) calculated from the moment the bullet is fired
+		 * @param	lifespan	The lifespan of the bullet in ms, calculated when the bullet is fired. Set to zero to zero to disable bullet lifespan.
 		 */
 		public function setBulletLifeSpan(lifespan:int):void
 		{
+			bulletLifeSpan = lifespan;
 		}
 		
 		/**
@@ -547,10 +608,44 @@ package org.flixel.plugin.photonstorm
 			return result;
 		}
 		
+		/**
+		 * Sets a pre-fire callback function and sound. These are played immediately before the bullet is fired.
+		 * 
+		 * @param	callback	The function to call
+		 * @param	sound		An FlxSound to play
+		 */
+		public function setPreFireCallback(callback:Function = null, sound:FlxSound = null):void
+		{
+			onPreFireCallback = callback;
+			onPreFireSound = sound;
+		}
 		
+		/**
+		 * Sets a fire callback function and sound. These are played immediately as the bullet is fired.
+		 * 
+		 * @param	callback	The function to call
+		 * @param	sound		An FlxSound to play
+		 */
+		public function setFireCallback(callback:Function = null, sound:FlxSound = null):void
+		{
+			onFireCallback = callback;
+			onFireSound = sound;
+		}
+		
+		/**
+		 * Sets a post-fire callback function and sound. These are played immediately after the bullet is fired.
+		 * 
+		 * @param	callback	The function to call
+		 * @param	sound		An FlxSound to play
+		 */
+		public function setPostFireCallback(callback:Function = null, sound:FlxSound = null):void
+		{
+			onPostFireCallback = callback;
+			onPostFireSound = sound;
+		}
 		
 		// TODO
-		public function createBulletPattern(pattern:Array):void
+		public function TODOcreateBulletPattern(pattern:Array):void
 		{
 			//	Launches this many bullets
 		}

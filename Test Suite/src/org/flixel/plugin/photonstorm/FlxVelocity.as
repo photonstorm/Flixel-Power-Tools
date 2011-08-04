@@ -299,7 +299,6 @@ package org.flixel.plugin.photonstorm
 		 * The angle is calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
 		 * 
 		 * @param	a			The FlxObject to test from
-		 * @param	b			The FlxObject to test to
 		 * @param	asDegrees	If you need the value in degrees instead of radians, set to true
 		 * 
 		 * @return	Number The angle (in radians unless asDegrees is true)
