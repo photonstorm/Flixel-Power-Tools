@@ -51,6 +51,7 @@
   <!-- SWC Libraries -->
   <libraryPaths>
     <element path="lib\greensock.swc" />
+    <element path="lib\MinimalComps_0_9_9.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>

@@ -76,8 +76,8 @@ package org.flixel.plugin.photonstorm
 		private var xSpeedAdjust:Number = 0;
 		private var ySpeedAdjust:Number = 0;
 		
-		private var gravityX:int;
-		private var gravityY:int;
+		private var gravityX:int = 0;
+		private var gravityY:int = 0;
 		
 		private var fireRate:int; 			// The ms delay between firing when the key is held down
 		private var nextFireTime:int; 		// The internal time when they can next fire
@@ -1056,15 +1056,9 @@ package org.flixel.plugin.photonstorm
 				}
 				else if (movement == MOVEMENT_ACCELERATES)
 				{
-					if (gravityX == 0)
-					{
-						entity.acceleration.x = 0;
-					}
-					
-					if (gravityY == 0)
-					{
-						entity.acceleration.y = 0;
-					}
+					//	By default these are zero anyway, so it's safe to set like this
+					entity.acceleration.x = gravityX;
+					entity.acceleration.y = gravityY;
 				}
 			}
 			

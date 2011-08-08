@@ -2,11 +2,12 @@
  * FlxColor
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.5 Added RGBtoWebString
  * v1.4 getHSVColorWheel now supports an alpha value per color
  * v1.3 Added getAlphaFloat
  * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.4 - May 9th 2011
+ * @version 1.5 - August 4th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  * @see Depends upon FlxMath
@@ -175,6 +176,20 @@ package org.flixel.plugin.photonstorm
 			var argb:Object = getRGB(color);
 			
 			return "0x" + colorToHexString(argb.alpha) + colorToHexString(argb.red) + colorToHexString(argb.green) + colorToHexString(argb.blue);
+		}
+		
+		/**
+		 * Return a String representation of the color in the format #RRGGBB
+		 * 
+		 * @param	color The color to get the String representation for
+		 * 
+		 * @return	A string of length 10 characters in the format 0xAARRGGBB
+		 */
+		public static function RGBtoWebString(color:uint):String
+		{
+			var argb:Object = getRGB(color);
+			
+			return "#" + colorToHexString(argb.red) + colorToHexString(argb.green) + colorToHexString(argb.blue);
 		}
 
 		/**
