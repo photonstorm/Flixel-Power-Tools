@@ -1,3 +1,9 @@
+8th August 2011
+
+GlitchFX - v1.2 Fixed updateFromSource github issue #8 (thanks CoderBrandon)
+FlxControlHander - v1.7 Modified update function so gravity is applied constantly
+Several new demos created
+
 4th August 2011
 
 FlxCoreUtils - v1.1 Added get mouseIndex and gameContainer

@@ -2,6 +2,7 @@
  * FlxControlHandler
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.7 Modified update function so gravity is applied constantly
  * v1.6 Thrust and Reverse complete, final few rotation bugs solved. Sounds hooked in for fire, jump, walk and thrust
  * v1.5 Full support for rotation with min/max angle limits
  * v1.4 Fixed bug in runFire causing fireRate to be ignored
@@ -9,7 +10,7 @@
  * v1.2 First real version deployed to dev
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.6 - June 15th 2011
+ * @version 1.7 - August 8th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
