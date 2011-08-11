@@ -67,6 +67,7 @@ package
 		[Embed(source = '../assets/sprites/shinyball.png')] public static var shinyBallPNG:Class;
 		[Embed(source = '../assets/sprites/arrows.png')] public static var arrowsPNG:Class;
 		[Embed(source = '../assets/sprites/mana_card.png')] public static var manaCardPNG:Class;
+		[Embed(source = '../assets/sprites/oz_pov_melting_disk.png')] public static var ozPovMeltingDiskPNG:Class;
 		
 		//	Pictures
 		[Embed(source = '../assets/pics/mask-test.png')] public static var alphaMaskPNG:Class;

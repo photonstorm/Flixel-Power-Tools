@@ -49,7 +49,7 @@ package
 		[Embed(source = '../assets/fonts/087.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = ControlTest8;
+		private var shortcut:Class = WeaponTest9;
 		
 		private var version:String;
 		private var options:Array;
@@ -114,7 +114,7 @@ package
 			options["Scrolling Zones"] = [ScrollZoneTest1, ScrollZoneTest2, ScrollZoneTest3, ScrollZoneTest4, ScrollZoneTest5];
 			options["Special FX"] = [BlurTest1, BlurTest2, CenterSlideTest1, FloodFillTest1, FloodFillTest2, GlitchTest1, PlasmaTest1, RainbowLineTest1, SineWaveTest1, SineWaveTest2, SineWaveTest3, SineWaveTest4, StarFieldTest1, StarFieldTest2];
 			options["Velocity"] = [VelocityTest1, VelocityTest2, VelocityTest3, VelocityTest4];
-			options["Weapons"] = [WeaponTest1, WeaponTest2, WeaponTest3, WeaponTest4, WeaponTest5, WeaponTest6, WeaponTest7, WeaponTest8];
+			options["Weapons"] = [WeaponTest1, WeaponTest2, WeaponTest3, WeaponTest4, WeaponTest5, WeaponTest6, WeaponTest7, WeaponTest8, WeaponTest9];
 		}
 		
 		override public function create():void
