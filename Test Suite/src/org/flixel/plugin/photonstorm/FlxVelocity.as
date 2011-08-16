@@ -2,11 +2,12 @@
  * FlxVelocity
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.6 New method: velocityFromFacing
  * v1.5 New methods: velocityFromAngle, accelerateTowardsObject, accelerateTowardsMouse, accelerateTowardsPoint
  * v1.4 New methods: moveTowardsPoint, distanceToPoint, angleBetweenPoint
  * v1.3 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.5 - June 10th 2011
+ * @version 1.6 - August 15th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
  * @see Depends on FlxMath
@@ -285,6 +286,43 @@ package org.flixel.plugin.photonstorm
 		public static function velocityFromAngle(angle:int, speed:int):FlxPoint
 		{
 			var a:Number = FlxMath.asRadians(angle);
+			
+			var result:FlxPoint = new FlxPoint;
+			
+			result.x = int(Math.cos(a) * speed);
+			result.y = int(Math.sin(a) * speed);
+			
+			return result;
+		}
+		
+		/**
+		 * Given the FlxSprite and speed calculate the velocity and return it as an FlxPoint based on the direction the sprite is facing
+		 * 
+		 * @param	parent	The FlxSprite to get the facing value from
+		 * @param	speed	The speed it will move, in pixels per second sq
+		 * 
+		 * @return	An FlxPoint where FlxPoint.x contains the velocity x value and FlxPoint.y contains the velocity y value
+		 */
+		public static function velocityFromFacing(parent:FlxSprite, speed:int):FlxPoint
+		{
+			var a:Number;
+			
+			if (parent.facing == FlxObject.LEFT)
+			{
+				a = FlxMath.asRadians(180);
+			}
+			else if (parent.facing == FlxObject.RIGHT)
+			{
+				a = FlxMath.asRadians(0);
+			}
+			else if (parent.facing == FlxObject.UP)
+			{
+				a = FlxMath.asRadians( -90);
+			}
+			else if (parent.facing == FlxObject.DOWN)
+			{
+				a = FlxMath.asRadians(90);
+			}
 			
 			var result:FlxPoint = new FlxPoint;
 			

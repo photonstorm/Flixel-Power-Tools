@@ -2,17 +2,17 @@
  * FlxWeapon
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.2 Added useParentDirection boolean
  * v1.1 Added pre-fire, fire and post-fire callbacks and sound support, rnd factors, boolean returns and currentBullet
  * v1.0 First release
  * 
- * @version 1.1 - August 3rd 2011
+ * @version 1.2 - August 15th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
 package org.flixel.plugin.photonstorm 
 {
-	import mx.core.ButtonAsset;
 	import org.flixel.*;
 	import flash.utils.getTimer;
 	import org.flixel.plugin.photonstorm.BaseTypes.Bullet;
@@ -64,6 +64,8 @@ package org.flixel.plugin.photonstorm
 		private var parentXVariable:String;
 		private var parentYVariable:String;
 		private var positionOffset:FlxPoint;
+		private var directionFromParent:Boolean;
+		private var angleFromParent:Boolean;
 		
 		private var velocity:FlxPoint;
 		
@@ -293,6 +295,11 @@ package org.flixel.plugin.photonstorm
 				launchY += fireY;
 			}
 			
+			if (directionFromParent)
+			{
+				velocity = FlxVelocity.velocityFromFacing(parent, bulletSpeed);
+			}
+			
 			//	Faster (less CPU) to use this small if-else ladder than a switch statement
 			if (method == FIRE)
 			{
@@ -399,13 +406,14 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * Causes the Weapon to fire from the parents x/y value, as seen in Space Invaders and most shoot-em-ups.
 		 * 
-		 * @param	parentRef	If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
-		 * @param	xVariable	The x axis variable of the parent to use when firing. Typically "x", but could be "screenX" or any public getter that exposes the x coordinate.
-		 * @param	yVariable	The y axis variable of the parent to use when firing. Typically "y", but could be "screenY" or any public getter that exposes the y coordinate.
-		 * @param	offsetX		When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
-		 * @param	offsetY		When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
+		 * @param	parentRef		If this weapon belongs to a parent sprite, specify it here (bullets will fire from the sprites x/y vars as defined below).
+		 * @param	xVariable		The x axis variable of the parent to use when firing. Typically "x", but could be "screenX" or any public getter that exposes the x coordinate.
+		 * @param	yVariable		The y axis variable of the parent to use when firing. Typically "y", but could be "screenY" or any public getter that exposes the y coordinate.
+		 * @param	offsetX			When the bullet is fired if you need to offset it on the x axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
+		 * @param	offsetY			When the bullet is fired if you need to offset it on the y axis, for example to line it up with the "nose" of a space ship, set the amount here (positive or negative)
+		 * @param	useDirection	When fired the bullet direction is based on parent sprites facing value (up/down/left/right)
 		 */
-		public function setParent(parentRef:*, xVariable:String, yVariable:String, offsetX:int = 0, offsetY:int = 0):void
+		public function setParent(parentRef:*, xVariable:String, yVariable:String, offsetX:int = 0, offsetY:int = 0, useDirection:Boolean = false):void
 		{
 			if (parentRef)
 			{
@@ -418,6 +426,8 @@ package org.flixel.plugin.photonstorm
 			
 				positionOffset.x = offsetX;
 				positionOffset.y = offsetY;
+				
+				directionFromParent = useDirection;
 			}
 		}
 		

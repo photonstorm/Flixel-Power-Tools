@@ -2,6 +2,7 @@
  * FlxControlHandler
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.8 Added isPressedUp/Down/Left/Right handlers
  * v1.7 Modified update function so gravity is applied constantly
  * v1.6 Thrust and Reverse complete, final few rotation bugs solved. Sounds hooked in for fire, jump, walk and thrust
  * v1.5 Full support for rotation with min/max angle limits
@@ -10,7 +11,7 @@
  * v1.2 First real version deployed to dev
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.7 - August 8th 2011
+ * @version 1.8 - August 16th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -28,6 +29,8 @@ package org.flixel.plugin.photonstorm
 	 * 
 	 * TODO
 	 * ----
+	 * Allow to bind Fire Button to FlxWeapon
+	 * Allow to enable multiple key sets. So cursors and WASD together
 	 * Hot Keys
 	 * Binding of sound effects to keys (seperate from setSounds? as those are event based)
 	 * If moving diagonally compensate speed parameter (times x,y velocities by 0.707 or cos/sin(45))
@@ -122,6 +125,12 @@ package org.flixel.plugin.photonstorm
 		private var fireSound:FlxSound = null;
 		private var walkSound:FlxSound = null;
 		private var thrustSound:FlxSound = null;
+		
+		//	Helpers
+		public var isPressedUp:Boolean = false;
+		public var isPressedDown:Boolean = false;
+		public var isPressedLeft:Boolean = false;
+		public var isPressedRight:Boolean = false;
 		
 		/**
 		 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
@@ -674,6 +683,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(upKey))
 			{
 				move = true;
+				isPressedUp = true;
 				
 				if (yFacing)
 				{
@@ -705,6 +715,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(downKey))
 			{
 				move = true;
+				isPressedDown = true;
 				
 				if (yFacing)
 				{
@@ -737,6 +748,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(leftKey))
 			{
 				move = true;
+				isPressedLeft = true;
 				
 				if (xFacing)
 				{
@@ -768,6 +780,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(rightKey))
 			{
 				move = true;
+				isPressedRight = true;
 				
 				if (xFacing)
 				{
@@ -1034,6 +1047,12 @@ package org.flixel.plugin.photonstorm
 			{
 				return;
 			}
+			
+			//	Reset the helper booleans
+			isPressedUp = false;
+			isPressedDown = false;
+			isPressedLeft = false;
+			isPressedRight = false;
 			
 			if (stopping == STOPPING_INSTANT)
 			{

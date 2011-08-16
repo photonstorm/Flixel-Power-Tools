@@ -1,3 +1,9 @@
+15th August 2011
+
+FlxWeapon - v1.2 Added useParentDirection boolean
+FlxControlHandler - v1.8 Added isPressedUp/Down/Left/Right handlers
+FlxVelocity - v1.6 New Method: velocityFromFacing
+
 11th August 2011
 
 Created WeaponTest9 - destructable terrain
