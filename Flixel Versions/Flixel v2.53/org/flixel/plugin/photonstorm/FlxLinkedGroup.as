@@ -2,9 +2,12 @@ package org.flixel.plugin.photonstorm
 {
 	import org.flixel.FlxGroup;
 	import org.flixel.FlxSprite;
+	import flash.utils.getTimer;
 
 	public class FlxLinkedGroup extends FlxGroup
 	{
+		//private var queue
+		
 		
 		public function FlxLinkedGroup(MaxSize:uint = 0)
 		{

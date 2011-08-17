@@ -1,12 +1,17 @@
 /**
- * FlxControls
+ * FlxControlHandler
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.8 Added isPressedUp/Down/Left/Right handlers
+ * v1.7 Modified update function so gravity is applied constantly
+ * v1.6 Thrust and Reverse complete, final few rotation bugs solved. Sounds hooked in for fire, jump, walk and thrust
+ * v1.5 Full support for rotation with min/max angle limits
+ * v1.4 Fixed bug in runFire causing fireRate to be ignored
  * v1.3 Major refactoring and lots of new enhancements
  * v1.2 First real version deployed to dev
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - May 18th 2011
+ * @version 1.8 - August 16th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -24,10 +29,13 @@ package org.flixel.plugin.photonstorm
 	 * 
 	 * TODO
 	 * ----
-	 * Support for angles! Thrust like spaceship movement
+	 * Allow to bind Fire Button to FlxWeapon
+	 * Allow to enable multiple key sets. So cursors and WASD together
+	 * Hot Keys
+	 * Binding of sound effects to keys (seperate from setSounds? as those are event based)
+	 * If moving diagonally compensate speed parameter (times x,y velocities by 0.707 or cos/sin(45))
 	 * Specify animation frames to play based on velocity
-	 * Hotkeys (bind a key to a user function - like for weapon select)
-	 * Variable gravity (based on height)
+	 * Variable gravity (based on height, the higher the stronger the effect)
 	 */
 	public class FlxControlHandler
 	{
@@ -48,17 +56,32 @@ package org.flixel.plugin.photonstorm
 		private var altJump:Boolean;
 		private var xFacing:Boolean;
 		private var yFacing:Boolean;
+		private var rotateAntiClockwise:Boolean;
+		private var rotateClockwise:Boolean;
 		
 		private var upMoveSpeed:int;
 		private var downMoveSpeed:int;
 		private var leftMoveSpeed:int;
 		private var rightMoveSpeed:int;
+		private var thrustSpeed:int;
+		private var reverseSpeed:int;
+		
+		//	Rotation
+		private var thrustEnabled:Boolean;
+		private var reverseEnabled:Boolean;
+		private var isRotating:Boolean;
+		private var antiClockwiseRotationSpeed:Number;
+		private var clockwiseRotationSpeed:Number;
+		private var enforceAngleLimits:Boolean;
+		private var minAngle:int;
+		private var maxAngle:int;
+		private var capAngularVelocity:Boolean;
 		
 		private var xSpeedAdjust:Number = 0;
 		private var ySpeedAdjust:Number = 0;
 		
-		private var gravityX:int;
-		private var gravityY:int;
+		private var gravityX:int = 0;
+		private var gravityY:int = 0;
 		
 		private var fireRate:int; 			// The ms delay between firing when the key is held down
 		private var nextFireTime:int; 		// The internal time when they can next fire
@@ -78,6 +101,8 @@ package org.flixel.plugin.photonstorm
 		
 		private var movement:int;
 		private var stopping:int;
+		private var rotation:int;
+		private var rotationStopping:int;
 		private var capVelocity:Boolean;
 		
 		private var hotkeys:Array;			// TODO
@@ -90,6 +115,22 @@ package org.flixel.plugin.photonstorm
 		private var altFireKey:String;		// TODO
 		private var jumpKey:String;
 		private var altJumpKey:String;		// TODO
+		private var antiClockwiseKey:String;
+		private var clockwiseKey:String;
+		private var thrustKey:String;
+		private var reverseKey:String;
+		
+		//	Sounds
+		private var jumpSound:FlxSound = null;
+		private var fireSound:FlxSound = null;
+		private var walkSound:FlxSound = null;
+		private var thrustSound:FlxSound = null;
+		
+		//	Helpers
+		public var isPressedUp:Boolean = false;
+		public var isPressedDown:Boolean = false;
+		public var isPressedLeft:Boolean = false;
+		public var isPressedRight:Boolean = false;
 		
 		/**
 		 * The "Instant" Movement Type means the sprite will move at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
@@ -111,6 +152,27 @@ package org.flixel.plugin.photonstorm
 		 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
 		 */
 		public static const STOPPING_NEVER:int = 2;
+		
+		/**
+		 * The "Instant" Movement Type means the sprite will rotate at maximum speed instantly, and will not "accelerate" (or speed-up) before reaching that speed.
+		 */
+		public static const ROTATION_INSTANT:int = 0;
+		/**
+		 * The "Accelerates" Rotaton Type means the sprite will accelerate until it reaches maximum rotation speed.
+		 */
+		public static const ROTATION_ACCELERATES:int = 1;
+		/**
+		 * The "Instant" Stopping Type means the sprite will stop rotating immediately when no rotation keys are being pressed, there will be no deceleration.
+		 */
+		public static const ROTATION_STOPPING_INSTANT:int = 0;
+		/**
+		 * The "Decelerates" Stopping Type means the sprite will start decelerating when no rotation keys are being pressed. Deceleration continues until rotation speed reaches zero.
+		 */
+		public static const ROTATION_STOPPING_DECELERATES:int = 1;
+		/**
+		 * The "Never" Stopping Type means the sprite will never decelerate, any speed built up will be carried on and never reduce.
+		 */
+		public static const ROTATION_STOPPING_NEVER:int = 2;
 		
 		/**
 		 * This keymode fires for as long as the key is held down
@@ -148,6 +210,17 @@ package org.flixel.plugin.photonstorm
 			
 			xFacing = updateFacing;
 			yFacing = updateFacing;
+			
+			up = false;
+			down = false;
+			left = false;
+			right = false;
+			
+			thrustEnabled = false;
+			isRotating = false;
+			enforceAngleLimits = false;
+			rotation = ROTATION_INSTANT;
+			rotationStopping = ROTATION_STOPPING_INSTANT;
 			
 			if (enableArrowKeys)
 			{
@@ -228,13 +301,154 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
+		 * Set the speed at which the sprite will rotate when a direction key is pressed.<br>
+		 * Use this in combination with setMovementSpeed to create a Thrust like movement system.<br>
+		 * All values are given in pixels per second. So an xSpeed of 100 would rotate the sprite 100 pixels in 1 second (1000ms)<br>
+		 * Due to the nature of the internal Flash timer this amount is not 100% accurate and will vary above/below the desired distance by a few pixels.<br>
+		 */
+		public function setRotationSpeed(antiClockwiseSpeed:Number, clockwiseSpeed:Number, speedMax:Number, deceleration:Number):void
+		{
+			antiClockwiseRotationSpeed = -antiClockwiseSpeed;
+			clockwiseRotationSpeed = clockwiseSpeed;
+			
+			setRotationKeys();
+			setMaximumRotationSpeed(speedMax);
+			setRotationDeceleration(deceleration);
+		}
+		
+		/**
+		 * 
+		 * 
+		 * @param	rotationType
+		 * @param	stoppingType
+		 */
+		public function setRotationType(rotationType:int, stoppingType:int):void
+		{
+			rotation = rotationType;
+			rotationStopping = stoppingType;
+		}
+		
+		/**
+		 * Sets the maximum speed (in pixels per second) that the FlxSprite can rotate.<br>
+		 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.<br>
+		 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
+		 * 
+		 * @param	speed			The maximum speed in pixels per second in which the sprite can rotate
+		 * @param	limitVelocity	If true the angular velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
+		 */
+		public function setMaximumRotationSpeed(speed:Number, limitVelocity:Boolean = true):void
+		{
+			entity.maxAngular = speed;
+			
+			capAngularVelocity = limitVelocity;
+		}
+		
+		/**
+		 * Deceleration is a speed (in pixels per second) that is applied to the sprite if stopping type is "DECELERATES" and if no rotation is taking place.<br>
+		 * The velocity of the sprite will be reduced until it reaches zero.
+		 * 
+		 * @param	speed		The speed in pixels per second at which the sprite will have its angular rotation speed decreased
+		 */
+		public function setRotationDeceleration(speed:Number):void
+		{
+			entity.angularDrag = speed;
+		}
+		
+		/**
+		 * Set minimum and maximum angle limits that the Sprite won't be able to rotate beyond.<br>
+		 * Values must be between -180 and +180. 0 is pointing right, 90 down, 180 left, -90 up.
+		 * 
+		 * @param	minimumAngle	Minimum angle below which the sprite cannot rotate (must be -180 or above)
+		 * @param	maximumAngle	Maximum angle above which the sprite cannot rotate (must be 180 or below)
+		 */
+		public function setRotationLimits(minimumAngle:int, maximumAngle:int):void
+		{
+			if (minimumAngle > maximumAngle || minimumAngle < -180 || maximumAngle > 180)
+			{
+				throw new Error("FlxControlHandler setRotationLimits: Invalid Minimum / Maximum angle");
+			}
+			else
+			{
+				enforceAngleLimits = true;
+				minAngle = minimumAngle;
+				maxAngle = maximumAngle;
+			}
+		}
+		
+		/**
+		 * Disables rotation limits set in place by setRotationLimits()
+		 */
+		public function disableRotationLimits():void
+		{
+			enforceAngleLimits = false;
+		}
+		
+		/**
+		 * Set which keys will rotate the sprite. The speed of rotation is set in setRotationSpeed.
+		 * 
+		 * @param	leftRight				Use the LEFT and RIGHT arrow keys for anti-clockwise and clockwise rotation respectively.
+		 * @param	upDown					Use the UP and DOWN arrow keys for anti-clockwise and clockwise rotation respectively.
+		 * @param	customAntiClockwise		The String value of your own key to use for anti-clockwise rotation (as taken from org.flixel.system.input.Keyboard)
+		 * @param	customClockwise			The String value of your own key to use for clockwise rotation (as taken from org.flixel.system.input.Keyboard)
+		 */
+		public function setRotationKeys(leftRight:Boolean = true, upDown:Boolean = false, customAntiClockwise:String = "", customClockwise:String = ""):void
+		{
+			isRotating = true;
+			rotateAntiClockwise = true;
+			rotateClockwise = true;
+			antiClockwiseKey = "LEFT";
+			clockwiseKey = "RIGHT";
+
+			if (upDown == true)
+			{
+				antiClockwiseKey = "UP";
+				clockwiseKey = "DOWN";
+			}
+			
+			if (customAntiClockwise != "" && customClockwise != "")
+			{
+				antiClockwiseKey = customAntiClockwise;
+				clockwiseKey = customClockwise;
+			}
+		}
+		
+		/**
+		 * If you want to enable a Thrust like motion for your sprite use this to set the speed and keys.<br>
+		 * This is usually used in conjunction with Rotation and it will over-ride anything already defined in setMovementSpeed.
+		 * 
+		 * @param	thrustKey		Specify the key String (as taken from org.flixel.system.input.Keyboard) to use for the Thrust action
+		 * @param	thrustSpeed		The speed in pixels per second which the sprite will move. Acceleration or Instant movement is determined by the Movement Type.
+		 * @param	reverseKey		If you want to be able to reverse, set the key string as taken from org.flixel.system.input.Keyboard (defaults to null).
+		 * @param	reverseSpeed	The speed in pixels per second which the sprite will reverse. Acceleration or Instant movement is determined by the Movement Type.
+		 */
+		public function setThrust(thrustKey:String, thrustSpeed:Number, reverseKey:String = null, reverseSpeed:Number = 0):void
+		{
+			thrustEnabled = false;
+			reverseEnabled = false;
+			
+			if (thrustKey)
+			{
+				this.thrustKey = thrustKey;
+				this.thrustSpeed = thrustSpeed;
+				thrustEnabled = true;
+			}
+			
+			if (reverseKey)
+			{
+				this.reverseKey = reverseKey;
+				this.reverseSpeed = reverseSpeed;
+				reverseEnabled = true;
+			}
+		}
+		
+		/**
 		 * Sets the maximum speed (in pixels per second) that the FlxSprite can move. You can set the horizontal and vertical speeds independantly.<br>
 		 * When the FlxSprite is accelerating (movement type MOVEMENT_ACCELERATES) its speed won't increase above this value.<br>
 		 * However Flixel allows the velocity of an FlxSprite to be set to anything. So if you'd like to check the value and restrain it, then enable "limitVelocity".
 		 * 
 		 * @param	xSpeed			The maximum speed in pixels per second in which the sprite can move horizontally
 		 * @param	ySpeed			The maximum speed in pixels per second in which the sprite can move vertically
-		 * @param	limitVelocity	If true the velocity of the FlxSprite will be checked and kept within the limit (true). If false it can be set to anything.
+		 * @param	limitVelocity	If true the velocity of the FlxSprite will be checked and kept within the limit. If false it can be set to anything.
 		 */
 		public function setMaximumSpeed(xSpeed:uint, ySpeed:uint, limitVelocity:Boolean = true):void
 		{
@@ -293,17 +507,32 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function speedUp(xFactor:Number, yFactor:Number):void
 		{
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function slowDown(xFactor:Number, yFactor:Number):void
 		{
 		}
 		
-		// TODO
+		/**
+		 * TODO
+		 * 
+		 * @param	xFactor
+		 * @param	yFactor
+		 */
 		public function resetSpeeds(resetX:Boolean = true, resetY:Boolean = true):void
 		{
 			if (resetX)
@@ -317,10 +546,58 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		// TODO
-		public function addHotKey(key:String, callback:Function, mode:int):void
+		/**
+		 * Creates a new Hot Key, which can be bound to any function you specify (such as "swap weapon", "quit", etc)
+		 * 
+		 * @param	key			The key to use as the hot key (String from org.flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL", "Q", etc)
+		 * @param	callback	The function to call when the key is pressed
+		 * @param	keymode		The keymode that will trigger the callback, either KEYMODE_PRESSED, KEYMODE_JUST_DOWN or KEYMODE_RELEASED
+		 */
+		public function addHotKey(key:String, callback:Function, keymode:int):void
 		{
 			
+		}
+		
+		/**
+		 * Removes a previously defined hot key
+		 * 
+		 * @param	key		The key to use as the hot key (String from org.flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL", "Q", etc)
+		 * @return	true if the key was found and removed, false if the key couldn't be found
+		 */
+		public function removeHotKey(key:String):Boolean
+		{
+			return true;
+		}
+		
+		/**
+		 * Set sound effects for the movement events jumping, firing, walking and thrust.
+		 * 
+		 * @param	jump	The FlxSound to play when the user jumps
+		 * @param	fire	The FlxSound to play when the user fires
+		 * @param	walk	The FlxSound to play when the user walks
+		 * @param	thrust	The FlxSound to play when the user thrusts
+		 */
+		public function setSounds(jump:FlxSound = null, fire:FlxSound = null, walk:FlxSound = null, thrust:FlxSound = null):void
+		{
+			if (jump)
+			{
+				jumpSound = jump;
+			}
+			
+			if (fire)
+			{
+				fireSound = fire;
+			}
+			
+			if (walk)
+			{
+				walkSound = walk;
+			}
+			
+			if (thrust)
+			{
+				thrustSound = thrust;
+			}
 		}
 		
 		/**
@@ -328,7 +605,7 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @param	key				The key to use as the fire button (String from org.flixel.system.input.Keyboard, i.e. "SPACE", "CONTROL")
 		 * @param	keymode			The FlxControlHandler KEYMODE value (KEYMODE_PRESSED, KEYMODE_JUST_DOWN, KEYMODE_RELEASED)
-		 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (250 would allow it to fire 4 times per second)
+		 * @param	repeatDelay		Time delay in ms between which the fire action can repeat (0 means instant, 250 would allow it to fire approx. 4 times per second)
 		 * @param	callback		A user defined function to call when it fires
 		 * @param	altKey			Specify an alternative fire key that works AS WELL AS the primary fire key (TODO)
 		 */
@@ -406,6 +683,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(upKey))
 			{
 				move = true;
+				isPressedUp = true;
 				
 				if (yFacing)
 				{
@@ -437,6 +715,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(downKey))
 			{
 				move = true;
+				isPressedDown = true;
 				
 				if (yFacing)
 				{
@@ -469,6 +748,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(leftKey))
 			{
 				move = true;
+				isPressedLeft = true;
 				
 				if (xFacing)
 				{
@@ -500,6 +780,7 @@ package org.flixel.plugin.photonstorm
 			if (FlxG.keys.pressed(rightKey))
 			{
 				move = true;
+				isPressedRight = true;
 				
 				if (xFacing)
 				{
@@ -524,6 +805,125 @@ package org.flixel.plugin.photonstorm
 			return move;
 		}
 		
+		private function moveAntiClockwise():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(antiClockwiseKey))
+			{
+				move = true;
+				
+				if (rotation == ROTATION_INSTANT)
+				{
+					entity.angularVelocity = antiClockwiseRotationSpeed;
+				}
+				else if (rotation == ROTATION_ACCELERATES)
+				{
+					entity.angularAcceleration = antiClockwiseRotationSpeed;
+				}
+				
+				// TODO - Not quite there yet given the way Flixel can rotate to any valid int angle!
+				if (enforceAngleLimits)
+				{
+					//entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+				}
+			}
+			
+			return move;
+		}
+		
+		private function moveClockwise():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(clockwiseKey))
+			{
+				move = true;
+				
+				if (rotation == ROTATION_INSTANT)
+				{
+					entity.angularVelocity = clockwiseRotationSpeed;
+				}
+				else if (rotation == ROTATION_ACCELERATES)
+				{
+					entity.angularAcceleration = clockwiseRotationSpeed;
+				}
+				
+				// TODO - Not quite there yet given the way Flixel can rotate to any valid int angle!
+				if (enforceAngleLimits)
+				{
+					//entity.angle = FlxMath.angleLimit(entity.angle, minAngle, maxAngle);
+				}
+			}
+			
+			return move;
+		}
+		
+		private function moveThrust():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(thrustKey))
+			{
+				move = true;
+				
+				var motion:FlxPoint = FlxVelocity.velocityFromAngle(entity.angle, thrustSpeed);
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = motion.x;
+					entity.velocity.y = motion.y;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = motion.x;
+					entity.acceleration.y = motion.y;
+				}
+				
+				if (bounds && entity.x < bounds.x)
+				{
+					entity.x = bounds.x;
+				}
+			}
+			
+			if (move && thrustSound)
+			{
+				thrustSound.play(false);
+			}
+			
+			return move;
+		}
+		
+		private function moveReverse():Boolean
+		{
+			var move:Boolean = false;
+			
+			if (FlxG.keys.pressed(reverseKey))
+			{
+				move = true;
+				
+				var motion:FlxPoint = FlxVelocity.velocityFromAngle(entity.angle, reverseSpeed);
+				
+				if (movement == MOVEMENT_INSTANT)
+				{
+					entity.velocity.x = -motion.x;
+					entity.velocity.y = -motion.y;
+				}
+				else if (movement == MOVEMENT_ACCELERATES)
+				{
+					entity.acceleration.x = -motion.x;
+					entity.acceleration.y = -motion.y;
+				}
+				
+				if (bounds && entity.x < bounds.x)
+				{
+					entity.x = bounds.x;
+				}
+			}
+			
+			return move;
+		}
+		
 		private function runFire():Boolean
 		{
 			var fired:Boolean = false;
@@ -533,15 +933,32 @@ package org.flixel.plugin.photonstorm
 			//	2 = Just Released
 			if ((fireKeyMode == 0 && FlxG.keys.pressed(fireKey)) || (fireKeyMode == 1 && FlxG.keys.justPressed(fireKey)) || (fireKeyMode == 2 && FlxG.keys.justReleased(fireKey)))
 			{
-				if (getTimer() > nextFireTime)
+				if (fireRate > 0)
+				{
+					if (getTimer() > nextFireTime)
+					{
+						lastFiredTime = getTimer();
+						
+						fireCallback.call();
+						
+						fired = true;
+						
+						nextFireTime = lastFiredTime + fireRate;
+					}
+				}
+				else
 				{
 					lastFiredTime = getTimer();
-					nextFireTime = lastFiredTime + fireRate;
 					
 					fireCallback.call();
 					
 					fired = true;
 				}
+			}
+			
+			if (fired && fireSound)
+			{
+				fireSound.play(true);
 			}
 			
 			return fired;
@@ -613,6 +1030,11 @@ package org.flixel.plugin.photonstorm
 				jumped = true;
 			}
 			
+			if (jumped && jumpSound)
+			{
+				jumpSound.play(true);
+			}
+			
 			return jumped;
 		}
 		
@@ -625,6 +1047,12 @@ package org.flixel.plugin.photonstorm
 			{
 				return;
 			}
+			
+			//	Reset the helper booleans
+			isPressedUp = false;
+			isPressedDown = false;
+			isPressedLeft = false;
+			isPressedRight = false;
 			
 			if (stopping == STOPPING_INSTANT)
 			{
@@ -648,39 +1076,99 @@ package org.flixel.plugin.photonstorm
 				}
 				else if (movement == MOVEMENT_ACCELERATES)
 				{
-					if (gravityX == 0)
-					{
-						entity.acceleration.x = 0;
-					}
-					
-					if (gravityY == 0)
-					{
-						entity.acceleration.y = 0;
-					}
+					//	By default these are zero anyway, so it's safe to set like this
+					entity.acceleration.x = gravityX;
+					entity.acceleration.y = gravityY;
 				}
 			}
 			
-			var movedX:Boolean = false;
-			var movedY:Boolean = false;
-			
-			if (up)
+			//	Rotation
+			if (isRotating)
 			{
-				movedY = moveUp();
+				if (rotationStopping == ROTATION_STOPPING_INSTANT)
+				{
+					if (rotation == ROTATION_INSTANT)
+					{
+						entity.angularVelocity = 0;
+					}
+					else if (rotation == ROTATION_ACCELERATES)
+					{
+						entity.angularAcceleration = 0;
+					}
+				}
+				else if (rotationStopping == ROTATION_STOPPING_DECELERATES)
+				{
+					if (rotation == ROTATION_INSTANT)
+					{
+						entity.angularVelocity = 0;
+					}
+				}
+				
+				var hasRotatedAntiClockwise:Boolean = false;
+				var hasRotatedClockwise:Boolean = false;
+				
+				hasRotatedAntiClockwise = moveAntiClockwise();
+				
+				if (hasRotatedAntiClockwise == false)
+				{
+					hasRotatedClockwise = moveClockwise();
+				}
+				
+				if (rotationStopping == ROTATION_STOPPING_DECELERATES)
+				{
+					if (rotation == ROTATION_ACCELERATES && hasRotatedAntiClockwise == false && hasRotatedClockwise == false)
+					{
+						entity.angularAcceleration = 0;
+					}
+				}
+				
+				//	If they have got instant stopping with acceleration and are NOT pressing a key, then stop the rotation. Otherwise we let it carry on
+				if (rotationStopping == ROTATION_STOPPING_INSTANT && rotation == ROTATION_ACCELERATES && hasRotatedAntiClockwise == false && hasRotatedClockwise == false)
+				{
+					entity.angularVelocity = 0;
+					entity.angularAcceleration = 0;
+				}
 			}
 			
-			if (down && movedY == false)
+			//	Thrust
+			if (thrustEnabled || reverseEnabled)
 			{
-				moveDown();
+				var moved:Boolean = false;
+				
+				if (thrustEnabled)
+				{
+					moved = moveThrust();
+				}
+				
+				if (moved == false && reverseEnabled)
+				{
+					moved = moveReverse();
+				}
 			}
-			
-			if (left)
+			else
 			{
-				movedX = moveLeft();
-			}
-			
-			if (right && movedX == false)
-			{
-				moveRight();
+				var movedX:Boolean = false;
+				var movedY:Boolean = false;
+				
+				if (up)
+				{
+					movedY = moveUp();
+				}
+				
+				if (down && movedY == false)
+				{
+					movedY = moveDown();
+				}
+				
+				if (left)
+				{
+					movedX = moveLeft();
+				}
+				
+				if (right && movedX == false)
+				{
+					movedX = moveRight();
+				}
 			}
 			
 			if (fire)
@@ -706,6 +1194,17 @@ package org.flixel.plugin.photonstorm
 				}
 			}
 			
+			if (walkSound)
+			{
+				if ((movement == MOVEMENT_INSTANT && entity.velocity.x != 0) || (movement == MOVEMENT_ACCELERATES && entity.acceleration.x != 0))
+				{
+					walkSound.play(false);
+				}
+				else
+				{
+					walkSound.stop();
+				}
+			}
 		}
 		
 		/**

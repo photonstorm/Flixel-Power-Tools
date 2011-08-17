@@ -2,11 +2,12 @@
  * FlxCollision
  * -- Part of the Flixel Power Tools set
  * 
- * Updated for the Flixel 2.5 Plugin system
- * 
+ * v1.5 Added createCameraWall
+ * v1.4 Added pixelPerfectPointCheck()
  * v1.3 Update fixes bug where it wouldn't accurately perform collision on AutoBuffered rotated sprites, or sprites with offsets
+ * v1.2 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.3 - April 27th 2011
+ * @version 1.5 - July 27th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -26,6 +27,9 @@ package org.flixel.plugin.photonstorm
 	public class FlxCollision 
 	{
 		public static var debug:BitmapData = new BitmapData(1, 1, false);
+		
+		public static var CAMERA_WALL_OUTSIDE:uint = 0;
+		public static var CAMERA_WALL_INSIDE:uint = 1;
 		
 		public function FlxCollision() 
 		{
@@ -94,6 +98,91 @@ package org.flixel.plugin.photonstorm
 			{
 				return true;
 			}
+		}
+		
+		/**
+		 * A Pixel Perfect Collision check between a given x/y coordinate and an FlxSprite<br>
+		 * 
+		 * @param	pointX			The x coordinate of the point given in local space (relative to the FlxSprite, not game world coordinates)
+		 * @param	pointY			The y coordinate of the point given in local space (relative to the FlxSprite, not game world coordinates)
+		 * @param	target			The FlxSprite to check the point against
+		 * @param	alphaTolerance	The alpha tolerance level above which pixels are counted as colliding. Default to 255 (must be fully transparent for collision)
+		 * 
+		 * @return	Boolean True if the x/y point collides with the FlxSprite, false if not
+		 */
+		public static function pixelPerfectPointCheck(pointX:uint, pointY:uint, target:FlxSprite, alphaTolerance:int = 255):Boolean
+		{
+			//	Intersect check
+			if (FlxMath.pointInCoordinates(pointX, pointY, target.x, target.y, target.width, target.height) == false)
+			{
+				return false;
+			}
+			
+			//	How deep is pointX/Y within the rect?
+			var test:BitmapData = target.framePixels;
+			
+			if (FlxColor.getAlpha(test.getPixel32(pointX - target.x, pointY - target.y)) >= alphaTolerance)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		/**
+		 * Creates a "wall" around the given camera which can be used for FlxSprite collision
+		 * 
+		 * @param	camera				The FlxCamera to use for the wall bounds (can be FlxG.camera for the current one)
+		 * @param	placement			CAMERA_WALL_OUTSIDE or CAMERA_WALL_INSIDE
+		 * @param	thickness			The thickness of the wall in pixels
+		 * @param	adjustWorldBounds	Adjust the FlxG.worldBounds based on the wall (true) or leave alone (false)
+		 * 
+		 * @return	FlxGroup The 4 FlxTileblocks that are created are placed into this FlxGroup which should be added to your State
+		 */
+		public static function createCameraWall(camera:FlxCamera, placement:uint, thickness:uint, adjustWorldBounds:Boolean = false):FlxGroup
+		{
+			var left:FlxTileblock;
+			var right:FlxTileblock;
+			var top:FlxTileblock;
+			var bottom:FlxTileblock;
+			
+			switch (placement)
+			{
+				case CAMERA_WALL_OUTSIDE:
+					left = new FlxTileblock(camera.x - thickness, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					right = new FlxTileblock(camera.x + camera.width, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					top = new FlxTileblock(camera.x - thickness, camera.y - thickness, camera.width + thickness * 2, thickness);
+					bottom = new FlxTileblock(camera.x - thickness, camera.height, camera.width + thickness * 2, thickness);
+					
+					if (adjustWorldBounds)
+					{
+						FlxG.worldBounds = new FlxRect(camera.x - thickness, camera.y - thickness, camera.width + thickness * 2, camera.height + thickness * 2);
+					}
+					break;
+					
+				case CAMERA_WALL_INSIDE:
+					left = new FlxTileblock(camera.x, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					right = new FlxTileblock(camera.x + camera.width - thickness, camera.y + thickness, thickness, camera.height - (thickness * 2));
+					top = new FlxTileblock(camera.x, camera.y, camera.width, thickness);
+					bottom = new FlxTileblock(camera.x, camera.height - thickness, camera.width, thickness);
+					
+					if (adjustWorldBounds)
+					{
+						FlxG.worldBounds = new FlxRect(camera.x, camera.y, camera.width, camera.height);
+					}
+					break;
+			}
+			
+			var result:FlxGroup = new FlxGroup(4);
+			
+			result.add(left);
+			result.add(right);
+			result.add(top);
+			result.add(bottom);
+			
+			return result;
 		}
 		
 	}

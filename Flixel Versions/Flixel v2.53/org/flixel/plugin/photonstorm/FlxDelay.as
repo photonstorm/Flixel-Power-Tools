@@ -2,9 +2,12 @@
  * FlxDelay
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.4 Modified abort so it no longer runs the stop callback (thanks to Cambrian-Man)
+ * v1.3 Added secondsElapsed and secondsRemaining and some more documentation
+ * v1.2 Added callback support
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.1 - April 23rd 2011
+ * @version 1.4 - July 31st 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -19,18 +22,30 @@ package org.flixel.plugin.photonstorm
 	import org.flixel.*;
 	
 	/**
-	 * A useful timer that can be used to trigger events after certain amounts of time are up.<br />
-	 * Uses getTimer so is low on resources and avoids using Flash events.<br />
-	 * Also takes into consideration the Pause state of your game.<br />
+	 * A useful timer that can be used to trigger events after certain amounts of time are up.
+	 * Uses getTimer so is low on resources and avoids using Flash events.
+	 * Also takes into consideration the Pause state of your game.
 	 * If your game pauses, when it starts again the timer notices and adjusts the expires time accordingly.
 	 */
 	
 	public class FlxDelay extends Sprite
 	{
+		/**
+		 * true if the timer is currently running, otherwise false
+		 */
 		public var isRunning:Boolean;
 		
-		private var started:int;
+		/**
+		 * If you wish to call a function once the timer completes, set it here
+		 */
+		public var callback:Function;
+		
+		/**
+		 * The duration of the Delay in milliseconds
+		 */
 		public var duration:int;
+		
+		private var started:int;
 		private var expires:int;
 		private var pauseStarted:int;
 		private var pausedTimerRunning:Boolean;
@@ -82,6 +97,22 @@ package org.flixel.plugin.photonstorm
 			start();
 		}
 		
+		/**
+		 * The amount of seconds that have elapsed since the timer was started
+		 */
+		public function get secondsElapsed():int
+		{
+			return int((getTimer() - started) / 1000);
+		}
+		
+		/**
+		 * The amount of seconds that are remaining until the timer completes
+		 */
+		public function get secondsRemaining():int
+		{
+			return int((expires - getTimer()) / 1000);
+		}
+		
 		private function update(event:Event):void
 		{
 			//	Has the game been paused?
@@ -109,15 +140,21 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function abort():void
 		{
-			stop();
+			stop(false);
 		}
 		
-		private function stop():void
+		private function stop(runCallback:Boolean = true):void
 		{
 			removeEventListener(Event.ENTER_FRAME, update);
 			
 			isRunning = false;
 			complete = true;
+			
+			if (callback is Function && runCallback == true)
+			{
+				callback.call();
+			}
+			
 		}
 		
 	}
