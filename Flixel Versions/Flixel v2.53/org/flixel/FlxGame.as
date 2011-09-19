@@ -16,9 +16,9 @@ package org.flixel
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	
+	import org.flixel.plugin.TimerManager;
 	import org.flixel.system.FlxDebugger;
 	import org.flixel.system.FlxReplay;
-	import org.flixel.plugin.TimerManager;
 
 	/**
 	 * FlxGame is the heart of all flixel games, and contains a bunch of basic game loops and things.
@@ -40,7 +40,13 @@ package org.flixel
 		 */
 		public var useSoundHotKeys:Boolean;
 		/**
+		 * Tells flixel to use the default system mouse cursor instead of custom Flixel mouse cursors.
+		 * @default false
+		 */
+		public var useSystemCursor:Boolean;
+		/**
 		 * Initialize and allow the flixel debugger overlay even in release mode.
+		 * Also useful if you don't use FlxPreloader!
 		 * @default false
 		 */
 		public var forceDebugger:Boolean;
@@ -166,11 +172,11 @@ package org.flixel
 		 * @param	Zoom			The default level of zoom for the game's cameras (e.g. 2 = all pixels are now drawn at 2x).  Default = 1.
 		 * @param	GameFramerate	How frequently the game should update (default is 60 times per second).
 		 * @param	FlashFramerate	Sets the actual display framerate for Flash player (default is 30 times per second).
+		 * @param	UseSystemCursor	Whether to use the default OS mouse pointer, or to use custom flixel ones.
 		 */
-		public function FlxGame(GameSizeX:uint,GameSizeY:uint,InitialState:Class,Zoom:Number=1,GameFramerate:uint=60,FlashFramerate:uint=30)
+		public function FlxGame(GameSizeX:uint,GameSizeY:uint,InitialState:Class,Zoom:Number=1,GameFramerate:uint=60,FlashFramerate:uint=30,UseSystemCursor:Boolean=false)
 		{
 			//super high priority init stuff (focus, mouse, etc)
-			flash.ui.Mouse.hide();
 			_lostFocus = false;
 			_focus = new Sprite();
 			_focus.visible = false;
@@ -185,6 +191,9 @@ package org.flixel
 			_total = 0;
 			_state = null;
 			useSoundHotKeys = true;
+			useSystemCursor = UseSystemCursor;
+			if(!useSystemCursor)
+				flash.ui.Mouse.hide();
 			forceDebugger = false;
 			_debuggerUp = false;
 			
@@ -242,7 +251,7 @@ package org.flixel
 					_debuggerUp = _debugger.visible;
 					if(_debugger.visible)
 						flash.ui.Mouse.show();
-					else
+					else if(!useSystemCursor)
 						flash.ui.Mouse.hide();
 					//_console.toggle();
 					return;
@@ -387,12 +396,12 @@ package org.flixel
 		 */
 		protected function onFocus(FlashEvent:Event=null):void
 		{
-			if(!_debuggerUp)
+			if(!_debuggerUp && !useSystemCursor)
 				flash.ui.Mouse.hide();
 			FlxG.resetInput();
 			_lostFocus = _focus.visible = false;
 			stage.frameRate = _flashFramerate;
-			FlxG.playSounds();
+			FlxG.resumeSounds();
 		}
 		
 		/**
@@ -418,7 +427,7 @@ package org.flixel
 		 * 
 		 * @param	FlashEvent	Flash event.
 		 */
-		protected function onEnterFrame(FlashEvent:Event=null):void
+		protected function ORIGINALonEnterFrame(FlashEvent:Event=null):void
 		{			
 			var mark:uint = getTimer();
 			var elapsedMS:uint = mark-_total;
@@ -447,6 +456,55 @@ package org.flixel
 				}
 				
 				FlxBasic._VISIBLECOUNT = 0;
+				draw();
+				
+				if(_debuggerUp)
+				{
+					_debugger.perf.flash(elapsedMS);
+					_debugger.perf.visibleObjects(FlxBasic._VISIBLECOUNT);
+					_debugger.perf.update();
+					_debugger.watch.update();
+				}
+			}
+		}
+		
+		/**
+		 * Handles the onEnterFrame call and figures out how many updates and draw calls to do.
+		 * Modified by Richard Davey to remove the deterministic timing, and instead rely on the event loop.
+		 * 
+		 * @param	FlashEvent	Flash event.
+		 */
+		protected function onEnterFrame(FlashEvent:Event=null):void
+		{			
+			var mark:uint = getTimer();
+			var elapsedMS:uint = mark-_total;
+			_total = mark;
+			updateSoundTray(elapsedMS);
+			if(!_lostFocus)
+			{
+				if((_debugger != null) && _debugger.vcr.paused)
+				{
+					if(_debugger.vcr.stepRequested)
+					{
+						_debugger.vcr.stepRequested = false;
+						step();
+					}
+				}
+				else
+				{
+					_accumulator += elapsedMS;
+					
+					if (_accumulator > _maxAccumulation)
+					{
+						_accumulator = _maxAccumulation;
+					}
+					
+					step();
+					_accumulator = _accumulator - _step; 
+				}
+				
+				FlxBasic._VISIBLECOUNT = 0;
+				
 				draw();
 				
 				if(_debuggerUp)

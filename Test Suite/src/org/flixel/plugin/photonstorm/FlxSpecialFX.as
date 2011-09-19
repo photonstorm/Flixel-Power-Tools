@@ -2,6 +2,7 @@
  * FlxSpecialFX
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.6 Added WowCopperFX
  * v1.5 Added RevealFX
  * v1.4 Added BlurFX and CenterSlideFX
  * v1.3 Renamed DropDown to FloodFill
@@ -9,7 +10,7 @@
  * v1.1 Added SineWaveFX
  * v1.0 First release of the new FlxSpecialFX system
  * 
- * @version 1.4 - June 12th 2011
+ * @version 1.6 - September 19th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -27,6 +28,7 @@ package org.flixel.plugin.photonstorm
 	import org.flixel.plugin.photonstorm.FX.RevealFX;
 	import org.flixel.plugin.photonstorm.FX.SineWaveFX;
 	import org.flixel.plugin.photonstorm.FX.StarfieldFX;
+	import org.flixel.plugin.photonstorm.FX.WowCopperFX;
 	
 	/**
 	 * FlxSpecialFX is a single point of access to all of the FX Plugins available in the Flixel Power Tools
@@ -167,6 +169,19 @@ package org.flixel.plugin.photonstorm
 			return members[temp];
 		}
 		
+		/**
+		 * Creates a WOW Copper Effect
+		 * 
+		 * @return	WowCopperFX
+		 */
+		public static function wowCopper():WowCopperFX
+		{
+			var temp:WowCopperFX = new WowCopperFX
+			
+			members[temp] = temp;
+			
+			return members[temp];
+		}
 		
 		
 		

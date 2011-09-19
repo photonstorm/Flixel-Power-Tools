@@ -474,8 +474,8 @@ package org.flixel
 		public function findPath(Start:FlxPoint,End:FlxPoint,Simplify:Boolean=true,RaySimplify:Boolean=false):FlxPath
 		{
 			//figure out what tile we are starting and ending on.
-			var startIndex:uint = uint((Start.y-y)/_tileHeight) * widthInTiles + uint((Start.x-x)/_tileWidth);
-			var endIndex:uint = uint((End.y-y)/_tileHeight) * widthInTiles + uint((End.x-x)/_tileWidth);
+			var startIndex:uint = int((Start.y-y)/_tileHeight) * widthInTiles + int((Start.x-x)/_tileWidth);
+			var endIndex:uint = int((End.y-y)/_tileHeight) * widthInTiles + int((End.x-x)/_tileWidth);
 
 			//check that the start and end are clear.
 			if( ((_tileObjects[_data[startIndex]] as FlxTile).allowCollisions > 0) ||
@@ -596,7 +596,8 @@ package org.flixel
 					distances[i] = -1;
 				i++;
 			}
-			var distance:uint = 0;
+			distances[StartIndex] = 0;
+			var distance:uint = 1;
 			var neighbors:Array = [StartIndex];
 			var current:Array;
 			var currentIndex:uint;
@@ -735,49 +736,73 @@ package org.flixel
 			{
 				i = Start - widthInTiles;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(right)
 			{
 				i = Start + 1;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(down)
 			{
 				i = Start + widthInTiles;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(left)
 			{
 				i = Start - 1;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(up && right)
 			{
 				i = Start - widthInTiles + 1;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(right && down)
 			{
 				i = Start + widthInTiles + 1;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(left && down)
 			{
 				i = Start + widthInTiles - 1;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 			if(up && left)
 			{
 				i = Start - widthInTiles - 1;
 				if((Data[i] >= 0) && (Data[i] < current))
-					return walkPath(Data,i,Points);
+				{
+					walkPath(Data,i,Points);
+					return;
+				}
 			}
 		}
 		
