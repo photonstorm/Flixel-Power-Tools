@@ -57,10 +57,10 @@ package tests.scrollingtext
 			}
 			
 			//	Our font - it's a lovely golden 16x16 font set from the Bitmap Brothers game Gods on the Atari ST
-			font = new FlxBitmapFont(AssetsRegistry.godsPNG, 16, 16, FlxBitmapFont.TEXT_SET10 + ".:0123456789<*>", 20);
+			//font = new FlxBitmapFont(AssetsRegistry.godsPNG, 16, 16, FlxBitmapFont.TEXT_SET10 + ".:0123456789<*>", 20);
 			
 			//	Just another font to try it with. This one is only 7x8 in size. Uncomment the line below (and comment-out the font line above to test)
-			//font = new FlxBitmapFont(AssetsRegistry.tinyPNG, 7, 8, FlxBitmapFont.TEXT_SET10 + ":/.!',-701234 6", 21, 1, 1);
+			font = new FlxBitmapFont(AssetsRegistry.tinyPNG, 7, 8, FlxBitmapFont.TEXT_SET10 + ":/.!',-701234 6", 21, 1, 1);
 			
 			var diff:uint = 16;
 			

@@ -38,7 +38,7 @@ package org.flixel.plugin.photonstorm
 		 * 
 		 * @param	bitmapFont			A pre-prepared FlxBitmapFont object (see the Test Suite examples for details on how this works)
 		 * @param	region				A Rectangle that defines the size of the scrolling FlxSprite. The sprite will be placed at region.x/y and be region.width/height in size.
-		 * @param	pixels				The number of pixels to scroll per step. For a smooth (but slow) scroll use low values. Keep the value equal to the font width, so if the font width is 16 use a value like 1, 2, 4 or 8.
+		 * @param	pixels				The number of pixels to scroll per step. For a smooth (but slow) scroll use low values. Keep the value proportional to the font width, so if the font width is 16 use a value like 1, 2, 4 or 8.
 		 * @param	steps				How many steps should pass before the text is next scrolled? Default 0 means every step we scroll. Higher values slow things down.
 		 * @param	text				The default text for your scrolling message. Can be changed in real-time via the addText method.
 		 * @param	onlyScrollOnscreen	Only update the text scroller when this FlxSprite is visible on-screen? Default true.

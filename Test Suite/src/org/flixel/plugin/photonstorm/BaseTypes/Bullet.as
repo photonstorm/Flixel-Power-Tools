@@ -168,6 +168,11 @@ package org.flixel.plugin.photonstorm.BaseTypes
 				play("fire");
 			}
 			
+			if (weapon.bulletElasticity > 0)
+			{
+				elasticity = weapon.bulletElasticity;
+			}
+			
 			exists = true;
 			
 			launchTime = getTimer();
@@ -211,8 +216,6 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		
 		override public function update():void
 		{
-			super.update();
-			
 			if (lifespan > 0 && getTimer() > expiresTime)
 			{
 				kill();

@@ -2,11 +2,12 @@
  * FlxWeapon
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.3 Added bullet elasticity and bulletsFired counter
  * v1.2 Added useParentDirection boolean
  * v1.1 Added pre-fire, fire and post-fire callbacks and sound support, rnd factors, boolean returns and currentBullet
  * v1.0 First release
  * 
- * @version 1.2 - August 15th 2011
+ * @version 1.3 - October 9th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -69,7 +70,11 @@ package org.flixel.plugin.photonstorm
 		
 		private var velocity:FlxPoint;
 		
+		public var multiShot:uint = 0;
+		
 		public var bulletLifeSpan:uint = 0;
+		public var bulletElasticity:Number = 0;
+		
 		public var rndFactorAngle:uint = 0;
 		public var rndFactorLifeSpan:uint = 0;
 		public var rndFactorSpeed:uint = 0;
@@ -100,8 +105,12 @@ package org.flixel.plugin.photonstorm
 		public static const BULLET_SOUTH_EAST:int = 45;
 		public static const BULLET_SOUTH_WEST:int = 135;
 		
+		/**
+		 * Keeps a tally of how many bullets have been fired by this weapon
+		 */
+		public var bulletsFired:uint = 0;
+		
 		//	TODO :)
-		private var bulletsFired:uint;
 		private var currentMagazine:uint;
 		//private var currentBullet:uint;
 		private var magazineCount:uint;
@@ -336,6 +345,8 @@ package org.flixel.plugin.photonstorm
 				onPostFireSound.play();
 			}
 			
+			bulletsFired++;
+			
 			return true;
 		}
 		
@@ -560,7 +571,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * To make the bullet apply a random factor to either its angle, speed, or both when fired, set these values. Can create a nice "scatter gun" effect.
+		 * Give the bullet a random factor to its angle, speed, position or lifespan when fired. Can create a nice "scatter gun" effect.
 		 * 
 		 * @param	randomAngle		The +- value applied to the angle when fired. For example 20 means the bullet can fire up to 20 degrees under or over its angle when fired.
 		 * @param	randomSpeed		The +- value applied to the bullet speed when fired. For example 10 means the bullet speed varies by +- 10px/sec
@@ -584,11 +595,21 @@ package org.flixel.plugin.photonstorm
 		 * If the bullet should have a fixed life span use this function to set it.
 		 * The bullet will be killed once it passes this lifespan (if still alive and in bounds)
 		 * 
-		 * @param	lifespan	The lifespan of the bullet in ms, calculated when the bullet is fired. Set to zero to zero to disable bullet lifespan.
+		 * @param	lifespan	The lifespan of the bullet in ms, calculated when the bullet is fired. Set to zero to disable bullet lifespan.
 		 */
 		public function setBulletLifeSpan(lifespan:int):void
 		{
 			bulletLifeSpan = lifespan;
+		}
+		
+		/**
+		 * The elasticity of the fired bullet controls how much it rebounds off collision surfaces.
+		 * 
+		 * @param	elasticity	The elasticity of the bullet between 0 and 1 (0 being no rebound, 1 being 100% force rebound). Set to zero to disable.
+		 */
+		public function setBulletElasticity(elasticity:Number):void
+		{
+			bulletElasticity = elasticity;
 		}
 		
 		/**

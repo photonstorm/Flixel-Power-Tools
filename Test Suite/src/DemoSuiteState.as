@@ -99,7 +99,7 @@ package
 			
 			options["Bitmap Fonts"] = [BitmapFontTest1, BitmapFontTest2, BitmapFontTest3];
 			options["Button Plus"] = [ButtonPlusTest1];
-			options["Collision"] = [CollisionTest1, CollisionTest2, CollisionTest3];
+			options["Collision"] = [CollisionTest1, CollisionTest2, CollisionTest3, CollisionTest4];
 			options["Color"] = [ColorTest1, ColorTest2];
 			options["Controls"] = [ControlTest1, ControlTest2, ControlTest3, ControlTest4, ControlTest5, ControlTest6, ControlTest7 ];
 			options["Delay"] = [DelayTest1];
@@ -114,7 +114,7 @@ package
 			options["Scrolling Zones"] = [ScrollZoneTest1, ScrollZoneTest2, ScrollZoneTest3, ScrollZoneTest4, ScrollZoneTest5];
 			options["Special FX"] = [BlurTest1, BlurTest2, CenterSlideTest1, FloodFillTest1, FloodFillTest2, GlitchTest1, PlasmaTest1, RainbowLineTest1, SineWaveTest1, SineWaveTest2, SineWaveTest3, SineWaveTest4, StarFieldTest1, StarFieldTest2, WowCopperTest1];
 			options["Velocity"] = [VelocityTest1, VelocityTest2, VelocityTest3, VelocityTest4];
-			options["Weapons"] = [WeaponTest1, WeaponTest2, WeaponTest3, WeaponTest4, WeaponTest5, WeaponTest6, WeaponTest7, WeaponTest8, WeaponTest9];
+			options["Weapons"] = [WeaponTest1, WeaponTest2, WeaponTest3, WeaponTest4, WeaponTest5, WeaponTest6, WeaponTest7, WeaponTest8, WeaponTest9, WeaponTest10];
 		}
 		
 		override public function create():void
