@@ -49,7 +49,7 @@ package
 		[Embed(source = '../assets/fonts/087.png')] private var blueFontPNG:Class;
 		
 		//	Press SPACE to jump to this one quickly
-		private var shortcut:Class = WeaponTest9;
+		private var shortcut:Class = WeaponTest6;
 		
 		private var version:String;
 		private var options:Array;

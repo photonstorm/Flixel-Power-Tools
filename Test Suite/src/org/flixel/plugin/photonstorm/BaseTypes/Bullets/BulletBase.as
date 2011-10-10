@@ -1,5 +1,5 @@
 /**
- * Bullet
+ * BulletBase
  * -- Part of the Flixel Power Tools set
  * 
  * v1.2 Removed "id" and used the FlxSprite ID value instead
@@ -11,7 +11,7 @@
  * @author Richard Davey / Photon Storm
 */
 
-package org.flixel.plugin.photonstorm.BaseTypes 
+package org.flixel.plugin.photonstorm.BaseTypes.Bullets 
 {
 	import org.flixel.FlxPoint;
 	import org.flixel.FlxSprite;
@@ -20,7 +20,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 	import org.flixel.plugin.photonstorm.FlxWeapon;
 	import flash.utils.getTimer;
 
-	public class Bullet extends FlxSprite
+	public class BulletBase extends FlxSprite
 	{
 		protected var weapon:FlxWeapon;
 		
@@ -40,7 +40,7 @@ package org.flixel.plugin.photonstorm.BaseTypes
 		
 		protected var animated:Boolean;
 		
-		public function Bullet(weapon:FlxWeapon, id:uint)
+		public function BulletBase(weapon:FlxWeapon, id:uint)
 		{
 			super(0, 0);
 			

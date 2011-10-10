@@ -8,7 +8,7 @@ package tests.weapon
 	{
 		//	Common variables
 		public static var title:String = "Weapon 3";
-		public static var description:String = "Animted Bullets Example";
+		public static var description:String = "Animated Bullets Example";
 		private var instructions:String = "Left and Right to Move. Space to Fire.";
 		private var header:TestsHeader;
 		
