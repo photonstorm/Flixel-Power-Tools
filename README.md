@@ -3,7 +3,7 @@ Flixel Power Tools
 
 Version 1.9
 
-October 10th 2011
+October 11th 2011
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 

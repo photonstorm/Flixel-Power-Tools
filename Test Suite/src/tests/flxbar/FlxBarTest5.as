@@ -8,15 +8,20 @@ package tests.flxbar
 	{
 		//	Common variables
 		public static var title:String = "FlxBar 5";
-		public static var description:String = "Changing the range of an FlxBar";
+		public static var description:String = "Changing the range of an FlxBar in-game";
 		private var instructions:String = "Changing the range of an FlxBar";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var bar:FlxBar;
+		private var pic:FlxSprite;
+		
 		private var currentLevel:uint;
-		private var level:FlxText;
-		private var levelUp:FlxButton;
+		private var currentExperience:uint;
+		private var maxExperience:uint;
+		private var experienceBar:FlxBar;
+		private var experienceText:FlxText;
+		
+		private var fight:FlxButton;
 		
 		public function FlxBarTest5() 
 		{
@@ -29,19 +34,28 @@ package tests.flxbar
 			
 			//	Test specific
 			
+			header.showDarkBackground();
+			
+			pic = new FlxSprite(8, 64, AssetsRegistry.dragonWizardPNG);
+			
 			currentLevel = 1;
+			currentExperience = 0;
+			maxExperience = 100;
 			
-			bar = new FlxBar(16, 32, FlxBar.FILL_LEFT_TO_RIGHT, 100, 10);
-			bar.setRange(0, 10);
-			bar.percent = 50;
+			experienceBar = new FlxBar(116, 116, FlxBar.FILL_LEFT_TO_RIGHT, 200, 16);
+			experienceBar.createGradientBar([0x00000000], [0xffFFFF00, 0xffFF8B17, 0xffFF0000], 1, 180, true);
+			experienceBar.setRange(0, 100);
+			experienceBar.percent = 0;
 			
-			levelUp = new FlxButton(16, 64, "Level Up", increaseLevel);
+			experienceText = new FlxText(116, 100, 260);
+			experienceText.shadow = 0xff000000;
 			
-			level = new FlxText(16, 96, 200, "Level 1 " + " px " + bar.pxPerPercent);
+			fight = new FlxButton(116, 148, "Fight!", increaseExperience);
 			
-			add(bar);
-			add(levelUp);
-			add(level);
+			add(pic);
+			add(experienceBar);
+			add(experienceText);
+			add(fight);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -50,26 +64,29 @@ package tests.flxbar
 		override public function update():void
 		{
 			super.update();
+			
+			experienceText.text = "Exp: " + currentExperience + " / " + maxExperience + " - Level: " + currentLevel;
 		}
 		
-		private function increaseLevel():void
+		private function increaseExperience():void
 		{
-			currentLevel++;
+			var damage:uint = Math.random() * 50;
 			
-			level.text = "Level " + currentLevel + " px " + bar.pxPerPercent;
+			currentExperience += damage;
 			
-			switch (currentLevel)
+			if (currentExperience > maxExperience)
 			{
-				case 2:
-					bar.setRange(10, 100);
-					//bar.percent = 50;
-					break;
-					
-				case 3:
-					bar.setRange(100, 200);
-					//bar.percent = 50;
-					break;
+				currentLevel++;
+				maxExperience += 250;
+				experienceBar.setRange(0, maxExperience);
+				header.instructions.text = "You hit for " + damage + " damage and LEVEL UP!";
 			}
+			else
+			{
+				header.instructions.text = "You hit for " + damage + " damage";
+			}
+				
+			experienceBar.currentValue = currentExperience;
 			
 		}
 		

@@ -104,6 +104,7 @@ package
 		[Embed(source = '../assets/pics/nslide_snot.png')] public static var nslideSnotPNG:Class;
 		[Embed(source = '../assets/pics/mack_golden_girl.png')] public static var goldenGirlMackPNG:Class;
 		[Embed(source = '../assets/pics/ladycop.png')] public static var ladyCopyPNG:Class;
+		[Embed(source = "../assets/pics/dragonwiz.png")] public static var dragonWizardPNG:Class;
 		
 		//	Music
 		[Embed(source = '../assets/mods/battlechips3.mod', mimeType = 'application/octet-stream')] public static var battlechips3MOD:Class;
