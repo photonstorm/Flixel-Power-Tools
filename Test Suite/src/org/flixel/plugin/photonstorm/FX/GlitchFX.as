@@ -2,16 +2,14 @@
  * GlitchFX - Special FX Plugin
  * -- Part of the Flixel Power Tools set
  * 
- * v1.2 Fixed updateFromSource github issue #8 (thanks CoderBrandon)
- * v1.1 Added changeGlitchValues support
- * v1.0 First release
+ * v2.0 Moved to the new structure for FPT v2.0
  * 
- * @version 1.2 - August 8th 2011
+ * @version 2.0 - October 11th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
-package org.flixel.plugin.photonstorm.FX 
+package org.flixel.plugin.photonstorm.fx 
 {
 	import flash.display.BitmapData;
 	import flash.geom.Point;

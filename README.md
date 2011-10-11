@@ -1,7 +1,7 @@
 Flixel Power Tools
 ==================
 
-Version 1.9
+Version 2.0
 
 October 11th 2011
 

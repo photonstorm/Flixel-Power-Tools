@@ -2,15 +2,14 @@
  * RainbowLineFX - A Special FX Plugin
  * -- Part of the Flixel Power Tools set
  * 
- * v1.0 Built into the new FlxSpecialFX system
+ * v2.0 Moved to the new structure for FPT v2.0
  * 
- * @version 1.0 - May 9th 2011
+ * @version 2.0 - October 11th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
- * @see Requires FlxGradient, FlxMath
 */
 
-package org.flixel.plugin.photonstorm.FX 
+package org.flixel.plugin.photonstorm.fx 
 {
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;

@@ -2,15 +2,14 @@
  * FloodFillFX - Special FX Plugin
  * -- Part of the Flixel Power Tools set
  * 
- * v1.1 Renamed - was "DropDown", but now a more accurate "flood fill"
- * v1.0 First release
+ * v2.0 Moved to the new structure for FPT v2.0
  * 
- * @version 1.1 - May 31st 2011
+ * @version 2.0 - October 11th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
 
-package org.flixel.plugin.photonstorm.FX 
+package org.flixel.plugin.photonstorm.fx 
 {
 	import flash.display.BitmapData;
 	import flash.geom.Point;
