@@ -85,6 +85,8 @@ package tests.flxbar
 			add(bar8);
 			add(bar9);
 			
+			FlxG.watch(bar1, "percent");
+			
 			//	Header overlay
 			add(header.overlay);
 		}
@@ -98,7 +100,7 @@ package tests.flxbar
 			{
 				v++;
 				
-				if (v > 100)
+				if (v >= 100)
 				{
 					vDirection = 1;
 				}

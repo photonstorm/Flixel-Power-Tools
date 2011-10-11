@@ -1,3 +1,9 @@
+=== v1.9 Released =============================================================================================================
+
+10th October 2011
+
+FlxBar - v1.6 Lots of bug fixes, more documentation, 2 new test cases, ability to set currentValue added
+
 9th October 2011
 
 FlxCollision - v1.6 Fixed bug in pixelPerfectCheck that stopped non-square rotated objects from colliding properly (thanks to joon on the flixel forums for spotting)

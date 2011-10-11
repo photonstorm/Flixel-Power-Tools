@@ -1,6 +1,7 @@
 /**
  * Flixel Power Tools Test Suite
  * 
+ * v1.9 - Lots of small updates and bug fixes
  * v1.8 - Extended Sprites and new FlxFlectrum / FlxFlod class
  * v1.7 - New FlxBar and FlxWeapon tests
  * v1.6 - FlxControl and new Special FX Plugins
@@ -8,7 +9,7 @@
  * v1.4 - Scrolling Text and new Special FX Plugin systems added
  * v1.3 - Updated for Flixel v2.53
  * 
- * @version 1.8 - July 29th 2011
+ * @version 1.9 - October 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -83,8 +84,8 @@ package
 			sections.push( { title: "Controls", 		isNew: false,	pic: AssetsRegistry.nonohaPurplePNG } );
 			sections.push( { title: "Delay", 			isNew: false,	pic: AssetsRegistry.pigChampagnePNG } );
 			sections.push( { title: "Display", 			isNew: false,	pic: AssetsRegistry.nonohaBluePNG } );
-			sections.push( { title: "Extended Sprites",	isNew: true,	pic: AssetsRegistry.ladyCopyPNG } );
-			sections.push( { title: "Flod", 			isNew: true,	pic: AssetsRegistry.cactuarPNG } );
+			sections.push( { title: "Extended Sprites",	isNew: false,	pic: AssetsRegistry.ladyCopyPNG } );
+			sections.push( { title: "Flod", 			isNew: false,	pic: AssetsRegistry.cactuarPNG } );
 			sections.push( { title: "FlxBar", 			isNew: false,	pic: AssetsRegistry.spyroPNG } );
 			sections.push( { title: "Gradient", 		isNew: false,	pic: AssetsRegistry.goldenGirlMackPNG } );
 			//sections.push( { title: "Linked Group",		isNew: true,	pic: AssetsRegistry.goldenGirlMackPNG } );
@@ -106,13 +107,13 @@ package
 			options["Display"] = [AlphaMaskTest1, AlphaMaskTest2, AlphaMaskTest3];
 			options["Extended Sprites"] = [ExtendedSpriteTest1, ExtendedSpriteTest2, ExtendedSpriteTest3, ExtendedSpriteTest4, ExtendedSpriteTest5, ExtendedSpriteTest6, ExtendedSpriteTest7, ExtendedSpriteTest8, ExtendedSpriteTest9, ExtendedSpriteTest10, ExtendedSpriteTest11, ExtendedSpriteTest12, ExtendedSpriteTest13, ExtendedSpriteTest14];
 			options["Flod"] = [FlodTest1, FlodTest2, FlodTest3];
-			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3];
+			options["FlxBar"] = [FlxBarTest1, FlxBarTest2, FlxBarTest3, FlxBarTest4, FlxBarTest5];
 			options["Gradient"] = [GradientTest1, GradientTest2, GradientTest3];
 			//options["Linked Group"] = [LinkedGroupTest1];
 			options["Screen Grab"] = [ScreenGrabTest1, ScreenGrabTest2];
 			options["Scrolling Text"] = [ScrollingTextTest1, ScrollingTextTest2, ScrollingTextTest3];
 			options["Scrolling Zones"] = [ScrollZoneTest1, ScrollZoneTest2, ScrollZoneTest3, ScrollZoneTest4, ScrollZoneTest5];
-			options["Special FX"] = [BlurTest1, BlurTest2, CenterSlideTest1, FloodFillTest1, FloodFillTest2, GlitchTest1, PlasmaTest1, RainbowLineTest1, SineWaveTest1, SineWaveTest2, SineWaveTest3, SineWaveTest4, StarFieldTest1, StarFieldTest2, WowCopperTest1];
+			options["Special FX"] = [BlurTest1, BlurTest2, CenterSlideTest1, FloodFillTest1, FloodFillTest2, GlitchTest1, PlasmaTest1, RainbowLineTest1, SineWaveTest1, SineWaveTest2, SineWaveTest3, SineWaveTest4, StarFieldTest1, StarFieldTest2];
 			options["Velocity"] = [VelocityTest1, VelocityTest2, VelocityTest3, VelocityTest4];
 			options["Weapons"] = [WeaponTest1, WeaponTest2, WeaponTest3, WeaponTest4, WeaponTest5, WeaponTest6, WeaponTest7, WeaponTest8, WeaponTest9, WeaponTest10];
 		}

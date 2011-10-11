@@ -7,14 +7,17 @@ package tests.flxbar
 	public class FlxBarTest4 extends FlxState
 	{
 		//	Common variables
-		public static var title:String = "FlxBar 1";
-		public static var description:String = "Using FlxBar as a 10 health bar";
+		public static var title:String = "FlxBar 4";
+		public static var description:String = "A Zelda style Health Bar";
 		private var instructions:String = "Click the mouse to randomise the health values";
 		private var header:TestsHeader;
 		
 		//	Test specific variables
-		private var ufo:FlxSprite;
-		private var ufoHealthBar:FlxBar;
+		private var panel:FlxSprite;
+		private var healthBar:FlxBar;
+		
+		private var increase:FlxButton;
+		private var decrease:FlxButton;
 		
 		public function FlxBarTest4() 
 		{
@@ -26,19 +29,28 @@ package tests.flxbar
 			add(header);
 			
 			//	Test specific
-			ufo = new FlxSprite(64, 120, AssetsRegistry.ufoPNG);
-			ufo.health = FlxMath.rand(500, 5000);
+			panel = new FlxSprite(0, 64, AssetsRegistry.zeldaLifePanelPNG);
+			FlxDisplay.screenCenter(panel);
 			
-			//	Creates a new FlxBar positioned at 16x64 that fills from left to right
-			//	The 64x4 is the width and height of the bar.
-			//	ufo is the FlxSprite it is bound to, and "health" is the FlxSprite variable it will monitor
-			ufoHealthBar = new FlxBar(16, 64, FlxBar.FILL_LEFT_TO_RIGHT, 64, 4, ufo, "health", 500, 5000);
+			healthBar = new FlxBar(panel.x + 8, panel.y + 25, FlxBar.FILL_LEFT_TO_RIGHT, 158, 14);
+			healthBar.createImageBar(null, AssetsRegistry.zeldaLifeHeartsPNG, 0x0);
 			
-			//	This tells it to track the x/y position of the red FlxSprite, but offset by the values given
-			ufoHealthBar.trackParent(0, -5);
+			//	There are 10 hearts in the graphic (one after the other) so we set the range here as being from 0 to 10
+			healthBar.setRange(0, 10);
 			
-			add(ufo);
-			add(ufoHealthBar);
+			//	The starting value
+			healthBar.currentValue = 1;
+			
+			increase = new FlxButton(panel.x, panel.y + panel.height + 4, "+", addHealth);
+			increase.width = 64;
+			
+			decrease = new FlxButton(panel.x + panel.width - 80, panel.y + panel.height + 4, "-", removeHealth);
+			decrease.width = 64;
+			
+			add(panel);
+			add(healthBar);
+			add(increase);
+			add(decrease);
 			
 			//	Header overlay
 			add(header.overlay);
@@ -46,22 +58,21 @@ package tests.flxbar
 		
 		override public function update():void
 		{
-			ufo.x = FlxG.mouse.screenX - 16;
-			ufo.y = FlxG.mouse.screenY - 16;
-			
-			if (FlxG.mouse.justReleased())
-			{
-				var r:uint = FlxMath.rand(500, 5000);
-				
-				ufo.health = r;
-				
-				header.instructions.text = "Health: " + r + "";
-			}
-			
-			//	If you notice a lag/delay in the bar following the sprite then
-			//	it's because you've called super.update() at the START of your update function.
-			//	Leave it until the end and it'll run smoothly.
 			super.update();
+		}
+		
+		private function addHealth():void
+		{
+			healthBar.currentValue++;
+				
+			header.instructions.text = "Health: " + healthBar.currentValue;
+		}
+		
+		private function removeHealth():void
+		{
+			healthBar.currentValue--;
+			
+			header.instructions.text = "Health: " + healthBar.currentValue;
 		}
 		
 	}

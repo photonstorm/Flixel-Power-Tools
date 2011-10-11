@@ -1,9 +1,9 @@
 Flixel Power Tools
 ==================
 
-Version 1.8
+Version 1.9
 
-July 29th 2011
+October 10th 2011
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
@@ -89,6 +89,10 @@ The following classes are currently in the Flixel Power Tools:
 * FlxSpecialFX
 * FlxVelocity
 * FlxWeapon
+
+APIs Include
+
+* FlxKongregate
 
 Special FX Includes
 

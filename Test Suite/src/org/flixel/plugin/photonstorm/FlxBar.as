@@ -2,13 +2,14 @@
  * FlxBar
  * -- Part of the Flixel Power Tools set
  * 
+ * v1.6 Lots of bug fixes, more documentation, 2 new test cases, ability to set currentValue added
  * v1.5 Fixed bug in "get percent" function that allows it to work with any value range
  * v1.4 Added support for min/max callbacks and "kill on min"
  * v1.3 Renamed from FlxHealthBar and made less specific / far more flexible
  * v1.2 Fixed colour values for fill and gradient to include alpha
  * v1.1 Updated for the Flixel 2.5 Plugin system
  * 
- * @version 1.5 - June 6th 2011
+ * @version 1.6 - October 10th 2011
  * @link http://www.photonstorm.com
  * @author Richard Davey / Photon Storm
 */
@@ -47,10 +48,34 @@ package org.flixel.plugin.photonstorm
 		 */
 		public var positionOffset:FlxPoint;
 		
+		/**
+		 * The minimum value the bar can be (can never be >= max)
+		 */
 		private var min:Number;
+		
+		/**
+		 * The maximum value the bar can be (can never be <= min)
+		 */
 		private var max:Number;
+		
+		/**
+		 * How wide is the range of this bar? (max - min)
+		 */
+		private var range:Number;
+		
+		/**
+		 * What 1% of the bar is equal to in terms of value (range / 100)
+		 */
 		private var pct:Number;
+		
+		/**
+		 * The current value - must always be between min and max
+		 */
 		private var value:Number;
+		
+		/**
+		 * How many pixels = 1% of the bar (barWidth (or height) / 100)
+		 */
 		public var pxPerPercent:Number;
 		
 		private var emptyCallback:Function;
@@ -131,8 +156,8 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Track the parent FlxSprites x/y coordinates. For example if you wanted your sprite to have a floating health-bar above their head.<br />
-		 * If your health bar is 10px tall and you wanted it to appear above your sprite, then set offsetY to be -10<br />
+		 * Track the parent FlxSprites x/y coordinates. For example if you wanted your sprite to have a floating health-bar above their head.
+		 * If your health bar is 10px tall and you wanted it to appear above your sprite, then set offsetY to be -10
 		 * If you wanted it to appear below your sprite, and your sprite was 32px tall, then set offsetY to be 32. Same applies to offsetX.
 		 * 
 		 * @param	offsetX		The offset on X in relation to the origin x/y of the parent
@@ -171,7 +196,7 @@ package org.flixel.plugin.photonstorm
 				trackParent(offsetX, offsetY);
 			}
 			
-			updateValue();
+			updateValueFromParent();
 			updateBar();
 		}
 		
@@ -245,22 +270,66 @@ package org.flixel.plugin.photonstorm
 			
 			this.min = min;
 			this.max = max;
-			pct = 100 / (max - min);
 			
-			if (fillHorizontal)
+			range = max - min;
+			
+			if (range < 100)
 			{
-				pxPerPercent = barWidth / (max - min);
+				pct = range / 100;
 			}
 			else
 			{
-				pxPerPercent = barHeight / (max - min);
+				pct = range / 100;
 			}
 			
-			trace("setRange pct:", pct, "pxPerPercent", pxPerPercent);
+			if (fillHorizontal)
+			{
+				pxPerPercent = barWidth / 100;
+			}
+			else
+			{
+				pxPerPercent = barHeight / 100;
+			}
+			
+			if (value)
+			{
+				if (value > max)
+				{
+					value = max;
+				}
+				
+				if (value < min)
+				{
+					value = min;
+				}
+			}
+			else
+			{
+				value = min;
+			}
+		}
+		
+		public function debug():void
+		{
+			trace("FlxBar - Min:", min, "Max:", max, "Range:", range, "pct:", pct, "pxp:", pxPerPercent, "Value:", value);
+		}
+		
+		public function get stats():Object
+		{
+			var data:Object = {
+				min: min,
+				max: max,
+				range: range,
+				pct: pct,
+				pxPerPct: pxPerPercent,
+				fillH: fillHorizontal
+			}
+			
+			return data;
 		}
 		
 		/**
-		 * Creates a solid-colour filled health bar in the given colours, with optional 1px thick border.<br />
+		 * Creates a solid-colour filled health bar in the given colours, with optional 1px thick border.
 		 * All colour values are in 0xAARRGGBB format, so if you want a slightly transparent health bar give it lower AA values.
 		 * 
 		 * @param	empty		The color of the bar when empty in 0xAARRGGBB format (the background colour)
@@ -291,7 +360,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Creates a gradient filled health bar using the given colour ranges, with optional 1px thick border.<br />
+		 * Creates a gradient filled health bar using the given colour ranges, with optional 1px thick border.
 		 * All colour values are in 0xAARRGGBB format, so if you want a slightly transparent health bar give it lower AA values.
 		 * 
 		 * @param	empty		Array of colour values used to create the gradient of the health bar when empty, each colour must be in 0xAARRGGBB format (the background colour)
@@ -324,7 +393,7 @@ package org.flixel.plugin.photonstorm
 		}
 		
 		/**
-		 * Creates a health bar filled using the given bitmap images.<br />
+		 * Creates a health bar filled using the given bitmap images.
 		 * You can provide "empty" (background) and "fill" (foreground) images. either one or both images (empty / fill), and use the optional empty/fill colour values 
 		 * All colour values are in 0xAARRGGBB format, so if you want a slightly transparent health bar give it lower AA values.
 		 * 
@@ -421,10 +490,13 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		private function updateValue():void
+		private function updateValueFromParent():void
 		{
-			var newValue:Number = parent[parentVariable];
-			
+			updateValue(parent[parentVariable]);
+		}
+		
+		private function updateValue(newValue:Number):void
+		{
 			if (newValue > max)
 			{
 				newValue = max;
@@ -523,7 +595,7 @@ package org.flixel.plugin.photonstorm
 			{
 				if (parent[parentVariable] != value)
 				{
-					updateValue();
+					updateValueFromParent();
 					updateBar();
 				}
 				
@@ -535,27 +607,48 @@ package org.flixel.plugin.photonstorm
 			}
 		}
 		
-		public function get percent():uint
+		/**
+		 * The percentage of how full the bar is (a value between 0 and 100)
+		 */
+		public function get percent():Number
 		{
 			if (value > max)
 			{
 				return 100;
 			}
 			
-			return Math.floor(value * pct);
+			return Math.floor((value / range) * 100);
 		}
 		
-		public function set percent(newPct:uint):void
+		/**
+		 * Sets the percentage of how full the bar is (a value between 0 and 100). This changes FlxBar.currentValue
+		 */
+		public function set percent(newPct:Number):void
 		{
 			if (newPct >= 0 && newPct <= 100)
 			{
-				//value = newPct * pct;
-				value = newPct / 100;
-				
-				trace("value", value);
+				updateValue(pct * newPct);
 				
 				updateBar();
 			}
+		}
+		
+		/**
+		 * Set the current value of the bar (must be between min and max range)
+		 */
+		public function set currentValue(newValue:Number):void
+		{
+			updateValue(newValue);
+			
+			updateBar();
+		}
+		
+		/**
+		 * The current actual value of the bar
+		 */
+		public function get currentValue():Number
+		{
+			return value;
 		}
 		
 	}
