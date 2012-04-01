@@ -319,11 +319,11 @@ package org.flixel.plugin.photonstorm
 				do {
 					if (min < max)
 					{
-						result = min + (Math.random() * (max - min));
+						result = min + Math.floor(Math.random() * (max + 1 - min));
 					}
 					else
 					{
-						result = max + (Math.random() * (min - max));
+						result = max + Math.floor(Math.random() * (min + 1 - max));
 					}
 				}
 				while (excludes.indexOf(result) >= 0);
@@ -335,11 +335,11 @@ package org.flixel.plugin.photonstorm
 				//	Reverse check
 				if (min < max)
 				{
-					return min + (Math.random() * (max - min));
+					return min + Math.floor(Math.random() * (max + 1 - min));
 				}
 				else
 				{
-					return max + (Math.random() * (min - max));
+					return max + Math.floor(Math.random() * (min + 1 - max));
 				}
 			}
 		}
