@@ -319,7 +319,7 @@ package org.flixel.plugin.photonstorm
 				do {
 					if (min < max)
 					{
-						result = min + Math.floor(Math.random() * (max + 1 - min));
+						result = min + Math.floor(Math.random() * (max + 1 - min)); // Math.floor and adding 1 makes this inclusive
 					}
 					else
 					{
