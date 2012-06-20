@@ -237,8 +237,8 @@ package org.flixel.plugin.photonstorm
 		 */
 		public function loadGraphic(normal:FlxSprite, highlight:FlxSprite):void
 		{
-			buttonNormal.pixels = normal.pixels;
-			buttonHighlight.pixels = highlight.pixels;
+			buttonNormal.pixels = normal.framePixels;
+			buttonHighlight.pixels = highlight.framePixels;
 			
 			width = buttonNormal.width;
 			height = buttonNormal.height;
