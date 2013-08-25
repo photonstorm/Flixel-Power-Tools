@@ -40,7 +40,7 @@ package org.flixel.plugin.photonstorm
 		/**
 		 * Adds horizontal spacing between each character of the font, in pixels. Default is 0.
 		 */
-		public var customSpacingX:uint = 0;
+		public var customSpacingX:Number = 0;
 		
 		/**
 		 * Adds vertical spacing between each line of multi-line text, set in pixels. Default is 0.
@@ -243,7 +243,7 @@ package org.flixel.plugin.photonstorm
 		 * @param	lineAlignment		Align each line of multi-line text. Set to FlxBitmapFont.ALIGN_LEFT (default), FlxBitmapFont.ALIGN_RIGHT or FlxBitmapFont.ALIGN_CENTER.
 		 * @param	allowLowerCase		Lots of bitmap font sets only include upper-case characters, if yours needs to support lower case then set this to true.
 		 */
-		public function setText(content:String, multiLines:Boolean = false, characterSpacing:uint = 0, lineSpacing:uint = 0, lineAlignment:String = "left", allowLowerCase:Boolean = false):void
+		public function setText(content:String, multiLines:Boolean = false, characterSpacing:Number = 0, lineSpacing:uint = 0, lineAlignment:String = "left", allowLowerCase:Boolean = false):void
 		{
 			customSpacingX = characterSpacing;
 			customSpacingY = lineSpacing;
@@ -284,9 +284,12 @@ package org.flixel.plugin.photonstorm
 				{
 					temp = new BitmapData(fixedWidth, (lines.length * (characterHeight + customSpacingY)) - customSpacingY, true, 0xf);
 				}
-				else
+				else if(customSpacingX>0)
 				{
 					temp = new BitmapData(getLongestLine() * (characterWidth + customSpacingX), (lines.length * (characterHeight + customSpacingY)) - customSpacingY, true, 0xf);
+				}else 
+				{
+					temp = new BitmapData(getLongestLine() * (characterWidth), (lines.length * (characterHeight + customSpacingY)) - customSpacingY, true, 0xf);
 				}
 				
 				//	Loop through each line of text
@@ -326,9 +329,13 @@ package org.flixel.plugin.photonstorm
 				{
 					temp = new BitmapData(fixedWidth, characterHeight, true, 0xf);
 				}
-				else
+				else if (customSpacingX>0)
 				{
 					temp = new BitmapData(_text.length * (characterWidth + customSpacingX), characterHeight, true, 0xf);
+				}
+				else 
+				{
+					temp = new BitmapData(_text.length * (characterWidth), characterHeight, true, 0xf);
 				}
 				
 				switch (align)
@@ -420,7 +427,7 @@ package org.flixel.plugin.photonstorm
 					//	If the character doesn't exist in the font then we don't want a blank space, we just want to skip it
 					if (grabData[line.charCodeAt(c)] is Rectangle)
 					{
-						output.copyPixels(fontSet, grabData[line.charCodeAt(c)], new Point(x, y));
+						output.copyPixels(fontSet, grabData[line.charCodeAt(c)], new Point(x, y),null,null,true);
 						
 						x += characterWidth + customSpacingX;
 						
