@@ -1,0 +1,37 @@
+
+### ACTIONSCRIPT ###
+
+# Build and Release Folders
+bin/
+bin-debug/
+bin-release/
+
+# Project property files
+.actionScriptProperties
+.flexProperties
+.settings/
+.project
+
+
+### OS SPECIAL FILES ###
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# OSX (MAC)
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+.*
+!.gitignore
+*~
+
