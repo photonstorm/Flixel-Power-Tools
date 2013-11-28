@@ -1,9 +1,9 @@
 Flixel Power Tools
 ==================
 
-Version 1.9
+Version 1.9 (final release)
 
-October 11th 2011
+November 28th 2013
 
 By Richard Davey, [Photon Storm](http://www.photonstorm.com)
 
@@ -93,27 +93,9 @@ Special FX Includes
 Contributing
 ------------
 
-If you'd like to add a new class to the package, or a function into an exisiting class
-then please feel free. Be sure to checkout the dev branch first however!
+I'm afraid that the Flixel Power Tools are no longer maintained by myself. I have moved on to [other things](http://phaser.io).
 
-If you'd just like to request a specific class or function then leave me a message on
-either the [Flixel Power Tools project page][fpt] or the [Flixel Forums][ff]
-
-
-Dev or Master
--------------
-
-As the Flixel Power Tools are changing rapidly I have split them into two branches: master and dev.
-
-Dev contains the "bleeding edge" classes (aka might not compile). Once they are stable I merge with "master".
-
-Unless you are extremely curious, or helping out with the project, you should pretty much always checkout from master.
-
-
-Bugs?
------
-
-Please add them to the [Issue Tracker][1] with as much info as possible.
+I would strongly suggest you start using the [Flixel Commmunity](https://github.com/FlixelCommunity) version of Flixel which contains updated versions of these tools.
 
 License
 -------
