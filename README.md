@@ -14,28 +14,12 @@ of classes designed to provide extra functionality to your Flixel 2.5+ games.
 Quick Install Guide
 -------------------
 
-Unzip the file `photonstorm.zip` into the following folder within your Flixel project:
+Copy the `src` and `lib` folders into your ActionScript project. All the classes for Flixel Power Tools should be contained in
 
-     src/org/flixel/plugin
+	src/org/flixel/plugin/photonstorm
 
-It should create a folder called `photonstorm` containing all of the tools. The final
-directory structure of your project should be:
-
-     src/org/flixel/plugin/photonstorm
-
-and within the `photonstorm` folder you'll find all the classes listed below.
-
-Now read the Getting Started Guide in the Doc folder. It contains important information that will 
+Now read the "Getting Started Guide" in the `Docs` folder; it contains important information that will 
 help you compile!
-
-Dev branch users:
-
-I don't keep the zip file as up to date as the src in the Test Suite. So ignore the above and 
-instead copy the photonstorm folder out of:
-
-    Test Suite/src/org/flixel/plugin
-
-to your Flixel plugin folder
 
 
 Getting Started Guide
@@ -158,6 +142,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those of the
 authors and should not be interpreted as representing official policies, either expressed
+or implied, of the FreeBSD Project.
 
 [1]: https://github.com/photonstorm/Flixel-Power-Tools/issues
 [fpt]: https://github.com/photonstorm/Flixel-Power-Tools
