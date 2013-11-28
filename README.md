@@ -25,7 +25,9 @@ help you compile!
 Getting Started Guide
 ---------------------
 
-There is a comprehensive Getting Started Guide in both Word and PDF format in the `Docs` folder.
+There is a comprehensive Getting Started Guide in both Word and PDF format in the `Docs` branch:
+
+https://github.com/FlixelCommunity/Flixel-Power-Tools/tree/docs
 
 Documentation is also provided built-in to the classes. AS3 IDEs such as FlashDevelop will
 provide context-sensitive help for all classes and functions in the Flixel Power Tools.
@@ -33,13 +35,17 @@ provide context-sensitive help for all classes and functions in the Flixel Power
 Finally check out the home page at http://www.photonstorm.com/flixel-power-tools for updates.
 
 
-Demo Suite
+Test Suite
 ----------
 
-The Flixel Power Tools come with a comprehensive Demo Suite. Use it to visually see the 
+Get the full Test Suite from here:
+
+https://github.com/FlixelCommunity/Flixel-Power-Tools/tree/test-suite
+
+The Flixel Power Tools come with a comprehensive Test Suite. Use it to visually see the 
 tools in action, and then learn from the source code and comments within.
 
-To run the Demo Suite launch the following SWF:
+To run the Test Suite launch the following SWF:
 
     Test Suite/bin/FlixelPowerTools.swf
 
